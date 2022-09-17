@@ -1,0 +1,33 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@test/(.*)$": "<rootDir>/e2e/$1"
+  },
+  "testTimeout": 15000,
+  "rootDir": "..",
+  "collectCoverageFrom": [
+    "**/src/**/*.(t|j)s",
+    "!**/*.dto.(t|j)s",
+    "!**/*.entity.(t|j)s",
+    "!**/**.mock.spec.(t|j)s",
+    "!**/**.mock.e2e-spec.(t|j)s",
+    "!**/*.module.(t|j)s",
+    "!**/*.swagger.(t|j)s",
+    "!**/*.enum.(t|j)s",
+    "!**/src/common/decorators/test/**.(t|j)s",
+    "!**/src/common/decorators/test/*.(t|j)s",
+    "!**/config/*.(t|j)s",
+    "!**/src/common/helpers/*.(t|j)s",
+    "!**/src/common/swagger/*.(t|j)s",
+    "!**/*.(service|controller|guard|strategy).spec.(t|j)s",
+    "!**/src/**main.(t|j)s",
+    "!**/src/main.(t|j)s"
+  ],
+  "coverageDirectory": "<rootDir>/coverage-e2e",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  }
+}

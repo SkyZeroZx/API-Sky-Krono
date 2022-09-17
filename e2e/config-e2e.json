@@ -1,0 +1,125 @@
+{
+  "env": {
+    "jwtToken": {
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsInVzZXJuYW1lIjoic2t5emVyb2JvdDY0QGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE2NjIyNjExOTksImV4cCI6MTY2MjM0NzU5OX0.5GyTlWKKR2xf5LeEQNRZjQC-YQMSZU0RI7rvAQt11kA"
+    },
+    "jwtTokenFail": {
+      "Authorization": ""
+    },
+    "users": {
+      "userSuscrito": {
+        "id": 6
+      },
+      "userLoginOk": {
+        "id": 6,
+        "username": "skyzerobot64@gmail.com",
+        "password": "Admin1",
+        "name": "SkyBot",
+        "fatherLastName": "Sky",
+        "motherLastName": "Sky",
+        "createdAt": "2022-06-19T22:05:34.710Z",
+        "updateAt": "2022-08-27T14:20:40.000Z",
+        "role": "admin",
+        "status": "HABILITADO",
+        "firstLogin": false
+      },
+      "userReseteado": {
+        "id": 102,
+        "username": "jburgost@unac.edu.pe",
+        "password": "QJbtSqTxgE",
+        "name": "Jaime",
+        "fatherLastName": "Burgos",
+        "motherLastName": "Tejada",
+        "createdAt": "2022-08-27T14:07:11.468Z",
+        "updateAt": "2022-09-01T13:46:26.000Z",
+        "role": "admin",
+        "status": "RESETEADO",
+        "firstLogin": true
+      },
+      "userCreado": {
+        "id": 31,
+        "username": "mysqlserver64@gmail.com",
+        "password": "Bs8sc80d8c",
+        "name": "UserCreate",
+        "fatherLastName": "Create Paterno",
+        "motherLastName": "Create Materno",
+        "createdAt": "2022-08-09T23:28:53.167Z",
+        "updateAt": "2022-09-01T14:22:22.000Z",
+        "role": "admin",
+        "status": "CREADO",
+        "firstLogin": true
+      },
+      "userBloqueado": {
+        "id": 4,
+        "username": "saivergx@gmail.com",
+        "password": "QPpwATdl2z",
+        "name": "Jaime",
+        "fatherLastName": "Burgos",
+        "motherLastName": "Tejada",
+        "createdAt": "2022-06-19T10:46:39.563Z",
+        "updateAt": "2022-09-01T13:44:14.000Z",
+        "status": "BLOQUEADO",
+        "role": "admin",
+        "firstLogin": true
+      },
+      "userAdmin": {
+        "id": 6,
+        "username": "skyzerobot64@gmail.com",
+        "password": "Admin1",
+        "name": "SkyBot",
+        "fatherLastName": "Sky",
+        "motherLastName": "Sky",
+        "createdAt": "2022-06-19T22:05:34.710Z",
+        "updateAt": "2022-08-27T14:20:40.000Z",
+        "role": "admin",
+        "status": "HABILITADO",
+        "firstLogin": false
+      },
+      "userUpdate": {
+        "id": 104,
+        "username": "qvhwAZabvp@mail.com",
+        "name": "TEST E2E API",
+        "fatherLastName": "TEST E2E API",
+        "motherLastName": "TEST E2E API",
+        "rol": "viewer",
+        "status": "CREADO"
+      },
+      "userViewer": {
+        "username": "view-user-sky@gmail.com",
+        "password": "Admin1"
+      }
+    },
+    "tasks": {
+      "updateTask": {
+        "codTask": 35,
+        "title": "Create",
+        "description": " Hcyct",
+        "codType": 1,
+        "dateRange": [
+          "2022-07-22T07:00:00",
+          "2022-07-22T14:00:00"
+        ],
+        "users": [
+          
+        ]
+      }
+    },
+    "findTask": {
+      "id": 34
+    },
+    "taskByUser": [
+      {
+        "id": 4,
+        "name": "Jaime",
+        "fatherLastName": "Burgos",
+        "motherLastName": "Tejada"
+      },
+      {
+        "id": 6,
+        "name": "SkyBot",
+        "fatherLastName": "Sky",
+        "motherLastName": "Sky"
+      }
+    ]
+  }
+}

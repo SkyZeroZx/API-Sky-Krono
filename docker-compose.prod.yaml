@@ -1,0 +1,36 @@
+version: '2.3'
+services:
+  skykronoapi:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: sky-krono-docker
+    container_name: sky-krono-api
+    restart: always # reiniciar el contenedor si se detiene
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      JWT_TOKEN: ${JWT_TOKEN}
+      EMAIL_HOST: ${EMAIL_HOST} # MAIL PROPERTIES
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_USERNAME: ${EMAIL_USERNAME}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      PUBLIC_KEY  : ${PUBLIC_KEY}  # WEB PUSH PROPERTIES
+      PRIVATE_KEY : ${PRIVATE_KEY}
+      EMAIL_WEB_PUSH  : ${EMAIL_WEB_PUSH}
+      RP_ID  : ${RP_ID} # WEB AUTH PROPERTIES
+      RP_ID_ARRAY : ${RP_ID_ARRAY}
+      ORIGIN  : ${ORIGIN}
+      TIME_ZONE : ${TIME_ZONE} # TIME ZONE PROPERTIES
+      DATE_PATTERN : ${DATE_PATTERN} # LOGGER PROPERTIES
+      APP_NAME : ${APP_NAME}
+      MAX_SIZE  : ${MAX_SIZE}  
+      MAX_DAYS  : ${MAX_DAYS}
+      LOG_FOLDER : ${LOG_FOLDER}
+      TIMESTAMP_FORMAT : ${TIMESTAMP_FORMAT}

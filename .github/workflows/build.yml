@@ -1,0 +1,99 @@
+name: Build
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Run Install Dependences
+        run: npm i
+      - uses: actions/cache@v2
+        id: restore-build
+        with:
+          path: ./*
+          key: ${{ github.sha }}
+  unit-test:
+    name: Unit Test Jest
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - uses: actions/cache@v2
+        id: restore-build
+        with:
+          path: ./*
+          key: ${{ github.sha }}
+      - name: Run All Unit Tests
+        run:  npm run test:cov
+      - uses: actions/cache@v2
+        id: build-unit-test
+        with:
+          path: ./*
+          key: ${{ github.sha }}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: reports-unit-test
+          path: coverage/*
+  e2e-testing: 
+    name: E2E Testing SuperTest
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - uses: actions/cache@v2
+        id: restore-build
+        with:
+          path: ./*
+          key: ${{ github.sha }}
+      - name : E2E Test
+        run: npm run test:e2e:cov
+      - uses: actions/upload-artifact@v3
+        with:
+          name: reports-e2e-test
+          path: coverage-e2e/*          
+  sonarcloud: 
+    name: SonarCloud
+    needs: [build , unit-test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - uses: actions/cache@v2
+        id: build-unit-test
+        with:
+          path: ./*
+          key: ${{ github.sha }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: reports-unit-test
+          path: coverage
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}           
