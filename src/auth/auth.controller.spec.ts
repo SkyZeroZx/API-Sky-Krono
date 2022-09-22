@@ -82,11 +82,14 @@ describe('AuthController', () => {
     // En caso contario cualquier otro usuario como el status bloqueado no puede logearse
     let userBloqueado = AuthMockService.userResetado;
     userBloqueado.status = Constant.STATUS_USER.BLOQUEADO;
-    const loginBloqueado: any = await controller.login(AuthMockService.loginDto, userBloqueado);
+    const loginBloqueado: any = controller.login(AuthMockService.loginDto, userBloqueado);
+ 
+    await expect(loginBloqueado).rejects.toThrowError(
+      new BadRequestException({
+        message: `El usuario tiene un status ${userBloqueado.status}`,
+      }),
+    );
     expect(spyGenerateToken).not.toBeCalledTimes(4);
-    expect(loginBloqueado).toEqual({
-      message: `El usuario tiene un status ${userBloqueado.status}`,
-    });
   });
 
   it('Validamos generateRegistration', async () => {

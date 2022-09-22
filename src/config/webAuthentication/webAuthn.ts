@@ -10,7 +10,7 @@ import { User } from '../../user/entities/user.entity';
 // Utilitarios de AuthnWeb
 
 // Human-readable title for your website
-const rpName = 'Sky Calendar App';
+const rpName = 'Sky Krono App';
 // A unique identifier for your website
 const rpID = process.env.RP_ID;
 

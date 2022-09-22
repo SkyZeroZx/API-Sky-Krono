@@ -29,6 +29,7 @@ export class Attendance {
   @IsOptional()
   description: string;
 
+  // Reference is check attendance today
   @Column('boolean', { default: true })
   isActive: boolean;
 
@@ -48,4 +49,8 @@ export class Attendance {
 
   @UpdateDateColumn({ type: 'timestamp' })
   exitTime: Date;
+
+  @Column('boolean', { default: false })
+  @IsOptional()
+  isDayOff: boolean;
 }

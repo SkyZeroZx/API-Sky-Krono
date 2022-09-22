@@ -199,7 +199,7 @@ export class UserService {
       }
 
       this.logger.warn(`Sucedio un error al cambiar la contraseña , usuario : ${user.username}`);
-      return { message: 'Sucedio un error al cambiar la contraseña' };
+      throw new InternalServerErrorException('Sucedio un error al cambiar la contraseña');
     } catch (error) {
       this.logger.error(`Sucedio un error al cambiar la contraseña del usuario ${user.username}`);
       this.logger.error(error);

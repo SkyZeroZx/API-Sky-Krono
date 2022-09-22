@@ -66,10 +66,9 @@ export class ScheduleService implements OnModuleInit {
         return { message: Constant.MENSAJE_OK, info: 'Se actualizo exitosamente el Schedule' };
       }
       this.logger.warn(`Sucedio un error al actualizar el Schedule`);
-      return { message: 'Sucedio un error al actualizar el Schedule' };
+      throw new InternalServerErrorException('Sucedio un error al actualizar el Schedule');
     } catch (error) {
-      this.logger.error(`Sucedio un error al intentar actualizar el Schedule`);
-      this.logger.error(error);
+      this.logger.error({ message: `Sucedio un error al intentar actualizar el Schedule`, error });
       throw new InternalServerErrorException('Sucedio un error al actualizar el Schedule');
     }
   }

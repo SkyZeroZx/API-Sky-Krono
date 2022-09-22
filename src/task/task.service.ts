@@ -242,7 +242,7 @@ export class TaskService {
         return { message: Constant.MENSAJE_OK, info: 'Tarea eliminada exitosamente' };
       }
       this.logger.warn(`No se encontro tarea a eliminar`);
-      return { message: 'Sucedio un error', info: 'No se encontro tarea a eliminar' };
+      throw new InternalServerErrorException('Sucedio un error al eliminar la tarea');
     } catch (error) {
       this.logger.error(`Error al elimanar la tarea`, deleteTaskDto, error);
       throw new InternalServerErrorException('Sucedio un error al eliminar la tarea');

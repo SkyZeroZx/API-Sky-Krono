@@ -20,6 +20,7 @@ import { ScheduleModule as ScheduleModuleNestJs } from '@nestjs/schedule';
 import { ChargueModule } from './chargue/chargue.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { LicenceModule } from './licence/licence.module';
 
 @Module({
   imports: [
@@ -52,7 +53,8 @@ import { ScheduleModule } from './schedule/schedule.module';
     TaskToUserModule,
     ChargueModule,
     AttendanceModule,
-    ScheduleModule
+    ScheduleModule,
+    LicenceModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -19,6 +19,7 @@ import { Constant } from '../../common/constants/Constant';
 import { Chargue } from '../../chargue/entities/chargue.entity';
 import { Schedule } from '../../schedule/entities/schedule.entity';
 import { Attendance } from '../../attendance/entities/attendance.entity';
+import { Licence } from '../../licence/entities/licence.entity';
 
 @Entity()
 @Unique(['username'])
@@ -32,6 +33,9 @@ export class User {
     nullable: false,
   })
   @OneToMany(() => Attendance, (Attendance) => Attendance.id, {
+    nullable: false,
+  })
+  @OneToMany(() => Licence, (Licence) => Licence.id, {
     nullable: false,
   })
   id: number;

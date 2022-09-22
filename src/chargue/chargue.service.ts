@@ -50,7 +50,7 @@ export class ChargueService {
       }
 
       this.logger.warn('Sucedio un error al actualizar el chargue');
-      return { message: 'Sucedio un error al actualizar el chargue' };
+      throw new InternalServerErrorException('Sucedio un error al actualizar el chargue');
     } catch (error) {
       this.logger.error({ message: 'Sucedio un error al intentar actualizar el chargue', error });
       throw new InternalServerErrorException('Sucedio un error al actualizar el chargue');

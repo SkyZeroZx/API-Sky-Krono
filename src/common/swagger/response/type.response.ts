@@ -7,7 +7,7 @@ export class TypeResponse {
       example: [
         {
           codType: 1,
-          typeDescription: 'MATUTINO',
+          description: 'MATUTINO',
           backgroundColor: 'rgba(16,183,89, .25)',
           borderColor: '#10b759',
           start: '07:00:00',
@@ -16,7 +16,7 @@ export class TypeResponse {
         },
         {
           codType: 2,
-          typeDescription: 'VESPERTINO',
+          description: 'VESPERTINO',
           backgroundColor: 'rgba(253,126,20,.25)',
           borderColor: '#fd7e14',
           start: '14:00:00',

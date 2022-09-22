@@ -19,6 +19,8 @@ export class Util {
   }
 
   static validateRegisterDate(schedule: Schedule): boolean {
+    //TODO Validate isPermissions 
+    
     const dayOfWeek = Util.getDayOfWeek();
 
     let validate: boolean[] = [];

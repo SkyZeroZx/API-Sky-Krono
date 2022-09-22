@@ -90,7 +90,7 @@ export class AttendanceService {
         return { message: Constant.MENSAJE_OK, info: 'Se registro exitosamente su salida' };
       }
       this.logger.warn(`Sucedio un error al actualizar el Attendance`);
-      return { message: 'Sucedio un error al actualizar el Attendance' };
+      throw new InternalServerErrorException('Sucedio un error al actualizar Attendance');
     } catch (error) {
       this.logger.error({
         message: `Sucedio un error al actualizar Attendance para el usuario ${user.name}`,
@@ -156,6 +156,7 @@ export class AttendanceService {
       .addSelect('ATTENDANCE.isActive', 'isActive')
       .addSelect('ATTENDANCE.isLater', 'isLater')
       .addSelect('ATTENDANCE.isAbsent', 'isAbsent')
+      .addSelect('ATTENDANCE.isDayOff', 'isDayOff')
       .innerJoin(User, 'USER', 'USER.id = ATTENDANCE.codUser')
       .where('USER.id =:id', { id: id })
       .orderBy('ATTENDANCE.date', 'DESC')

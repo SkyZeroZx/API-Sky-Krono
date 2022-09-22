@@ -12,7 +12,7 @@ describe('TypeController', () => {
   const listaTypes: Type[] = [
     {
       codType: 1,
-      typeDescription: 'TEST',
+      description: 'TEST',
       backgroundColor: '#ffff',
       borderColor: '#ffff',
       start: new Date(),
@@ -21,7 +21,7 @@ describe('TypeController', () => {
     },
     {
       codType: 2,
-      typeDescription: 'TEST 2',
+      description: 'TEST 2',
       backgroundColor: '#ffff',
       borderColor: '#ffff',
       start: new Date(),

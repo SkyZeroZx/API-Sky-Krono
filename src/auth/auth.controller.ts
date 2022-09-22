@@ -47,7 +47,7 @@ export class AuthController {
         Object.assign(data, { message: Constant.MENSAJE_OK });
         return data;
       default:
-        return { message: `El usuario tiene un status ${user.status}` };
+        new BadRequestException(`El usuario tiene un status ${user.status}`);
     }
   }
 
