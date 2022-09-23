@@ -226,13 +226,11 @@ export class TaskService {
    */
   async removeTask(deleteTaskDto: DeleteTaskDto) {
     this.logger.log({ message: `Eliminando tarea`, deleteTaskDto });
-    // Obtenemos los tokens de los usuarios antes de eliminarlos los relacionado a la tarea
     const tokens = await this.notificacionService.findTokensByTask(deleteTaskDto.codTask);
     try {
       const { affected } = await this.taskRepository.delete({ codTask: deleteTaskDto.codTask });
       if (affected > 0) {
         this.logger.log(`Tarea eliminada exitosamente`);
-        // Validando que se eliminen los task procedemos a enviar las notificaciones a los tokens
         tokens.forEach((item) => {
           this.notificacionService.sendNotification(
             item.tokenPush,
@@ -250,7 +248,6 @@ export class TaskService {
   }
 
   async removeUserToTask(taskToUserDto: TaskToUserDto) {
-    // Obtenemos los tokens para el usuario
     const tokens = await this.notificacionService.findTokensByUser(taskToUserDto.codUser);
     this.logger.log(`El ID user eliminado es  ${taskToUserDto.codUser}`);
     this.logger.log({
@@ -258,7 +255,6 @@ export class TaskService {
       tokens,
     });
 
-    // Iteramos los tokens de los usuarios para enviarlo antes de finalizar de eliminarlos de la tarea
     tokens.forEach((item) => {
       this.notificacionService.sendNotification(item.tokenPush, Constant.NOTIFICACION_DELETE_TASK);
     });
@@ -267,17 +263,14 @@ export class TaskService {
   }
 
   async addUserToTask(taskToUserDto: TaskToUserDto) {
-    // Registramos la nueva tarea para el usuario
     const newUserToTask = await this.serviceTaskToUser.addUserToTask(taskToUserDto);
     if (newUserToTask.message == Constant.MENSAJE_OK) {
-      // Obtenemos los tokens para el usuario
       const tokens = await this.notificacionService.findTokensByUser(taskToUserDto.codUser);
-      // Iteramos los tokens y enviamos la notificacion
       tokens.forEach((item) => {
         this.notificacionService.sendNotification(item.tokenPush, Constant.NOTIFICACION_NEW_TASK);
       });
     }
-    // Al finalizar retornamos el mensaje del servicio llamado inicialmente
+
     return newUserToTask;
   }
 }

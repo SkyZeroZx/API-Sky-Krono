@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -21,6 +21,7 @@ import { ChargueModule } from './chargue/chargue.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { LicenceModule } from './licence/licence.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { LicenceModule } from './licence/licence.module';
         database: config.get<string>(DATABASE_NAME),
         timezone: 'Z',
         entities: [__dirname + './**/**/*entity{.ts,.js}'],
+        cache: true,
         autoLoadEntities: true,
         synchronize: true,
         logging: false,
@@ -43,6 +45,11 @@ import { LicenceModule } from './licence/licence.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+    }),
+    CacheModule.register({
+      ttl: 60, // seconds
+      max: 300, // maximum number of items in cache
+      isGlobal: true,
     }),
     ScheduleModuleNestJs.forRoot(),
     AuthModule,
@@ -54,9 +61,15 @@ import { LicenceModule } from './licence/licence.module';
     ChargueModule,
     AttendanceModule,
     ScheduleModule,
-    LicenceModule
+    LicenceModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
+  ],
 })
 export class AppModule {}

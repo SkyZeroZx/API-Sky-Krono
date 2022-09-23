@@ -76,14 +76,14 @@ export class AuthController {
   @Post('generate-authentication-options')
   @ApiOperation({ summary: 'Generacion de autentificador usuario a logear' })
   async generateAuthenticationOptions(@Body() user) {
-    this.logger.log('Generando Authentication Options Authn Web username', user.username);
+    this.logger.log({ message: 'Generando Authentication Options Authn Web username', user });
     const userAuthenticators = await this.authService.getUserAuthenticatorsByUsername(
       user.username,
     );
     this.logger.log('userAuthenticators ', userAuthenticators);
     const authOptions = await generateAuthenticationOption(userAuthenticators);
     this.rememberChallenge = authOptions.challenge;
-    this.logger.log('Se genero authOptions', authOptions);
+    this.logger.log({ message: 'Se genero authOptions', authOptions });
     return authOptions;
   }
 
