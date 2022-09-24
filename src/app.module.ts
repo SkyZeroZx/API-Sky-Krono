@@ -51,14 +51,7 @@ import * as redisStore from 'cache-manager-redis-store';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    CacheModule.registerAsync({
-      useFactory: async (configService: ConfigService) => ({
-        ttl: parseInt(configService.get<string>(CACHE_TTL), 10),
-        max: parseInt(configService.get<string>(CACHE_MAX_ITEMS), 10),
-     //   isGlobal: configService.get<boolean>(CACHE_GLOBAL_NESTJS),
-      }),
-      inject: [ConfigService],
-    }),
+ 
     ScheduleModuleNestJs.forRoot(),
     AuthModule,
     TaskModule,
@@ -74,10 +67,7 @@ import * as redisStore from 'cache-manager-redis-store';
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    },
+    
   ],
 })
 export class AppModule {}
