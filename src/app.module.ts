@@ -11,6 +11,10 @@ import {
   DATABASE_USERNAME,
   DATABASE_PASSWORD,
   DATABASE_NAME,
+  ENABLED_MYSQL_CACHE,
+  CACHE_TTL,
+  CACHE_MAX_ITEMS,
+  CACHE_GLOBAL_NESTJS,
 } from './common/constants/Constant';
 import { AuthModule } from './auth/auth.module';
 import { TaskModule } from './task/task.module';
@@ -22,6 +26,7 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { LicenceModule } from './licence/licence.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -36,7 +41,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
         database: config.get<string>(DATABASE_NAME),
         timezone: 'Z',
         entities: [__dirname + './**/**/*entity{.ts,.js}'],
-        cache: true,
+        cache: config.get<boolean>(ENABLED_MYSQL_CACHE),
         autoLoadEntities: true,
         synchronize: true,
         logging: false,
@@ -46,10 +51,13 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    CacheModule.register({
-      ttl: 60, // seconds
-      max: 300, // maximum number of items in cache
-      isGlobal: true,
+    CacheModule.registerAsync({
+      useFactory: async (configService: ConfigService) => ({
+        ttl: parseInt(configService.get<string>(CACHE_TTL), 10),
+        max: parseInt(configService.get<string>(CACHE_MAX_ITEMS), 10),
+     //   isGlobal: configService.get<boolean>(CACHE_GLOBAL_NESTJS),
+      }),
+      inject: [ConfigService],
     }),
     ScheduleModuleNestJs.forRoot(),
     AuthModule,

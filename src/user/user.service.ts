@@ -113,7 +113,7 @@ export class UserService {
       .addSelect('SCHEDULE.name', 'schedule')
       .innerJoin(Chargue, 'CHARGUE', 'CHARGUE.id = USER.codChargue')
       .innerJoin(Schedule, 'SCHEDULE', 'SCHEDULE.id = USER.codSchedule')
-    //  .cache(6000)
+      .cache(6000)
       .getRawMany();
   }
 
