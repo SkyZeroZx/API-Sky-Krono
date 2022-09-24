@@ -26,6 +26,7 @@
     "sonar": "sonar-scanner"
   },
   "dependencies": {
+    "@fastify/static": "^6.5.0",
     "@nestjs/common": "^9.0.8",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.8",
@@ -33,6 +34,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.8",
+    "@nestjs/platform-fastify": "^9.1.2",
     "@nestjs/schedule": "^2.1.0",
     "@nestjs/swagger": "^6.0.5",
     "@nestjs/typeorm": "^9.0.1",
