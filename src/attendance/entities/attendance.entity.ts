@@ -53,4 +53,9 @@ export class Attendance {
   @Column('boolean', { default: false })
   @IsOptional()
   isDayOff: boolean;
+
+  
+  @Column('boolean', { default: false })
+  @IsOptional()
+  isLicence: boolean;
 }

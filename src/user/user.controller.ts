@@ -10,6 +10,7 @@ import {
   Param,
   CacheInterceptor,
   UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -21,16 +22,18 @@ import { User as UserEntity } from '../user/entities/user.entity';
 import { UserDecorator as User } from '../common/decorators/user.decorator';
 import { Auth } from '../common/decorators/auth.decorator';
 import { UserReponse } from '../common/swagger/response/user.response';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { fileFilter } from '../common/helpers/fileFilter.helper';
 
 @ApiTags('Users')
 @ApiBearerAuth()
-@UseInterceptors(CacheInterceptor)
+//@UseInterceptors(CacheInterceptor)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
   private readonly logger = new Logger(UserController.name);
 
-  //@Auth('admin')
+  @Auth('admin')
   @Post()
   @ApiOperation({ summary: 'Creacion de nuevo usuario' })
   @ApiResponse(UserReponse.createUser)
@@ -78,5 +81,18 @@ export class UserController {
   remove(@Param() deleteUserDto: DeleteUserDto) {
     this.logger.log('Eliminando usuario');
     return this.userService.remove(deleteUserDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/photo')
+  @ApiOperation({ summary: 'Registar la foto del usuario' })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter: fileFilter,
+    }),
+  )
+  savePhotoUser(@UploadedFile() file: Express.Multer.File, @User() user: UserEntity) {
+    this.logger.log('Registrando foto usuario');
+    return this.userService.savePhotoUser(file , user);
   }
 }

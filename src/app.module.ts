@@ -1,4 +1,4 @@
-import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,9 +12,6 @@ import {
   DATABASE_PASSWORD,
   DATABASE_NAME,
   ENABLED_MYSQL_CACHE,
-  CACHE_TTL,
-  CACHE_MAX_ITEMS,
-  CACHE_GLOBAL_NESTJS,
 } from './common/constants/Constant';
 import { AuthModule } from './auth/auth.module';
 import { TaskModule } from './task/task.module';
@@ -25,8 +22,7 @@ import { ChargueModule } from './chargue/chargue.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { LicenceModule } from './licence/licence.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import * as redisStore from 'cache-manager-redis-store';
+import { AwsS3Module } from './aws-s3/aws-s3.module';
 
 @Module({
   imports: [
@@ -51,7 +47,6 @@ import * as redisStore from 'cache-manager-redis-store';
       isGlobal: true,
       envFilePath: '.env',
     }),
- 
     ScheduleModuleNestJs.forRoot(),
     AuthModule,
     TaskModule,
@@ -63,11 +58,9 @@ import * as redisStore from 'cache-manager-redis-store';
     AttendanceModule,
     ScheduleModule,
     LicenceModule,
+    AwsS3Module,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

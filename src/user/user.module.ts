@@ -6,11 +6,13 @@ import { User } from './entities/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CACHE_TTL, CACHE_MAX_ITEMS } from '../common/constants/Constant';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AwsS3Module } from '../aws-s3/aws-s3.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    CacheModule.registerAsync({
+    AwsS3Module,
+    /*  CacheModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         ttl: parseInt(configService.get<string>(CACHE_TTL), 10),
         max: parseInt(configService.get<string>(CACHE_MAX_ITEMS), 10),
@@ -18,15 +20,15 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       }),
       inject: [ConfigService],
       imports: [ConfigModule],
-    }),
+    }),*/
   ],
   controllers: [UserController],
   providers: [
     UserService,
-    {
+    /*  {
       provide: APP_INTERCEPTOR,
       useClass: CacheInterceptor,
-    },
+    },*/
   ],
   exports: [UserService],
 })

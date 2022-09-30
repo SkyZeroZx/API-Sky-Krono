@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { LicenceService } from './licence.service';
 import { CreateLicenceDto } from './dto/create-licence.dto';
 import { UpdateLicenceDto } from './dto/update-licence.dto';
@@ -26,8 +36,8 @@ export class LicenceController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.licenceService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.licenceService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -41,7 +51,7 @@ export class LicenceController {
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Elimina la licencia de un usuario' })
-  remove(@Param('id') id: string) {
-    return this.licenceService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.licenceService.remove(id);
   }
 }

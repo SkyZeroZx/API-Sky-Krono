@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, ParseIntPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ChargueService } from './chargue.service';
 import { CreateChargueDto } from './dto/create-chargue.dto';
@@ -34,8 +34,8 @@ export class ChargueController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Elimiar un Chargue' })
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     this.logger.log('Elimiando Chargue');
-    return this.chargueService.remove(+id);
+    return this.chargueService.remove(id);
   }
 }

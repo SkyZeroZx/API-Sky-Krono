@@ -9,10 +9,10 @@ import webpush from './config/webpush/webpush';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 import { Cluster } from './config/cluster/cluster.service';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+
 async function bootstrap() {
   // Custom Logger replace logger NestJs with winston logger
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
+  const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger({
       exitOnError: false,
       format: winston.format.combine(

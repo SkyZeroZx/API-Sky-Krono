@@ -26,7 +26,8 @@
     "sonar": "sonar-scanner"
   },
   "dependencies": {
-    "@fastify/static": "^6.5.0",
+    "@aws-sdk/client-s3": "^3.178.0",
+    "@aws-sdk/lib-storage": "^3.178.0",
     "@nestjs/common": "^9.0.8",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.8",
@@ -34,7 +35,6 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.8",
-    "@nestjs/platform-fastify": "^9.1.2",
     "@nestjs/schedule": "^2.1.0",
     "@nestjs/swagger": "^6.0.5",
     "@nestjs/typeorm": "^9.0.1",
@@ -79,6 +79,7 @@
     "@types/express": "^4.17.13",
     "@types/jest": "27.5.0",
     "@types/jsonwebtoken": "^8.5.0",
+    "@types/multer": "^1.4.7",
     "@types/node": "^16.0.0",
     "@types/nodemailer": "^6.4.5",
     "@types/passport-jwt": "^3.0.6",

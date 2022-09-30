@@ -5,6 +5,7 @@ import {
   Get,
   Logger,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UseGuards,
@@ -16,7 +17,7 @@ import { TypeResponse } from '../common/swagger/response/type.response';
 import { CreateTypeDto } from './dto/create-type.dto';
 import { UpdateTypeDto } from './dto/update-type.dto';
 
-@ApiTags('Type Task')
+@ApiTags('Type')
 @ApiBearerAuth()
 @Controller('type')
 export class TypeController {
@@ -27,30 +28,28 @@ export class TypeController {
   @Get()
   @ApiOperation({ summary: 'Devolucion de todos los tipos' })
   @ApiResponse(TypeResponse.findAll)
-  async findAll() {
-    this.logger.log('Listando Types');
+  findAll() {
     return this.typeService.findAll();
   }
 
   @UseGuards(JwtAuthGuard)
   @Post()
   @ApiOperation({ summary: 'Creación de un nuevo tipo' })
-  async create(@Body() createTypeDto: CreateTypeDto) {
-    console.log('New ', createTypeDto);
+  create(@Body() createTypeDto: CreateTypeDto) {
     return this.typeService.createType(createTypeDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch()
   @ApiOperation({ summary: 'Actualización de un tipo' })
-  async update(@Body() updateTypeDto: UpdateTypeDto) {
+  update(@Body() updateTypeDto: UpdateTypeDto) {
     return this.typeService.updateType(updateTypeDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un tipo' })
-  async delete(@Param('id') id: string) {
-    return this.typeService.deleteType(+id);
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.typeService.deleteType(id);
   }
 }

@@ -10,6 +10,9 @@ import { User } from './entities/user.entity';
 import { generate } from 'generate-password';
 import { Chargue } from '../chargue/entities/chargue.entity';
 import { Schedule } from '../schedule/entities/schedule.entity';
+import { AwsS3Service } from '../aws-s3/aws-s3.service';
+import { fileNamer } from '../common/helpers';
+import { CompleteMultipartUploadOutput } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class UserService {
@@ -17,6 +20,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly awsS3Service: AwsS3Service,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -93,7 +97,6 @@ export class UserService {
   }
 
   async findAll() {
-    
     return this.userRepository
       .createQueryBuilder('USER')
       .select('USER.id', 'id')
@@ -113,7 +116,7 @@ export class UserService {
       .addSelect('SCHEDULE.name', 'schedule')
       .innerJoin(Chargue, 'CHARGUE', 'CHARGUE.id = USER.codChargue')
       .innerJoin(Schedule, 'SCHEDULE', 'SCHEDULE.id = USER.codSchedule')
-      .cache(6000)
+      .cache(1000)
       .getRawMany();
   }
 
@@ -194,18 +197,31 @@ export class UserService {
         })
         .where('username = :username', { username: userCreateNewPassword.username })
         .execute();
-
       if (affected == 1) {
         this.logger.log(`Se cambio satisfactoriamente la contraseña del usuario ${user.username}`);
         return { message: Constant.MENSAJE_OK, info: 'Se cambio exitosamente la contraseña' };
       }
-
       this.logger.warn(`Sucedio un error al cambiar la contraseña , usuario : ${user.username}`);
       throw new InternalServerErrorException('Sucedio un error al cambiar la contraseña');
     } catch (error) {
       this.logger.error(`Sucedio un error al cambiar la contraseña del usuario ${user.username}`);
       this.logger.error(error);
       throw new InternalServerErrorException('Sucedio un error al cambiar la contraseña');
+    }
+  }
+
+  async savePhotoUser(file: Express.Multer.File, { username, id }: User) {
+    this.logger.log(`Registrando el avatar del usuario ${username}`);
+    try {
+      const { Location } = await this.awsS3Service.uploadFile(
+        file.buffer,
+        fileNamer(username, file),
+      );
+      await this.userRepository.update({ id }, { photo: Location });
+      return { message: Constant.MENSAJE_OK, info: 'Se subio exitosamente la foto' };
+    } catch (error) {
+      this.logger.error({ message: 'Sucedio un error al subir foto del usuario', error });
+      throw new InternalServerErrorException('Sucedio un error al subir su foto');
     }
   }
 }
