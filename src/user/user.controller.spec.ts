@@ -4,7 +4,7 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DeleteUserDto } from './dto/delete-user.dto';
@@ -16,7 +16,7 @@ describe('UserController', () => {
   const mockFindAllUserVoid: User[] = [];
 
   const mockResult: any = {
-    message: Constant.MENSAJE_OK,
+    message: Constants.MSG_OK,
   };
   const mockCreateDto: CreateUserDto = {
     username: 'SkyZeroZx',
@@ -25,7 +25,7 @@ describe('UserController', () => {
     fatherLastName: 'Tejada',
     role: 'Admin',
     codChargue: 0,
-    codSchedule: 0
+    codSchedule: 0,
   };
   const mockUpdateDto: UpdateUserDto = {
     id: 555,

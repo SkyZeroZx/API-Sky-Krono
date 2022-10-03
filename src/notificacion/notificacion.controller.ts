@@ -38,7 +38,7 @@ export class NotificacionController {
     return this.notificacionService.registerTaskTokenByUser(sendNotificacionDto.users);
   }
 
-/*
+  /*
   @Get()
   async getAllJobs() {
     this.logger.log('Listando jobs registrados');

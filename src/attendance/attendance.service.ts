@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
 import { UpdateAttendanceDto } from './dto/update-attendance.dto';
 import { Attendance } from './entities/attendance.entity';
@@ -48,7 +48,7 @@ export class AttendanceService {
     }
 
     return {
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Attendance registrado exitosamente',
     };
   }
@@ -87,7 +87,7 @@ export class AttendanceService {
         .execute();
       if (affected == 1) {
         this.logger.log('Se actualizo exitosamente el Attendance');
-        return { message: Constant.MENSAJE_OK, info: 'Se registro exitosamente su salida' };
+        return { message: Constants.MSG_OK, info: 'Se registro exitosamente su salida' };
       }
       this.logger.warn(`Sucedio un error al actualizar el Attendance`);
       throw new InternalServerErrorException('Sucedio un error al actualizar Attendance');
@@ -114,11 +114,9 @@ export class AttendanceService {
         codUser: user.id,
         id: Util.formatDateId(),
       });
-     // console.log('toDateString ', Util.formatLocalDate());
-     // return attendance ;
-        //date: Util.formatLocalDate(),
-        
-        
+      // console.log('toDateString ', Util.formatLocalDate());
+      // return attendance ;
+      //date: Util.formatLocalDate(),
     } catch (error) {
       this.logger.error({
         message: `Sucedio un error al buscar el Attendance del usuario ${user.name}`,
@@ -128,7 +126,7 @@ export class AttendanceService {
     }
   }
 
-  async validateIsLater(user: User) {
+  async validateIsLater(user: User): Promise<boolean> {
     const scheduleByUser = await this.scheduleService.findScheduleByUser(user.id);
     return Util.isLater(scheduleByUser);
   }

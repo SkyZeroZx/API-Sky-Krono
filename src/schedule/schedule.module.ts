@@ -6,9 +6,9 @@ import { Schedule } from './entities/schedule.entity';
 import { NotificacionModule } from '../notificacion/notificacion.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Schedule]) , NotificacionModule],
+  imports: [TypeOrmModule.forFeature([Schedule]), NotificacionModule],
   controllers: [ScheduleController],
   providers: [ScheduleService],
-  exports: [ScheduleService]
+  exports: [ScheduleService],
 })
 export class ScheduleModule {}

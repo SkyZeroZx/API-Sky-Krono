@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { TaskToUser } from '../task_to_user/entities/task_to_user.entity';
 import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -42,7 +42,7 @@ export class NotificacionService {
     }
 
     this.logger.log('Se guardo el Token Task To User');
-    return { message: Constant.MENSAJE_OK, info: 'Se guardo el token exitosamente' };
+    return { message: Constants.MSG_OK, info: 'Se guardo el token exitosamente' };
   }
 
   async sendNotification(tokenPush: string, message: Object) {
@@ -107,13 +107,13 @@ export class NotificacionService {
 
       tokensPerUser.forEach((tokens) => {
         tokens.forEach((token) => {
-          this.sendNotification(token.tokenPush, Constant.NOTIFICACION_NEW_TASK);
+          this.sendNotification(token.tokenPush, Constants.NOTIFICATION_NEW_TASK);
         });
       });
 
       this.logger.log('Notificaciones enviadas exitosamente');
       return {
-        message: Constant.MENSAJE_OK,
+        message: Constants.MSG_OK,
         info: 'Notificaciones enviadas exitosamente',
       };
     } catch (error) {

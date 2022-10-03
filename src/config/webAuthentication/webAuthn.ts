@@ -7,7 +7,7 @@ import {
 import { Authentication } from '../../auth/entities/autentication.entity';
 import { User } from '../../user/entities/user.entity';
 
-// Utilitarios de AuthnWeb
+// Utils for Web Authentication
 
 // Human-readable title for your website
 const rpName = 'Sky Krono App';

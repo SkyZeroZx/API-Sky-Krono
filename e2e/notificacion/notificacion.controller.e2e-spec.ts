@@ -8,7 +8,7 @@ import { NotificacionModule } from '../../src/notificacion/notificacion.module';
 import webPush from '../../src/config/webpush';
 import { Notificacion } from '../../src/notificacion/entities/notificacion.entity';
 import { NotificacionService } from '../../src/notificacion/notificacion.service';
-import { Constant } from '../../src/common/constants/Constant';
+import { Constants } from '../../src/common/constants/Constant';
 
 describe('NotificacionController (e2e)', () => {
   let app: INestApplication;
@@ -61,7 +61,7 @@ describe('NotificacionController (e2e)', () => {
     const tokenPush = 'Envie un token';
     const sendNotificationOk = await request.post('/notificacion').send({ tokenPush });
     expect(spySaveMock).toBeCalled();
-    expect(sendNotificationOk.body.message).toEqual(Constant.MENSAJE_OK);
+    expect(sendNotificationOk.body.message).toEqual(Constants.MSG_OK);
   });
 
   it('/NOTIFICACION (POST) ERROR [MOCK]', async () => {
@@ -77,7 +77,7 @@ describe('NotificacionController (e2e)', () => {
 
   it('/NOTIFICACION/SEND (POST) OK', async () => {
     const sendNotificationOk = await request.post('/notificacion/send').send({ users: arrayUsers });
-    expect(sendNotificationOk.body.message).toEqual(Constant.MENSAJE_OK);
+    expect(sendNotificationOk.body.message).toEqual(Constants.MSG_OK);
   });
 
   it('/NOTIFICACION/SEND (POST) ERROR [MOCK]', async () => {

@@ -1,7 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { TaskToUser } from './entities/task_to_user.entity';
 import { TaskToUserMock } from './task_to_user.mock.spec';
 import { TaskToUserService } from './task_to_user.service';
@@ -35,7 +35,7 @@ describe('TaskToUserService', () => {
     const spySave = jest.spyOn(mockService, 'save');
     const data = await service.addUserToTask(TaskToUserMock.taskToUserDto);
     expect(spySave).toHaveBeenCalledWith(TaskToUserMock.taskToUserDto);
-    expect(data.message).toEqual(Constant.MENSAJE_OK);
+    expect(data.message).toEqual(Constants.MSG_OK);
   });
 
   it('Validamos addUserToTask Error', async () => {
@@ -63,7 +63,7 @@ describe('TaskToUserService', () => {
     const spyDelete = jest.spyOn(mockService, 'delete');
     const dataDelete = await service.removeUserToTask(TaskToUserMock.taskToUserDto);
     expect(spyDelete).toBeCalledWith(TaskToUserMock.taskToUserDto);
-    expect(dataDelete.message).toEqual(Constant.MENSAJE_OK);
+    expect(dataDelete.message).toEqual(Constants.MSG_OK);
   });
 
   it('Validamos removeUserToTask Error', async () => {

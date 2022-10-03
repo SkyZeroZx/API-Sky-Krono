@@ -14,7 +14,7 @@ import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserDecorator as User } from '../common/decorators/user.decorator';
 import { User as UserEntity } from '../user/entities/user.entity';
@@ -49,7 +49,7 @@ export class TaskController {
       this.logger.warn('No se encontraron taks');
       return { message: 'No se encontraron task' };
     }
-    this.logger.log('Listado Task ' + Constant.MENSAJE_OK);
+    this.logger.log('Listado Task ' + Constants.MSG_OK);
     return taks;
   }
 
@@ -64,7 +64,7 @@ export class TaskController {
       this.logger.warn(`No se encontraron taks para el usuario ${user.username}`);
       return { message: 'No se encontraron task' };
     }
-    this.logger.log(`Listado Task para el usuario ${user.username} ${Constant.MENSAJE_OK}`);
+    this.logger.log(`Listado Task para el usuario ${user.username} ${Constants.MSG_OK}`);
     return taskByUser;
   }
 
@@ -80,7 +80,7 @@ export class TaskController {
       this.logger.warn(`No se encontraron users para el task ${codTask}`);
       return { message: 'No se encontraron users para el task' };
     }
-    this.logger.log(`Listado Users para el task ${codTask} ${Constant.MENSAJE_OK}`);
+    this.logger.log(`Listado Users para el task ${codTask} ${Constants.MSG_OK}`);
     return taskByUser;
   }
 

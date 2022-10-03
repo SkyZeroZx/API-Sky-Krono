@@ -5,7 +5,7 @@ import { AppModule } from '../../src/app.module';
 import * as config from '../config-e2e.json';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import webPush from '../../src/config/webpush';
-import { Constant } from '../../src/common/constants/Constant';
+import { Constants } from '../../src/common/constants/Constant';
 import { UserModule } from '../../src/user/user.module';
 import { User } from '../../src/user/entities/user.entity';
 import { UserMockE2E } from './user.mock.e2e.spec';
@@ -64,10 +64,10 @@ describe('UserController (e2e)', () => {
       user: { id, createdAt, updateAt, status, firstLogin, password, ...rest },
     } = registerUserOK.body;
 
-    expect(message).toEqual(Constant.MENSAJE_OK);
+    expect(message).toEqual(Constants.MSG_OK);
     expect(createdAt).toBeDefined();
     expect(updateAt).toBeDefined();
-    expect(status).toEqual(Constant.STATUS_USER.CREADO);
+    expect(status).toEqual(Constants.STATUS_USER.CREADO);
     expect(password).toBeUndefined();
     expect(firstLogin).toBeTruthy();
     expect(rest).toEqual(userRegister.createUserNew);
@@ -151,7 +151,7 @@ describe('UserController (e2e)', () => {
   it('/UPDATE (PATCH) OK', async () => {
     const updateOK = await request.patch('/users').send(UserMockE2E.updateUserExist).expect(200);
 
-    expect(updateOK.body.message).toEqual(Constant.MENSAJE_OK);
+    expect(updateOK.body.message).toEqual(Constants.MSG_OK);
   });
 
   it('/UPDATE (PATCH) ERROR [MOCK]', async () => {
@@ -167,7 +167,7 @@ describe('UserController (e2e)', () => {
   it('/ (DELETE) OK [MOCK]', async () => {
     const spyDeleteOK = jest.spyOn(userRepositoryMock, 'delete').mockResolvedValueOnce(null);
     const deleteOK = await request.delete(`/users/${UserMockE2E.deleteUserDto.id}`).expect(200);
-    expect(deleteOK.body.message).toEqual(Constant.MENSAJE_OK);
+    expect(deleteOK.body.message).toEqual(Constants.MSG_OK);
     expect(spyDeleteOK).toBeCalled();
   });
 

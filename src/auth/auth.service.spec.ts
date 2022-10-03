@@ -3,8 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
-import { Constant } from '../common/constants/Constant';
-import { transporter } from '../config/mailer';
+import { Constants } from '../common/constants/Constant';
+import { transporter } from '../config/mailer/mailer';
 import { User } from '../user/entities/user.entity';
 import { UserServiceMock } from '../user/user.mock.spec';
 import { UserService } from '../user/user.service';
@@ -66,7 +66,7 @@ describe('AuthService', () => {
     expect(validateUserNull).toBeNull();
     expect(spyCompare).not.toBeCalled();
     spyFindByEmail.mockImplementation(async () => {
-      return { user: UserServiceMock.mockFindAllUserData[0], message: Constant.MENSAJE_OK };
+      return { user: UserServiceMock.mockFindAllUserData[0], message: Constants.MSG_OK };
     });
 
     const valiteUserOk = await authService.validateUser(email, pass);
@@ -88,7 +88,7 @@ describe('AuthService', () => {
   it('Validamos changePassword Ok', async () => {
     const { password: passwordEncripted } = UserServiceMock.mockFindAllUserData[0];
     const spyFindByEmail = jest.spyOn(userService, 'findByEmail').mockImplementation(async () => {
-      return { user: UserServiceMock.mockFindAllUserData[0], message: Constant.MENSAJE_OK };
+      return { user: UserServiceMock.mockFindAllUserData[0], message: Constants.MSG_OK };
     });
     const spyCompare = jest.spyOn(bcrypt, 'compare').mockImplementation(async () => {
       return true;
@@ -110,7 +110,7 @@ describe('AuthService', () => {
   it('Validamos changePassword Error', async () => {
     const { password: passwordEncripted } = UserServiceMock.mockFindAllUserData[0];
     const spyFindByEmail = jest.spyOn(userService, 'findByEmail').mockImplementation(async () => {
-      return { user: UserServiceMock.mockFindAllUserData[0], message: Constant.MENSAJE_OK };
+      return { user: UserServiceMock.mockFindAllUserData[0], message: Constants.MSG_OK };
     });
     const spyCompare = jest.spyOn(bcrypt, 'compare').mockImplementation(async () => {
       return false;
@@ -135,7 +135,7 @@ describe('AuthService', () => {
     const { password, ...user } = UserServiceMock.mockFindAllUserData[0];
     const spyJwtServiceSing = jest.spyOn(jwtService, 'sign');
     const spyFindByEmail = jest.spyOn(userService, 'findByEmail').mockImplementation(async () => {
-      return { user: UserServiceMock.mockFindAllUserData[0], message: Constant.MENSAJE_OK };
+      return { user: UserServiceMock.mockFindAllUserData[0], message: Constants.MSG_OK };
     });
 
     const spyGenerateToken = jest.spyOn(authService, 'generateToken');
@@ -168,13 +168,13 @@ describe('AuthService', () => {
     const spySaveNewPassword = jest
       .spyOn(userService, 'saveNewPassword')
       .mockImplementationOnce(async () => {
-        return { message: Constant.MENSAJE_OK, info: 'Todo salio bien' };
+        return { message: Constants.MSG_OK, info: 'Todo salio bien' };
       });
     const spyTransporterEmail = jest.spyOn(transporter, 'sendMail');
     const resetPassword = await authService.resetPassword(email);
     expect(spySaveNewPassword).toBeCalled();
     expect(resetPassword).toEqual({
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Usuario reseteado exitosamente',
     });
     expect(spyTransporterEmail).toBeCalled();

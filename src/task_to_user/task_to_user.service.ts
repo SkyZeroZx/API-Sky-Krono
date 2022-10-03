@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { Repository } from 'typeorm';
 import { TaskToUserDto } from './dto/task-to-user.dto';
 import { TaskToUser } from './entities/task_to_user.entity';
@@ -38,7 +38,7 @@ export class TaskToUserService {
       `Se agrego exitosamente al usuario ${taskToUserDto.codUser} a la tarea ${taskToUserDto.codTask}`,
     );
     return {
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Usuario Agregado a la Tarea',
     };
   }
@@ -75,7 +75,7 @@ export class TaskToUserService {
       `Se elimino exitosamente al usuario ${taskToUserDto.codUser} de la tarea ${taskToUserDto.codTask}`,
     );
     return {
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Usuario Eliminado de la Tarea',
     };
   }

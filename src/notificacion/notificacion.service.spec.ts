@@ -1,7 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { TaskServiceMock } from '../task/task.mock.spec';
 import { TaskToUser } from '../task_to_user/entities/task_to_user.entity';
 import { User } from '../user/entities/user.entity';
@@ -45,7 +45,7 @@ describe('NotificacionService', () => {
       NotificationMockService.createNotificacionDto,
     );
 
-    expect(suscribeNotificationOkNotSave.message).toEqual(Constant.MENSAJE_OK);
+    expect(suscribeNotificationOkNotSave.message).toEqual(Constants.MSG_OK);
     expect(spySave).not.toBeCalled();
     expect(spyFindAndCount).toBeCalledWith({
       where: {
@@ -67,7 +67,7 @@ describe('NotificacionService', () => {
         tokenPush: NotificationMockService.createNotificacionDto.tokenPush,
       },
     });
-    expect(suscribeNotificationOkSave.message).toEqual(Constant.MENSAJE_OK);
+    expect(suscribeNotificationOkSave.message).toEqual(Constants.MSG_OK);
   });
 
   it('Validamos suscribeNotification Error', async () => {
@@ -177,7 +177,7 @@ describe('NotificacionService', () => {
     expect(spySendNotification).toBeCalledTimes(
       UserServiceMock.mockFindAllUserData.length * TaskServiceMock.tokenByUser.length,
     );
-    expect(registerTaskTokenByUser.message).toEqual(Constant.MENSAJE_OK);
+    expect(registerTaskTokenByUser.message).toEqual(Constants.MSG_OK);
   });
 
   it('Validamos registerTaskTokenByUser Error', async () => {
@@ -206,6 +206,6 @@ describe('NotificacionService', () => {
     const noBlockErrorSendNotications = await service.registerTaskTokenByUser(
       UserServiceMock.mockFindAllUserData,
     );
-    expect(noBlockErrorSendNotications.message).toEqual(Constant.MENSAJE_OK);
+    expect(noBlockErrorSendNotications.message).toEqual(Constants.MSG_OK);
   });
 });

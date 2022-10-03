@@ -1,6 +1,7 @@
 import { formatInTimeZone } from 'date-fns-tz';
 import { Schedule } from '../../schedule/entities/schedule.entity';
 import { hoursToMinutes } from 'date-fns';
+import { Constants } from '../constants/Constant';
 
 export class Util {
   static formatLocalDate() {
@@ -19,47 +20,39 @@ export class Util {
   }
 
   static validateRegisterDate(schedule: Schedule): boolean {
-    //TODO Validate isPermissions 
-    
+    //TODO Validate isPermissions
     const dayOfWeek = Util.getDayOfWeek();
-
-    let validate: boolean[] = [];
-    const days: string[] = [
-      'monday',
-      'tuesday',
-      'wednesday',
-      'thursday',
-      'friday',
-      'saturday',
-      'sunday',
-    ];
-
-    for (let i = 0; i < days.length; i++) {
-      if (schedule[days[i]]) {
-        validate.push(dayOfWeek == i + 1);
-      }
-    }
-
-    const dayIsValid = validate.find((res) => res == true);
-    if (dayIsValid == undefined) {
-      return false;
-    }
-
-    return dayIsValid;
+    return schedule[Constants.DAYS_OF_WEEK[dayOfWeek - 1]];
   }
 
   static isLater({ entryHour, toleranceTime }: Schedule): boolean {
     const date = new Date();
     const currentHour = formatInTimeZone(date, process.env.TIME_ZONE, 'HH:mm');
     const currentTime =
-      hoursToMinutes(parseInt(currentHour.slice(0, 3))) + parseInt(currentHour.slice(3, 5));
+      hoursToMinutes(parseInt(currentHour.slice(0, 2))) + parseInt(currentHour.slice(3, 5));
     const entryHourTime =
-      hoursToMinutes(parseInt(entryHour.slice(0, 3))) + parseInt(entryHour.slice(3, 5));
+      hoursToMinutes(parseInt(entryHour.slice(0, 2))) + parseInt(entryHour.slice(3, 5));
     if (currentTime - entryHourTime > toleranceTime) {
       return true;
     }
     return false;
   }
 
-  static formtHistoryAttendance() {}
+  static formatTimeCronJob(entryHour: string): string {
+    const hour = entryHour.slice(0, 2);
+    const minute = entryHour.slice(3, 5);
+    return `${minute} ${hour}`;
+  }
+
+  static formatCronJob(schedule: Schedule): string {
+    let cronJobDay: number[] = [];
+    for (let i = 0; i < Constants.DAYS_OF_WEEK_CRON_JOB.length; i++) {
+      if (schedule[Constants.DAYS_OF_WEEK_CRON_JOB[i]]) {
+        cronJobDay.push(i);
+      }
+    }
+    const timeCronJob = Util.formatTimeCronJob(schedule.entryHour);
+    const days = cronJobDay.join(',');
+    return `${timeCronJob} * * ${days}`;
+  }
 }

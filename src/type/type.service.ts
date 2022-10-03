@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { CreateTypeDto } from './dto/create-type.dto';
 import { UpdateTypeDto } from './dto/update-type.dto';
 import { Type } from './entities/type.entity';
@@ -29,7 +29,7 @@ export class TypeService {
     }
 
     return {
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Type registrado exitosamente',
     };
   }
@@ -44,7 +44,7 @@ export class TypeService {
       );
       if (affected == 1) {
         this.logger.log('Se actualizo satisfactoriamente el Type');
-        return { message: Constant.MENSAJE_OK, info: 'Se actualizo exitosamente el Type' };
+        return { message: Constants.MSG_OK, info: 'Se actualizo exitosamente el Type' };
       }
       this.logger.warn(`Sucedio un error al actualizar el Type`);
       throw new InternalServerErrorException('Sucedio un error al actualizar el Type');
@@ -64,7 +64,7 @@ export class TypeService {
 
     this.logger.log(`Se elimino exitosamente el Type ${codType}`);
     return {
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Se elimino exitosamente el Type',
     };
   }

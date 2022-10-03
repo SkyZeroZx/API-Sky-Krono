@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { User } from '../user/entities/user.entity';
 import { CreateLicenceDto } from './dto/create-licence.dto';
 import { UpdateLicenceDto } from './dto/update-licence.dto';
@@ -32,7 +32,7 @@ export class LicenceService {
     this.logger.log('Licencia registrada exitosamente');
 
     return {
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Licencia registradada exitosamente',
     };
   }
@@ -71,7 +71,7 @@ export class LicenceService {
         updateLicence,
       );
       if (affected > 0) {
-        return { message: Constant.MENSAJE_OK, info: 'Tarea eliminada exitosamente' };
+        return { message: Constants.MSG_OK, info: 'Tarea eliminada exitosamente' };
       }
       this.logger.warn('No se encontro licencia a actualizar');
       throw new InternalServerErrorException('Sucedio un error al actualizar la licencia');
@@ -88,6 +88,6 @@ export class LicenceService {
       this.logger.error({ message: 'Sucedio un error al eliminar la licencia', error });
     }
     this.logger.log('Se elimino exitosamente la licencia');
-    return { message: Constant.MENSAJE_OK, info: 'Se elimino exitosamente la licencia' };
+    return { message: Constants.MSG_OK, info: 'Se elimino exitosamente la licencia' };
   }
 }

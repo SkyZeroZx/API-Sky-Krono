@@ -1,4 +1,4 @@
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { User } from '../user/entities/user.entity';
 import { ChangePasswordDto } from './dtos/changePasssword.dto';
 import { LoginDto } from './dtos/login.dto';
@@ -92,7 +92,7 @@ export class AuthMockService {
     name: 'name TEST',
     fatherLastName: 'Paterno TEST',
     motherLastName: 'Materno TEST',
-    status: Constant.STATUS_USER.RESETEADO,
+    status: Constants.STATUS_USER.RESETEADO,
     firstLogin: false,
     hashPassword: function (): Promise<void> {
       return;
@@ -103,7 +103,7 @@ export class AuthMockService {
     codChargue: 0,
     codSchedule: 0,
     photo: '',
-    phone: ''
+    phone: '',
   };
 
   public static readonly loginDto: LoginDto = {
@@ -138,7 +138,7 @@ export class AuthMockService {
     name: 'RESET',
     fatherLastName: 'RESET',
     motherLastName: 'RESET',
-    status: Constant.STATUS_USER.RESETEADO,
+    status: Constants.STATUS_USER.RESETEADO,
     firstLogin: false,
     hashPassword: function (): Promise<void> {
       return;
@@ -149,7 +149,7 @@ export class AuthMockService {
     codChargue: 0,
     codSchedule: 0,
     photo: '',
-    phone: ''
+    phone: '',
   };
 
   public static readonly userCreate: User = {
@@ -162,7 +162,7 @@ export class AuthMockService {
     name: 'CREADO',
     fatherLastName: 'CREADO',
     motherLastName: 'CREADO',
-    status: Constant.STATUS_USER.CREADO,
+    status: Constants.STATUS_USER.CREADO,
     firstLogin: false,
     hashPassword: function (): Promise<void> {
       return;
@@ -173,7 +173,7 @@ export class AuthMockService {
     codChargue: 0,
     codSchedule: 0,
     photo: '',
-    phone: ''
+    phone: '',
   };
 
   public static readonly userHabilitado: User = {
@@ -186,7 +186,7 @@ export class AuthMockService {
     name: 'HABILITADO',
     fatherLastName: 'HABILITADO',
     motherLastName: 'HABILITADO',
-    status: Constant.STATUS_USER.HABILITADO,
+    status: Constants.STATUS_USER.HABILITADO,
     firstLogin: false,
     hashPassword: function (): Promise<void> {
       return;
@@ -197,7 +197,7 @@ export class AuthMockService {
     codChargue: 0,
     codSchedule: 0,
     photo: '',
-    phone: ''
+    phone: '',
   };
 
   public static readonly userBloq: User = {
@@ -210,7 +210,7 @@ export class AuthMockService {
     name: 'BLOQUEADO',
     fatherLastName: 'BLOQUEADO',
     motherLastName: 'BLOQUEADO',
-    status: Constant.STATUS_USER.BLOQUEADO,
+    status: Constants.STATUS_USER.BLOQUEADO,
     firstLogin: false,
     hashPassword: function (): Promise<void> {
       return;
@@ -221,7 +221,7 @@ export class AuthMockService {
     codChargue: 0,
     codSchedule: 0,
     photo: '',
-    phone: ''
+    phone: '',
   };
 
   public static readonly verifyAuthWeb: any = {

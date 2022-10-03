@@ -6,7 +6,7 @@ import { TaskModule } from '../../src/task/task.module';
 import * as config from '../config-e2e.json';
 import { TaskMockServiceE2E } from './task.mock.e2e.spec';
 import { TaskService } from '../../src/task/task.service';
-import { Constant } from '../../src/common/constants/Constant';
+import { Constants } from '../../src/common/constants/Constant';
 import { Task } from '../../src/task/entities/task.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TaskToUserService } from '../../src/task_to_user/task_to_user.service';
@@ -104,7 +104,7 @@ describe('TaskController (e2e)', () => {
 
   it('/TASK (POST) OK', async () => {
     const taskCreateOk = await request.post('/task').send(TaskMockServiceE2E.createTaskDto);
-    expect(taskCreateOk.body.message).toEqual(Constant.MENSAJE_OK);
+    expect(taskCreateOk.body.message).toEqual(Constants.MSG_OK);
     expect(taskCreateOk.body.info).toEqual('Task registrado exitosamente');
   });
 
@@ -131,7 +131,7 @@ describe('TaskController (e2e)', () => {
     const {codUser , codTask}  =TaskMockServiceE2E.taskToUserDto
     const spyDeleteTaskToUser = jest.spyOn(taskToUserRepositoryMock, 'delete').mockResolvedValueOnce(null);
     const taskDeleteOk = await request.delete(`/task?codTask=${codTask}&codUser=${codUser}`)
-    expect(taskDeleteOk.body.message).toEqual(Constant.MENSAJE_OK)
+    expect(taskDeleteOk.body.message).toEqual(Constants.MSG_OK)
     expect(spyDeleteTaskToUser).toBeCalled();
   });
 
@@ -148,7 +148,7 @@ describe('TaskController (e2e)', () => {
   it('/TASK/ADD_USER (POST) OK', async () => {
     const spySaveTaskToUserRepositoryOk = jest.spyOn(taskToUserRepositoryMock, 'save').mockResolvedValueOnce(null);
     const addUsertToTaskOk = await request.post('/task/add_user').send(TaskMockServiceE2E.taskToUserDto).expect(201);
-    expect(addUsertToTaskOk.body.message).toEqual(Constant.MENSAJE_OK);
+    expect(addUsertToTaskOk.body.message).toEqual(Constants.MSG_OK);
     expect(spySaveTaskToUserRepositoryOk).toBeCalled();
   });
 
@@ -163,7 +163,7 @@ describe('TaskController (e2e)', () => {
 
   it('/TASK PATCH OK (MOCK)', async () => {
     const udpateTaskOk = await request.patch('/task').send(updateTask);
-    expect(udpateTaskOk.body.message).toEqual(Constant.MENSAJE_OK);
+    expect(udpateTaskOk.body.message).toEqual(Constants.MSG_OK);
   });
 
   it('/TASK PATCH ERROR (MOCK)', async () => {
@@ -190,7 +190,7 @@ describe('TaskController (e2e)', () => {
     const spyDeleteTaskRepository = jest.spyOn(taskRepositoryMock,'delete').mockResolvedValueOnce({affected:1})
     const removeTaskOk = await request.delete(`/task/remove_task/${TaskMockServiceE2E.deleteTaskDto.codTask}`)
     
-    expect(removeTaskOk.body.message).toEqual(Constant.MENSAJE_OK);
+    expect(removeTaskOk.body.message).toEqual(Constants.MSG_OK);
     expect(spyDeleteTaskRepository).toBeCalled()
 
   })

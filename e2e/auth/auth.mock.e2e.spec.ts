@@ -1,7 +1,7 @@
 import { ChangePasswordDto } from '../../src/auth/dtos/changePasssword.dto';
 import { LoginDto } from '../../src/auth/dtos/login.dto';
 import { ResetUserDto } from '../../src/auth/dtos/reset.dto';
-import { Constant } from '../../src/common/constants/Constant';
+import { Constants } from '../../src/common/constants/Constant';
 import { User } from '../../src/user/entities/user.entity';
  
 export class AuthMockServiceE2E {
@@ -93,7 +93,7 @@ export class AuthMockServiceE2E {
     name: 'name TEST',
     fatherLastName: 'Paterno TEST',
     motherLastName: 'Materno TEST',
-    status: Constant.STATUS_USER.RESETEADO,
+    status: Constants.STATUS_USER.RESETEADO,
     firstLogin: false,
     hashPassword: function (): Promise<void> {
       return;
@@ -135,7 +135,7 @@ export class AuthMockServiceE2E {
     name: 'RESET',
     fatherLastName: 'RESET',
     motherLastName: 'RESET',
-    status: Constant.STATUS_USER.RESETEADO,
+    status: Constants.STATUS_USER.RESETEADO,
     firstLogin: false,
     hashPassword: function (): Promise<void> {
       return;
@@ -155,7 +155,7 @@ export class AuthMockServiceE2E {
     name: 'CREADO',
     fatherLastName: 'CREADO',
     motherLastName: 'CREADO',
-    status: Constant.STATUS_USER.CREADO,
+    status: Constants.STATUS_USER.CREADO,
     firstLogin: false,
     hashPassword: function (): Promise<void> {
       return;
@@ -175,7 +175,7 @@ export class AuthMockServiceE2E {
     name: 'HABILITADO',
     fatherLastName: 'HABILITADO',
     motherLastName: 'HABILITADO',
-    status: Constant.STATUS_USER.HABILITADO,
+    status: Constants.STATUS_USER.HABILITADO,
     firstLogin: false,
     hashPassword: function (): Promise<void> {
       return;
@@ -195,7 +195,7 @@ export class AuthMockServiceE2E {
     name: 'BLOQUEADO',
     fatherLastName: 'BLOQUEADO',
     motherLastName: 'BLOQUEADO',
-    status: Constant.STATUS_USER.BLOQUEADO,
+    status: Constants.STATUS_USER.BLOQUEADO,
     firstLogin: false,
     hashPassword: function (): Promise<void> {
       return;

@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { CreateChargueDto } from './dto/create-chargue.dto';
 import { UpdateChargueDto } from './dto/update-chargue.dto';
 import { Chargue } from './entities/chargue.entity';
@@ -23,7 +23,7 @@ export class ChargueService {
       throw new InternalServerErrorException('Sucedio un error al crear el chargue');
     }
     return {
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Chargue registrado exitosamente',
     };
   }
@@ -46,7 +46,7 @@ export class ChargueService {
 
       if (affected == 1) {
         this.logger.log('Se actualizo satisfactoriamente el Chargue');
-        return { message: Constant.MENSAJE_OK, info: 'Se actualizo exitosamente el chargue' };
+        return { message: Constants.MSG_OK, info: 'Se actualizo exitosamente el chargue' };
       }
 
       this.logger.warn('Sucedio un error al actualizar el chargue');
@@ -69,7 +69,7 @@ export class ChargueService {
 
     this.logger.log(`Se elimino exitosamente el chargue ${id}`);
     return {
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Se elimino exitosamente el chargue',
     };
   }

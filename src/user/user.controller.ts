@@ -8,7 +8,6 @@ import {
   Logger,
   UseGuards,
   Param,
-  CacheInterceptor,
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
@@ -23,7 +22,7 @@ import { UserDecorator as User } from '../common/decorators/user.decorator';
 import { Auth } from '../common/decorators/auth.decorator';
 import { UserReponse } from '../common/swagger/response/user.response';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { fileFilter } from '../common/helpers/fileFilter.helper';
+import { fileFilter, maxSizeFile } from '../common/helpers/fileFilter.helper';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -46,14 +45,9 @@ export class UserController {
   @Get()
   @ApiOperation({ summary: 'Listado de todos los usuarios' })
   @ApiResponse(UserReponse.findAll)
-  async findAll() {
+  findAll() {
     this.logger.log('Listando Usuarios');
-    const users = await this.userService.findAll();
-    if (users.length === 0) {
-      this.logger.warn('No se encontraron usuarios');
-      return { message: 'No users found' };
-    }
-    return users;
+    return this.userService.findAll();
   }
 
   @UseGuards(JwtAuthGuard)
@@ -86,13 +80,10 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Post('/photo')
   @ApiOperation({ summary: 'Registar la foto del usuario' })
-  @UseInterceptors(
-    FileInterceptor('file', {
-      fileFilter: fileFilter,
-    }),
-  )
+  @UseInterceptors(FileInterceptor('file', { fileFilter: fileFilter }))
   savePhotoUser(@UploadedFile() file: Express.Multer.File, @User() user: UserEntity) {
     this.logger.log('Registrando foto usuario');
-    return this.userService.savePhotoUser(file , user);
+    maxSizeFile(file);
+    return this.userService.savePhotoUser(file, user);
   }
 }

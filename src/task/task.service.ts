@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { NotificacionService } from '../notificacion/notificacion.service';
 import { TaskToUserDto } from '../task_to_user/dto/task-to-user.dto';
 import { TaskToUser } from '../task_to_user/entities/task_to_user.entity';
@@ -69,7 +69,7 @@ export class TaskService {
 
     this.logger.log('Task registrado exitosamente');
     return {
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Task registrado exitosamente',
     };
   }
@@ -201,11 +201,11 @@ export class TaskService {
         tokens.forEach((item) => {
           this.notificacionService.sendNotification(
             item.tokenPush,
-            Constant.NOTIFICACION_UPDATE_TASK,
+            Constants.NOTIFICATION_UPDATE_TASK,
           );
         });
         return {
-          message: Constant.MENSAJE_OK,
+          message: Constants.MSG_OK,
           info: 'Task Actualizado Correctamente',
         };
       }
@@ -234,10 +234,10 @@ export class TaskService {
         tokens.forEach((item) => {
           this.notificacionService.sendNotification(
             item.tokenPush,
-            Constant.NOTIFICACION_DELETE_TASK,
+            Constants.NOTIFICATION_DELETE_TASK,
           );
         });
-        return { message: Constant.MENSAJE_OK, info: 'Tarea eliminada exitosamente' };
+        return { message: Constants.MSG_OK, info: 'Tarea eliminada exitosamente' };
       }
       this.logger.warn(`No se encontro tarea a eliminar`);
       throw new InternalServerErrorException('Sucedio un error al eliminar la tarea');
@@ -256,7 +256,7 @@ export class TaskService {
     });
 
     tokens.forEach((item) => {
-      this.notificacionService.sendNotification(item.tokenPush, Constant.NOTIFICACION_DELETE_TASK);
+      this.notificacionService.sendNotification(item.tokenPush, Constants.NOTIFICATION_DELETE_TASK);
     });
 
     return this.serviceTaskToUser.removeUserToTask(taskToUserDto);
@@ -264,10 +264,10 @@ export class TaskService {
 
   async addUserToTask(taskToUserDto: TaskToUserDto) {
     const newUserToTask = await this.serviceTaskToUser.addUserToTask(taskToUserDto);
-    if (newUserToTask.message == Constant.MENSAJE_OK) {
+    if (newUserToTask.message == Constants.MSG_OK) {
       const tokens = await this.notificacionService.findTokensByUser(taskToUserDto.codUser);
       tokens.forEach((item) => {
-        this.notificacionService.sendNotification(item.tokenPush, Constant.NOTIFICACION_NEW_TASK);
+        this.notificacionService.sendNotification(item.tokenPush, Constants.NOTIFICATION_NEW_TASK);
       });
     }
 

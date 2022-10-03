@@ -15,7 +15,7 @@ import { MinLength, IsNotEmpty, IsEmail, MaxLength } from 'class-validator';
 import * as bcrypt from 'bcryptjs';
 import { Notificacion } from '../../notificacion/entities/notificacion.entity';
 import { TaskToUser } from '../../task_to_user/entities/task_to_user.entity';
-import { Constant } from '../../common/constants/Constant';
+import { Constants } from '../../common/constants/Constant';
 import { Chargue } from '../../chargue/entities/chargue.entity';
 import { Schedule } from '../../schedule/entities/schedule.entity';
 import { Attendance } from '../../attendance/entities/attendance.entity';
@@ -128,7 +128,7 @@ export class User {
 
   @BeforeUpdate()
   async firstLoginStatus() {
-    if (this.status === Constant.STATUS_USER.HABILITADO) {
+    if (this.status === Constants.STATUS_USER.HABILITADO) {
       this.firstLogin = false;
     } else {
       this.firstLogin = true;

@@ -33,7 +33,9 @@ export class AttendanceController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/history')
-  @ApiOperation({ summary: 'Retorna el historial de los ultimas 14 asistencias para el usuario logeado' })
+  @ApiOperation({
+    summary: 'Retorna el historial de los ultimas 14 asistencias para el usuario logeado',
+  })
   historyAttendance(@User() user: UserEntity) {
     //TODO RETURN LAST 2 WEEKS FOR LOGGIN USER
     return this.attendanceService.historyAttendance(user);

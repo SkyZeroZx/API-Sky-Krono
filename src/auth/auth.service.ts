@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { UserService } from '../user/user.service';
 import { compare } from 'bcryptjs';
 import { User } from '../user/entities/user.entity';
@@ -36,7 +36,7 @@ export class AuthService {
 
     if (user && (await compare(pass, user.user.password))) {
       delete user.message;
-      user.message = Constant.MENSAJE_OK;
+      user.message = Constants.MSG_OK;
       delete user.user.password;
       this.logger.log(`Login exitoso usuario: ${email}`);
       return user.user;
@@ -71,25 +71,25 @@ export class AuthService {
         length: 10,
         numbers: true,
       }),
-      status: Constant.STATUS_USER.RESETEADO,
+      status: Constants.STATUS_USER.RESETEADO,
       firstLogin: true,
     } as User;
     try {
       // Salvamos la nueva contraseña con sus datos del usuario reseteado
       const response = await this.userService.saveNewPassword(userReset);
-      if (response.message == Constant.MENSAJE_OK) {
+      if (response.message == Constants.MSG_OK) {
         await transporter.sendMail({
           from: 'SkyCalendar <sky-admin@gmail.com>',
           to: username,
           subject: 'Reseteo de contraseña',
-          html: Constant.replaceText(
+          html: Constants.replaceText(
             ['{{username}}', '{{passwordReset}}'],
             [username, userReset.password],
-            Constant.MAIL.RESET_PASSWORD,
+            Constants.MAIL.RESET_PASSWORD,
           ),
         });
         this.logger.log(`Se envio correo de reseteo del usuario ${username}`);
-        return { message: Constant.MENSAJE_OK, info: 'Usuario reseteado exitosamente' };
+        return { message: Constants.MSG_OK, info: 'Usuario reseteado exitosamente' };
       }
       this.logger.error('No se pudo resetear la contraseña');
       throw new InternalServerErrorException({

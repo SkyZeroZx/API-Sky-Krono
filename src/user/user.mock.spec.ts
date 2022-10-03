@@ -1,4 +1,4 @@
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { CreateUserDto } from './dto/create-user.dto';
 import { DeleteUserDto } from './dto/delete-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -43,7 +43,8 @@ export class UserServiceMock {
     fatherLastName: 'Tejada',
     role: 'Admin',
     codChargue: 0,
-    codSchedule: 0
+    codSchedule: 0,
+    phone: '',
   };
 
   public static mockResultCreateUser: User = {
@@ -67,11 +68,11 @@ export class UserServiceMock {
     codChargue: 0,
     codSchedule: 0,
     photo: '',
-    phone: ''
+    phone: '',
   };
 
   public static mockResultOk = {
-    message: Constant.MENSAJE_OK,
+    message: Constants.MSG_OK,
   };
 
   public static updateUser: UpdateUserDto = {
@@ -106,7 +107,7 @@ export class UserServiceMock {
       codChargue: 0,
       codSchedule: 0,
       phone: null,
-      photo : null,
+      photo: null,
     },
     {
       id: 2,
@@ -125,7 +126,7 @@ export class UserServiceMock {
       codChargue: 0,
       codSchedule: 0,
       phone: null,
-      photo : null,
+      photo: null,
     },
   ];
 }

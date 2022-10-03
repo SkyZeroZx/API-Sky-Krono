@@ -1,18 +1,56 @@
+import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { NotificacionService } from '../notificacion/notificacion.service';
+import { ScheduleServiceMock } from './schedule.mock.spec';
 import { ScheduleService } from './schedule.service';
+import { ScheduleModule as ScheduleModuleNestJs } from '@nestjs/schedule';
+import { Schedule } from './entities/schedule.entity';
 
-xdescribe('ScheduleService', () => {
-  let service: ScheduleService;
-
+describe('ScheduleService', () => {
+  let scheduleService: ScheduleService;
+  let mockService: ScheduleServiceMock = new ScheduleServiceMock();
+  let schedulerRegistry: SchedulerRegistry;
+  let notificacionService: NotificacionService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ScheduleService],
+      providers: [
+        ScheduleService,
+        {
+          provide: getRepositoryToken(Schedule),
+          useValue: mockService,
+        },
+        {
+          provide: SchedulerRegistry,
+          useValue: mockService,
+        },
+        {
+          provide: NotificacionService,
+          useValue: mockService,
+        },
+      ],
+      imports: [ScheduleModuleNestJs.forRoot()],
     }).compile();
+    scheduleService = module.get<ScheduleService>(ScheduleService);
+    schedulerRegistry = module.get<SchedulerRegistry>(SchedulerRegistry);
+    notificacionService = module.get<NotificacionService>(NotificacionService);
+  });
 
-    service = module.get<ScheduleService>(ScheduleService);
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(scheduleService).toBeDefined();
   });
+
+  it('Validate onModuleInit', () => {
+    const spyRestartSavedCrons = jest
+      .spyOn(scheduleService, 'restartSavedCrons')
+      .mockResolvedValueOnce(null);
+    scheduleService.onModuleInit();
+    expect(spyRestartSavedCrons).toBeCalled();
+  });
+
+  it('Validate create OK', () => {});
 });

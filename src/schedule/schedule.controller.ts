@@ -45,9 +45,9 @@ export class ScheduleController {
   @UseGuards(JwtAuthGuard)
   @Patch()
   @ApiOperation({ summary: 'Permite editar un Schedule' })
-  async update(@Body() updateScheduleDto: UpdateScheduleDto) {
+  update(@Body() updateScheduleDto: UpdateScheduleDto) {
     this.logger.log('Actualizando Schedule');
-    return await this.scheduleService.update(updateScheduleDto);
+    return this.scheduleService.update(updateScheduleDto);
   }
 
   @UseGuards(JwtAuthGuard)

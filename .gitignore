@@ -5,6 +5,7 @@
 /coverage-e2e
 credentials.txt
 querys.sql
+dev_querys.sql
 
 #ENV
 .env

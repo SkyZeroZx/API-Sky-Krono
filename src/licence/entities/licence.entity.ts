@@ -6,7 +6,7 @@ import { User } from '../../user/entities/user.entity';
 export class Licence {
   @PrimaryGeneratedColumn()
   id: number;
-  
+
   @ManyToOne(() => User, (user) => user.id, {
     nullable: false,
   })

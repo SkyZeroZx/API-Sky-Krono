@@ -14,6 +14,10 @@ xdescribe('AttendanceController', () => {
     controller = module.get<AttendanceController>(AttendanceController);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });

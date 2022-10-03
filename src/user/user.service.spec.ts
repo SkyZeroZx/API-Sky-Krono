@@ -1,7 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { transporter } from '../config/mailer/mailer';
 
 import { User } from './entities/user.entity';
@@ -55,7 +55,7 @@ describe('UserService', () => {
     expect(spySave).toBeCalledWith(User);
     // Validamos los datos de nuestro response
     expect(dataOK.user).toEqual(UserServiceMock.mockResultCreateUser);
-    expect(dataOK.message).toEqual(Constant.MENSAJE_OK);
+    expect(dataOK.message).toEqual(Constants.MSG_OK);
   });
 
   it('Validamos Create Error', async () => {
@@ -123,7 +123,7 @@ describe('UserService', () => {
       username,
     });
     expect(spyAddSelect).toHaveBeenNthCalledWith(1, 'user.password');
-    expect(userNoExist).toEqual({ message: Constant.MENSAJE_OK });
+    expect(userNoExist).toEqual({ message: Constants.MSG_OK });
     // Ahora validamos para el caso nos retorne un usuario
     mockService.getOne.mockReturnValueOnce(UserServiceMock.mockResultCreateUser);
     // Llamamos nuestra funcion findByEmail y le paso el email fake
@@ -198,7 +198,7 @@ describe('UserService', () => {
       role: UserServiceMock.updateUser.role,
       status: UserServiceMock.updateUser.status,
     });
-    expect(userUpdateCreado.message).toEqual(Constant.MENSAJE_OK);
+    expect(userUpdateCreado.message).toEqual(Constants.MSG_OK);
   });
 
   it('Validamos getUserById Ok', async () => {
@@ -249,7 +249,7 @@ describe('UserService', () => {
     const spyDeleteOk = jest.spyOn(mockService, 'delete').mockResolvedValue(null);
     const data = await service.remove(UserServiceMock.deleteUser);
     expect(spyDeleteOk).toBeCalledWith(UserServiceMock.deleteUser.id);
-    expect(data.message).toEqual(Constant.MENSAJE_OK);
+    expect(data.message).toEqual(Constants.MSG_OK);
   });
 
   it('Validamos saveNewPassword OK', async () => {
@@ -276,7 +276,7 @@ describe('UserService', () => {
     });
     expect(spyWhere).toBeCalledWith('username = :username', { username });
     expect(spyExecuteQueryBuilderAffected).toBeCalled();
-    expect(savePasswordAffect.message).toEqual(Constant.MENSAJE_OK);
+    expect(savePasswordAffect.message).toEqual(Constants.MSG_OK);
     // Validamos para el caso que es diferente de 1 es decir no fue afectado
     const spyExecuteQueryBuilderNotAffected = spyExecuteQueryBuilderAffected.mockResolvedValueOnce({
       affected: 0,
