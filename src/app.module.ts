@@ -45,7 +45,7 @@ import { NotificationModule } from './notification/notification.module';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: '.env.template',
     }),
     ScheduleModuleNestJs.forRoot(),
     AuthModule,
