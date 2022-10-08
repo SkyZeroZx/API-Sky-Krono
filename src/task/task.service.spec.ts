@@ -1,8 +1,8 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
-import { NotificacionService } from '../notificacion/notificacion.service';
+import { Constants } from '../common/constants/Constant';
+import { NotificationService } from '../notification/notification.service';
 import { TaskToUser } from '../task_to_user/entities/task_to_user.entity';
 import { TaskToUserMock } from '../task_to_user/task_to_user.mock.spec';
 import { TaskToUserService } from '../task_to_user/task_to_user.service';
@@ -15,7 +15,7 @@ import { TaskService } from './task.service';
 describe('TaskService', () => {
   let taskService: TaskService;
   let mockService: TaskServiceMock = new TaskServiceMock();
-  let notificacionService: NotificacionService;
+  let notificationService: NotificationService;
   let taskToUserService: TaskToUserService;
 
   beforeEach(async () => {
@@ -27,7 +27,7 @@ describe('TaskService', () => {
           useValue: mockService,
         },
         {
-          provide: NotificacionService,
+          provide: NotificationService,
           useValue: mockService,
         },
         {
@@ -37,7 +37,7 @@ describe('TaskService', () => {
       ],
     }).compile();
     taskService = module.get<TaskService>(TaskService);
-    notificacionService = module.get<NotificacionService>(NotificacionService);
+    notificationService = module.get<NotificationService>(NotificationService);
     taskToUserService = module.get<TaskToUserService>(TaskToUserService);
   });
 
@@ -47,7 +47,7 @@ describe('TaskService', () => {
 
   it('should be defined', () => {
     expect(taskService).toBeDefined();
-    expect(notificacionService).toBeDefined();
+    expect(notificationService).toBeDefined();
     expect(taskToUserService).toBeDefined();
   });
 
@@ -65,7 +65,7 @@ describe('TaskService', () => {
     expect(spyCreate).toBeCalled();
     expect(spySaveTaskToUser).toHaveBeenNthCalledWith(1, codTask, users[0].id);
     expect(spySaveTaskToUser).toHaveBeenNthCalledWith(2, codTask, users[1].id);
-    expect(data.message).toEqual(Constant.MENSAJE_OK);
+    expect(data.message).toEqual(Constants.MSG_OK);
   });
 
   it('Validamos create Error', async () => {
@@ -219,7 +219,7 @@ describe('TaskService', () => {
     });
     expect(spyWhere).toBeCalledWith('codTask = :codTask', { codTask });
     expect(spyFindTokensByTask).toBeCalled();
-    expect(resolveNotSendNotifications.message).toEqual(Constant.MENSAJE_OK);
+    expect(resolveNotSendNotifications.message).toEqual(Constants.MSG_OK);
     expect(spyExecuteQueryBuilder).toBeCalled();
     expect(spySendNotification).not.toBeCalled();
 
@@ -234,7 +234,7 @@ describe('TaskService', () => {
     expect(spyUpdate).toBeCalledTimes(2);
     expect(spySet).toBeCalledTimes(2);
     expect(spySendNotification).toBeCalledTimes(TaskServiceMock.tokens.length);
-    expect(resolveSendNotifications.message).toEqual(Constant.MENSAJE_OK);
+    expect(resolveSendNotifications.message).toEqual(Constants.MSG_OK);
   });
 
   it('Validamos Update Error', async () => {
@@ -263,7 +263,7 @@ describe('TaskService', () => {
 
   it('Validamos removeTask OK', async () => {
     const spyFindTokensByTask = jest
-      .spyOn(notificacionService, 'findTokensByTask')
+      .spyOn(notificationService, 'findTokensByTask')
       .mockResolvedValueOnce([]);
     const spyDelete = jest.spyOn(mockService, 'delete').mockResolvedValueOnce({ affected: 1 });
     const spySendNotification = jest.spyOn(mockService, 'sendNotification');
@@ -274,7 +274,7 @@ describe('TaskService', () => {
     expect(spyFindTokensByTask).toBeCalled();
     expect(spyDelete).toBeCalledWith({ codTask: TaskServiceMock.deleteTaskDto.codTask });
     expect(spySendNotification).not.toBeCalled();
-    expect(removeTaskNotSendNotification.message).toEqual(Constant.MENSAJE_OK);
+    expect(removeTaskNotSendNotification.message).toEqual(Constants.MSG_OK);
 
     // Mockeamos y creamos nuestros espias para posteriormente validar en caso de la iteracion que envia tokens
     spyDelete.mockResolvedValueOnce({ affected: 1 });
@@ -286,11 +286,11 @@ describe('TaskService', () => {
       expect(spySendNotification).toHaveBeenNthCalledWith(
         i + 1,
         TaskServiceMock.tokenByUser[i].tokenPush,
-        Constant.NOTIFICACION_DELETE_TASK,
+        Constants.NOTIFICATION_DELETE_TASK,
       );
     }
     // Validamos las llamadas de nuestros espias y respuestas
-    expect(removeTaskSendNotification.message).toEqual(Constant.MENSAJE_OK);
+    expect(removeTaskSendNotification.message).toEqual(Constants.MSG_OK);
     expect(spyFindTokensByTask).toBeCalledTimes(2);
   });
 
@@ -305,24 +305,27 @@ describe('TaskService', () => {
     expect(spyDelete).toBeCalled();
     expect(spyFindTokensByTask).toBeCalled();
     spyDelete.mockResolvedValueOnce({ affected: 0 });
-    const data = await taskService.removeTask(TaskServiceMock.deleteTaskDto);
-    expect(data.message).toEqual('Sucedio un error');
+    await expect(taskService.removeTask(TaskServiceMock.deleteTaskDto)).rejects.toThrowError(
+      new InternalServerErrorException({
+        message: 'Sucedio un error al eliminar la tarea',
+      }),
+    );
   });
 
   it('Validamos removeUserToTask OK', async () => {
     const spyFindTokensByTask = jest
-      .spyOn(notificacionService, 'findTokensByUser')
+      .spyOn(notificationService, 'findTokensByUser')
       .mockResolvedValue([]);
     const spySendNotification = jest.spyOn(mockService, 'sendNotification');
     const spyRemoveTaskToUser = jest
       .spyOn(taskToUserService, 'removeUserToTask')
-      .mockResolvedValueOnce({ message: Constant.MENSAJE_OK, info: 'OK' });
+      .mockResolvedValueOnce({ message: Constants.MSG_OK, info: 'OK' });
 
     const removeUserToTask = await taskService.removeUserToTask(TaskToUserMock.taskToUserDto);
 
     expect(spyFindTokensByTask).toBeCalledWith(TaskToUserMock.taskToUserDto.codUser);
     expect(spySendNotification).not.toBeCalled();
-    expect(removeUserToTask.message).toEqual(Constant.MENSAJE_OK);
+    expect(removeUserToTask.message).toEqual(Constants.MSG_OK);
     expect(spyRemoveTaskToUser).toBeCalled();
 
     spyFindTokensByTask.mockResolvedValueOnce(TaskServiceMock.tokenByUser);
@@ -331,7 +334,7 @@ describe('TaskService', () => {
       expect(spySendNotification).toHaveBeenNthCalledWith(
         i + 1,
         TaskServiceMock.tokenByUser[i].tokenPush,
-        Constant.NOTIFICACION_DELETE_TASK,
+        Constants.NOTIFICATION_DELETE_TASK,
       );
     }
   });
@@ -339,14 +342,14 @@ describe('TaskService', () => {
   it('Validamos addUserToTask OK', async () => {
     const spyAddUserToTask = jest
       .spyOn(taskToUserService, 'addUserToTask')
-      .mockResolvedValueOnce({ message: Constant.MENSAJE_OK, info: 'Todo salio bien' });
+      .mockResolvedValueOnce({ message: Constants.MSG_OK, info: 'Todo salio bien' });
     const spySendNotification = jest.spyOn(mockService, 'sendNotification');
     const spyFindTokensByUser = jest
-      .spyOn(notificacionService, 'findTokensByUser')
+      .spyOn(notificationService, 'findTokensByUser')
       .mockResolvedValue(TaskServiceMock.tokenByUser);
     const removeUserToTask = await taskService.addUserToTask(TaskToUserMock.taskToUserDto);
 
-    expect(removeUserToTask.message).toEqual(Constant.MENSAJE_OK);
+    expect(removeUserToTask.message).toEqual(Constants.MSG_OK);
     expect(spyFindTokensByUser).toBeCalled();
     expect(spyAddUserToTask).toBeCalledWith(TaskToUserMock.taskToUserDto);
     //Validamos la llamada de cada token en su respectiva posicion
@@ -354,7 +357,7 @@ describe('TaskService', () => {
       expect(spySendNotification).toHaveBeenNthCalledWith(
         i + 1,
         TaskServiceMock.tokenByUser[i].tokenPush,
-        Constant.NOTIFICACION_NEW_TASK,
+        Constants.NOTIFICATION_NEW_TASK,
       );
     }
   });

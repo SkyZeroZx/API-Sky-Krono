@@ -1,39 +1,36 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { TaskToUser } from '../task_to_user/entities/task_to_user.entity';
 import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
-import { CreateNotificacionDto } from './dto/create-notificacion.dto';
-import { Notificacion } from './entities/notificacion.entity';
+import { CreateNotificationDto } from './dto/create-notification.dto';
+import { Notification } from './entities/notification.entity';
 import * as webpush from 'web-push';
-import { SchedulerRegistry } from '@nestjs/schedule';
-import { CronJob } from 'cron';
 import { Schedule } from '../schedule/entities/schedule.entity';
 
 @Injectable()
-export class NotificacionService {
-  private readonly logger = new Logger(NotificacionService.name);
+export class NotificationService {
+  private readonly logger = new Logger(NotificationService.name);
   constructor(
-    @InjectRepository(Notificacion)
-    private readonly notificacionRepository: Repository<Notificacion>, // private readonly schedulerRegistry: SchedulerRegistry,
+    @InjectRepository(Notification)
+    private readonly notificationService: Repository<Notification>,
   ) {}
 
-  async suscribeNotification(codUser: number, createNotificacionDto: CreateNotificacionDto) {
-    this.logger.log({ message: 'Suscribiendo el token para el usuario', createNotificacionDto });
+  async suscribeNotification(codUser: number, createNotificationDto: CreateNotificationDto) {
+    this.logger.log({ message: 'Suscribiendo el token para el usuario', createNotificationDto });
     try {
-      // Validamos si existe alguna coincidencia
-      const [, count] = await this.notificacionRepository.findAndCount({
+      const [, count] = await this.notificationService.findAndCount({
         where: {
           codUser: codUser,
-          tokenPush: createNotificacionDto.tokenPush,
+          tokenPush: createNotificationDto.tokenPush,
         },
       });
-      // En caso no devuelva 0 significa que no existe por lo cual vamos a registrarlo
+
       if (count == 0) {
-        await this.notificacionRepository.save({
+        await this.notificationService.save({
           codUser: codUser,
-          tokenPush: createNotificacionDto.tokenPush,
+          tokenPush: createNotificationDto.tokenPush,
         });
       }
     } catch (error) {
@@ -42,7 +39,7 @@ export class NotificacionService {
     }
 
     this.logger.log('Se guardo el Token Task To User');
-    return { message: Constant.MENSAJE_OK, info: 'Se guardo el token exitosamente' };
+    return { message: Constants.MSG_OK, info: 'Se guardo el token exitosamente' };
   }
 
   async sendNotification(tokenPush: string, message: Object) {
@@ -61,7 +58,7 @@ export class NotificacionService {
   }
 
   async findTokensByUser(codUser: number) {
-    return this.notificacionRepository
+    return this.notificationService
       .createQueryBuilder('NOTIFICACION')
       .select('DISTINCT   (NOTIFICACION.tokenPush)', 'tokenPush')
       .innerJoin(User, 'USER', ' USER.id = NOTIFICACION.codUser')
@@ -72,7 +69,7 @@ export class NotificacionService {
   }
 
   async findTokensByTask(codTask: number) {
-    return this.notificacionRepository
+    return this.notificationService
       .createQueryBuilder('NOTIFICACION')
       .select('DISTINCT   (NOTIFICACION.tokenPush)', 'tokenPush')
       .innerJoin(User, 'USER', ' USER.id = NOTIFICACION.codUser')
@@ -84,7 +81,7 @@ export class NotificacionService {
   }
 
   async findTokensBySchedule(codSchedule: number) {
-    return this.notificacionRepository
+    return this.notificationService
       .createQueryBuilder('NOTIFICACION')
       .select('DISTINCT   (NOTIFICACION.tokenPush)', 'tokenPush')
       .innerJoin(User, 'USER', ' USER.id = NOTIFICACION.codUser')
@@ -107,13 +104,13 @@ export class NotificacionService {
 
       tokensPerUser.forEach((tokens) => {
         tokens.forEach((token) => {
-          this.sendNotification(token.tokenPush, Constant.NOTIFICACION_NEW_TASK);
+          this.sendNotification(token.tokenPush, Constants.NOTIFICATION_NEW_TASK);
         });
       });
 
       this.logger.log('Notificaciones enviadas exitosamente');
       return {
-        message: Constant.MENSAJE_OK,
+        message: Constants.MSG_OK,
         info: 'Notificaciones enviadas exitosamente',
       };
     } catch (error) {
@@ -123,34 +120,4 @@ export class NotificacionService {
       );
     }
   }
-  /*
-  myScheduledTask(data) {
-    this.logger.log('test esto es una prueba guarde el param', data.name);
-  }
-
-  registerNewJob(data: any) {
-    const userSyncJob = new CronJob('15 * * * * *', () => this.myScheduledTask(data));
-    this.schedulerRegistry.addCronJob(data.name, userSyncJob);
-    userSyncJob.start();
-    return { message: Constant.MENSAJE_OK };
-  }
-
-  getCrons() {
-    const jobs = this.schedulerRegistry.getCronJobs();
-    jobs.forEach((value, key, map) => {
-      let next;
-      try {
-        next = value.nextDates().toJSDate();
-      } catch (e) {
-        next = 'error: next fire date is in the past!';
-      }
-      this.logger.log(`job: ${key} -> next: ${next}`);
-    });
-  }
-
-  stopCrons(data){
-    let job = this.schedulerRegistry.getCronJob(data.name);
-    this.schedulerRegistry.deleteCronJob(data.name)
-    
-  }*/
 }

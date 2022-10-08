@@ -1,30 +1,32 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { TaskServiceMock } from '../task/task.mock.spec';
 import { TaskToUser } from '../task_to_user/entities/task_to_user.entity';
 import { User } from '../user/entities/user.entity';
 import { UserServiceMock } from '../user/user.mock.spec';
-import { Notificacion } from './entities/notificacion.entity';
-import { NotificacionService } from './notificacion.service';
+import { Notification } from './entities/notification.entity';
+import { NotificationService } from './notification.service';
 import { NotificationMockService } from './notification.mock.spec';
 import * as webpush from 'web-push';
+import { Schedule } from '../schedule/entities/schedule.entity';
+
 describe('NotificacionService', () => {
-  let service: NotificacionService;
+  let notificationService: NotificationService;
   let mockService: NotificationMockService = new NotificationMockService();
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        NotificacionService,
+        NotificationService,
         {
-          provide: getRepositoryToken(Notificacion),
+          provide: getRepositoryToken(Notification),
           useValue: mockService,
         },
       ],
     }).compile();
 
-    service = module.get<NotificacionService>(NotificacionService);
+    notificationService = module.get<NotificationService>(NotificationService);
   });
 
   afterEach(() => {
@@ -32,52 +34,52 @@ describe('NotificacionService', () => {
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(notificationService).toBeDefined();
   });
 
-  it('Validamos suscribeNotification OK', async () => {
+  it('Validate suscribeNotification OK', async () => {
     // Creamos nuestros espias y mocks
     const spyFindAndCount = jest.spyOn(mockService, 'findAndCount').mockResolvedValueOnce([[], 1]);
     const spySave = jest.spyOn(mockService, 'save');
     // Llamamos nuestro servicio a evaluar
-    const suscribeNotificationOkNotSave = await service.suscribeNotification(
+    const suscribeNotificationOkNotSave = await notificationService.suscribeNotification(
       1,
-      NotificationMockService.createNotificacionDto,
+      NotificationMockService.createNotificationDto,
     );
 
-    expect(suscribeNotificationOkNotSave.message).toEqual(Constant.MENSAJE_OK);
+    expect(suscribeNotificationOkNotSave.message).toEqual(Constants.MSG_OK);
     expect(spySave).not.toBeCalled();
     expect(spyFindAndCount).toBeCalledWith({
       where: {
         codUser: 1,
-        tokenPush: NotificationMockService.createNotificacionDto.tokenPush,
+        tokenPush: NotificationMockService.createNotificationDto.tokenPush,
       },
     });
 
     // Validamos el caso cuando se registrar y se llame a save
     spyFindAndCount.mockResolvedValueOnce([[], 0]);
-    const suscribeNotificationOkSave = await service.suscribeNotification(
+    const suscribeNotificationOkSave = await notificationService.suscribeNotification(
       1,
-      NotificationMockService.createNotificacionDto,
+      NotificationMockService.createNotificationDto,
     );
     expect(spySave).toBeCalled();
     expect(spyFindAndCount).toHaveBeenNthCalledWith(2, {
       where: {
         codUser: 1,
-        tokenPush: NotificationMockService.createNotificacionDto.tokenPush,
+        tokenPush: NotificationMockService.createNotificationDto.tokenPush,
       },
     });
-    expect(suscribeNotificationOkSave.message).toEqual(Constant.MENSAJE_OK);
+    expect(suscribeNotificationOkSave.message).toEqual(Constants.MSG_OK);
   });
 
-  it('Validamos suscribeNotification Error', async () => {
+  it('Validate suscribeNotification Error', async () => {
     //Validamos el primer caso de error de findAndCount
     const spyFindAndCount = jest
       .spyOn(mockService, 'findAndCount')
       .mockRejectedValueOnce(new Error('Algo salio mal'));
     const spySave = jest.spyOn(mockService, 'save');
     await expect(
-      service.suscribeNotification(1, NotificationMockService.createNotificacionDto),
+      notificationService.suscribeNotification(1, NotificationMockService.createNotificationDto),
     ).rejects.toThrowError(
       new InternalServerErrorException({ message: 'Sucedio un error al guardar el token' }),
     );
@@ -88,7 +90,7 @@ describe('NotificacionService', () => {
     spySave.mockRejectedValueOnce(new Error('Algo salio mal'));
 
     await expect(
-      service.suscribeNotification(1, NotificationMockService.createNotificacionDto),
+      notificationService.suscribeNotification(1, NotificationMockService.createNotificationDto),
     ).rejects.toThrowError(
       new InternalServerErrorException({ message: 'Sucedio un error al guardar el token' }),
     );
@@ -96,18 +98,18 @@ describe('NotificacionService', () => {
     expect(spyFindAndCount).toBeCalledTimes(2);
   });
 
-  it('Validamos sendNotification ', async () => {
+  it('Validate sendNotification ', async () => {
     const tokenPush: string = '{"hello":"world"}';
     const message: Object = { hello: 'world' };
     const spyWebPush = jest.spyOn(webpush, 'sendNotification').mockResolvedValue(null);
-    await service.sendNotification(tokenPush, message);
+    await notificationService.sendNotification(tokenPush, message);
     expect(spyWebPush).toBeCalledWith(JSON.parse(tokenPush), JSON.stringify(message));
     // Validamos el caso de entrar en catch
     spyWebPush.mockRejectedValueOnce(new Error('Algo salio mal'));
-    expect(await service.sendNotification(tokenPush, message)).toBeUndefined();
+    expect(await notificationService.sendNotification(tokenPush, message)).toBeUndefined();
   });
 
-  it('Validamos findTokensByUser  ', async () => {
+  it('Validate findTokensByUser  ', async () => {
     const spyCreateQueryBuilder = jest.spyOn(mockService, 'createQueryBuilder');
     const spySelect = jest.spyOn(mockService, 'select');
     const spyInnerJoin = jest.spyOn(mockService, 'innerJoin');
@@ -115,7 +117,7 @@ describe('NotificacionService', () => {
     const spyGetRawMany = jest.spyOn(mockService, 'getRawMany');
 
     // Llamamos nuestro servicio y le paso el codUser
-    await service.findTokensByUser(1);
+    await notificationService.findTokensByUser(1);
     expect(spyCreateQueryBuilder).toBeCalledWith('NOTIFICACION');
     expect(spySelect).toBeCalledWith('DISTINCT   (NOTIFICACION.tokenPush)', 'tokenPush');
     expect(spyInnerJoin).toBeCalledWith(User, 'USER', ' USER.id = NOTIFICACION.codUser');
@@ -125,14 +127,14 @@ describe('NotificacionService', () => {
     expect(spyGetRawMany).toBeCalled();
   });
 
-  it('Validamos findTokensByTask  ', async () => {
+  it('Validate findTokensByTask  ', async () => {
     const spyCreateQueryBuilder = jest.spyOn(mockService, 'createQueryBuilder');
     const spySelect = jest.spyOn(mockService, 'select');
     const spyInnerJoin = jest.spyOn(mockService, 'innerJoin');
     const spyWhere = jest.spyOn(mockService, 'where');
     const spyGetRawMany = jest.spyOn(mockService, 'getRawMany');
     // Llamamos nuestro servicio y le paso el codUser
-    await service.findTokensByTask(1);
+    await notificationService.findTokensByTask(1);
     expect(spyCreateQueryBuilder).toBeCalledWith('NOTIFICACION');
     expect(spySelect).toBeCalledWith('DISTINCT   (NOTIFICACION.tokenPush)', 'tokenPush');
     expect(spyInnerJoin).toHaveBeenNthCalledWith(
@@ -153,16 +155,16 @@ describe('NotificacionService', () => {
     expect(spyGetRawMany).toBeCalled();
   });
 
-  it('Validamos registerTaskTokenByUser Ok', async () => {
+  it('Validate registerTaskTokenByUser Ok', async () => {
     const spyFindTokensByUser = jest
-      .spyOn(service, 'findTokensByUser')
+      .spyOn(notificationService, 'findTokensByUser')
       .mockResolvedValue(TaskServiceMock.tokenByUser);
     const spySendNotification = jest
-      .spyOn(service, 'sendNotification')
+      .spyOn(notificationService, 'sendNotification')
       .mockImplementation(async () => {
         return;
       });
-    const registerTaskTokenByUser = await service.registerTaskTokenByUser(
+    const registerTaskTokenByUser = await notificationService.registerTaskTokenByUser(
       UserServiceMock.mockFindAllUserData,
     );
 
@@ -177,18 +179,18 @@ describe('NotificacionService', () => {
     expect(spySendNotification).toBeCalledTimes(
       UserServiceMock.mockFindAllUserData.length * TaskServiceMock.tokenByUser.length,
     );
-    expect(registerTaskTokenByUser.message).toEqual(Constant.MENSAJE_OK);
+    expect(registerTaskTokenByUser.message).toEqual(Constants.MSG_OK);
   });
 
-  it('Validamos registerTaskTokenByUser Error', async () => {
+  it('Validate registerTaskTokenByUser Error', async () => {
     const spyFindTokensByUser = jest
-      .spyOn(service, 'findTokensByUser')
+      .spyOn(notificationService, 'findTokensByUser')
       .mockImplementation(async () => {
         throw new Error('');
       });
-    const spySendNotification = jest.spyOn(service, 'sendNotification');
+    const spySendNotification = jest.spyOn(notificationService, 'sendNotification');
     await expect(
-      service.registerTaskTokenByUser(UserServiceMock.mockFindAllUserData),
+      notificationService.registerTaskTokenByUser(UserServiceMock.mockFindAllUserData),
     ).rejects.toThrowError(
       new InternalServerErrorException({
         message: 'Sucedio un error al registrar tokens para la nueva tarea',
@@ -203,9 +205,36 @@ describe('NotificacionService', () => {
     spySendNotification.mockImplementation(async () => {
       new Error('Sucedio Algo mal');
     });
-    const noBlockErrorSendNotications = await service.registerTaskTokenByUser(
+    const noBlockErrorSendNotications = await notificationService.registerTaskTokenByUser(
       UserServiceMock.mockFindAllUserData,
     );
-    expect(noBlockErrorSendNotications.message).toEqual(Constant.MENSAJE_OK);
+    expect(noBlockErrorSendNotications.message).toEqual(Constants.MSG_OK);
+  });
+
+  it('Validate findTokensBySchedule', async () => {
+    const spyCreateQueryBuilder = jest.spyOn(mockService, 'createQueryBuilder');
+    const spySelect = jest.spyOn(mockService, 'select');
+    const spyInnerJoin = jest.spyOn(mockService, 'innerJoin');
+    const spyWhere = jest.spyOn(mockService, 'where');
+    const spyGetRawMany = jest.spyOn(mockService, 'getRawMany');
+    await notificationService.findTokensBySchedule(NotificationMockService.codSchedule);
+    expect(spyCreateQueryBuilder).toBeCalledWith('NOTIFICACION');
+    expect(spySelect).toBeCalledWith('DISTINCT   (NOTIFICACION.tokenPush)', 'tokenPush');
+    expect(spyInnerJoin).toHaveBeenNthCalledWith(
+      1,
+      User,
+      'USER',
+      ' USER.id = NOTIFICACION.codUser',
+    );
+    expect(spyInnerJoin).toHaveBeenNthCalledWith(
+      2,
+      Schedule,
+      'SCHEDULE',
+      ' SCHEDULE.id = USER.codSchedule',
+    );
+    expect(spyWhere).toHaveBeenCalledWith('SCHEDULE.id = :codSchedule', {
+      codSchedule: NotificationMockService.codSchedule,
+    });
+    expect(spyGetRawMany).toBeCalled();
   });
 });

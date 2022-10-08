@@ -14,14 +14,14 @@ import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserDecorator as User } from '../common/decorators/user.decorator';
 import { User as UserEntity } from '../user/entities/user.entity';
 import { DeleteTaskDto } from './dto/delete-task.dto';
 import { TaskToUserDto } from '../task_to_user/dto/task-to-user.dto';
 import { Auth } from '../common/decorators/auth.decorator';
-import { TaskResponse } from '../common/swagger/response/task.response';
+import { GenericResponse, TaskResponse } from '../common/swagger/response';
 
 @ApiTags('Task')
 @ApiBearerAuth()
@@ -32,7 +32,7 @@ export class TaskController {
 
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Crea una nueva tarea' })
-  @ApiResponse(TaskResponse.genericReponse)
+  @ApiResponse(GenericResponse.response)
   @Post()
   async create(@Body() createTaskDto: CreateTaskDto) {
     return this.taskService.create(createTaskDto);
@@ -49,7 +49,7 @@ export class TaskController {
       this.logger.warn('No se encontraron taks');
       return { message: 'No se encontraron task' };
     }
-    this.logger.log('Listado Task ' + Constant.MENSAJE_OK);
+    this.logger.log('Listado Task ' + Constants.MSG_OK);
     return taks;
   }
 
@@ -64,7 +64,7 @@ export class TaskController {
       this.logger.warn(`No se encontraron taks para el usuario ${user.username}`);
       return { message: 'No se encontraron task' };
     }
-    this.logger.log(`Listado Task para el usuario ${user.username} ${Constant.MENSAJE_OK}`);
+    this.logger.log(`Listado Task para el usuario ${user.username} ${Constants.MSG_OK}`);
     return taskByUser;
   }
 
@@ -80,14 +80,14 @@ export class TaskController {
       this.logger.warn(`No se encontraron users para el task ${codTask}`);
       return { message: 'No se encontraron users para el task' };
     }
-    this.logger.log(`Listado Users para el task ${codTask} ${Constant.MENSAJE_OK}`);
+    this.logger.log(`Listado Users para el task ${codTask} ${Constants.MSG_OK}`);
     return taskByUser;
   }
 
   @Auth('admin')
   @Delete()
   @ApiOperation({ summary: 'Eliminar un usuario de una tarea' })
-  @ApiResponse(TaskResponse.genericReponse)
+  @ApiResponse(GenericResponse.response)
   removeUserToTask(@Query() taskToUserDto: TaskToUserDto) {
     return this.taskService.removeUserToTask(taskToUserDto);
   }
@@ -95,7 +95,7 @@ export class TaskController {
   @Auth('admin')
   @Post('/add_user')
   @ApiOperation({ summary: 'Agregar un usuario a una tarea' })
-  @ApiResponse(TaskResponse.genericReponse)
+  @ApiResponse(GenericResponse.response)
   addUserToTask(@Body() taskToUserDto: TaskToUserDto) {
     return this.taskService.addUserToTask(taskToUserDto);
   }
@@ -103,7 +103,7 @@ export class TaskController {
   @Auth('admin')
   @Patch()
   @ApiOperation({ summary: 'Actualizar una tarea , descripcion , fecha inicio - fin' })
-  @ApiResponse(TaskResponse.genericReponse)
+  @ApiResponse(GenericResponse.response)
   update(@Body() updateTaskDto: UpdateTaskDto) {
     return this.taskService.update(updateTaskDto);
   }
@@ -113,7 +113,7 @@ export class TaskController {
   @ApiOperation({
     summary: 'Eliminar una tarea asi como los usuarios relacionados a esta misma en casacada',
   })
-  @ApiResponse(TaskResponse.genericReponse)
+  @ApiResponse(GenericResponse.response)
   removeTask(@Param() deleteTaskDto: DeleteTaskDto) {
     this.logger.log('Deleting task', deleteTaskDto);
     return this.taskService.removeTask(deleteTaskDto);

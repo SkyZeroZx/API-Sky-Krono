@@ -7,6 +7,6 @@ import { Chargue } from './entities/chargue.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Chargue])],
   controllers: [ChargueController],
-  providers: [ChargueService]
+  providers: [ChargueService],
 })
 export class ChargueModule {}

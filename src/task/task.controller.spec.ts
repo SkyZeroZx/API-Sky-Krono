@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
-import { NotificacionService } from '../notificacion/notificacion.service';
+import { Constants } from '../common/constants/Constant';
+import { NotificationService } from '../notification/notification.service';
 import { TaskToUserMock } from '../task_to_user/task_to_user.mock.spec';
 import { TaskToUserService } from '../task_to_user/task_to_user.service';
 import { UserServiceMock } from '../user/user.mock.spec';
@@ -24,7 +24,7 @@ describe('TaskController', () => {
           useValue: mockService,
         },
         {
-          provide: NotificacionService,
+          provide: NotificationService,
           useValue: mockService,
         },
         {
@@ -66,13 +66,13 @@ describe('TaskController', () => {
     const spyFindByUser = jest
       .spyOn(taskService, 'findByUser')
       .mockResolvedValueOnce(TaskServiceMock.taskFindAll);
-    const getTaskByUserData = await controller.getTaskByUser(UserServiceMock.mockResultCreateUser);
-    expect(spyFindByUser).toBeCalledWith(UserServiceMock.mockResultCreateUser.id);
+    const getTaskByUserData = await controller.getTaskByUser(UserServiceMock.userMock);
+    expect(spyFindByUser).toBeCalledWith(UserServiceMock.userMock.id);
     expect(getTaskByUserData).toEqual(TaskServiceMock.taskFindAll);
     // Validamos para el caso que findByUser del servicio nos retorne un array vacio
     spyFindByUser.mockResolvedValue([]);
-    const getTaskByUserVoid = await controller.getTaskByUser(UserServiceMock.mockResultCreateUser);
-    expect(spyFindByUser).toHaveBeenNthCalledWith(2, UserServiceMock.mockResultCreateUser.id);
+    const getTaskByUserVoid = await controller.getTaskByUser(UserServiceMock.userMock);
+    expect(spyFindByUser).toHaveBeenNthCalledWith(2, UserServiceMock.userMock.id);
     expect(getTaskByUserVoid).toEqual({ message: 'No se encontraron task' });
   });
 
@@ -94,36 +94,36 @@ describe('TaskController', () => {
   it('Validamos removeUserToTask', async () => {
     const spyRemoveUserToTask = jest
       .spyOn(taskService, 'removeUserToTask')
-      .mockResolvedValueOnce({ message: Constant.MENSAJE_OK, info: 'Todo salio bien' });
+      .mockResolvedValueOnce({ message: Constants.MSG_OK, info: 'Todo salio bien' });
     const removeUserToTask = await controller.removeUserToTask(TaskToUserMock.taskToUserDto);
     expect(spyRemoveUserToTask).toBeCalledWith(TaskToUserMock.taskToUserDto);
-    expect(removeUserToTask).toEqual({ message: Constant.MENSAJE_OK, info: 'Todo salio bien' });
+    expect(removeUserToTask).toEqual({ message: Constants.MSG_OK, info: 'Todo salio bien' });
   });
 
   it('Validamos addUserToTask', async () => {
     const spyAddUserToTask = jest
       .spyOn(taskService, 'addUserToTask')
-      .mockResolvedValueOnce({ message: Constant.MENSAJE_OK, info: 'Todo salio bien' });
+      .mockResolvedValueOnce({ message: Constants.MSG_OK, info: 'Todo salio bien' });
     const addUserToTask = await controller.addUserToTask(TaskToUserMock.taskToUserDto);
     expect(spyAddUserToTask).toBeCalledWith(TaskToUserMock.taskToUserDto);
-    expect(addUserToTask).toEqual({ message: Constant.MENSAJE_OK, info: 'Todo salio bien' });
+    expect(addUserToTask).toEqual({ message: Constants.MSG_OK, info: 'Todo salio bien' });
   });
 
   it('Validamos update', async () => {
     const spyUpdate = jest
       .spyOn(taskService, 'update')
-      .mockResolvedValueOnce({ message: Constant.MENSAJE_OK, info: 'Todo salio bien' });
+      .mockResolvedValueOnce({ message: Constants.MSG_OK, info: 'Todo salio bien' });
     const update = await controller.update(TaskToUserMock.taskToUserDto);
     expect(spyUpdate).toBeCalledWith(TaskToUserMock.taskToUserDto);
-    expect(update).toEqual({ message: Constant.MENSAJE_OK, info: 'Todo salio bien' });
+    expect(update).toEqual({ message: Constants.MSG_OK, info: 'Todo salio bien' });
   });
 
   it('Validamos removeTask', async () => {
     const spyRemoveTask = jest
       .spyOn(taskService, 'removeTask')
-      .mockResolvedValueOnce({ message: Constant.MENSAJE_OK, info: 'Todo salio bien' });
+      .mockResolvedValueOnce({ message: Constants.MSG_OK, info: 'Todo salio bien' });
     const removeTask = await controller.removeTask(TaskServiceMock.deleteTaskDto);
     expect(spyRemoveTask).toBeCalledWith(TaskServiceMock.deleteTaskDto);
-    expect(removeTask).toEqual({ message: Constant.MENSAJE_OK, info: 'Todo salio bien' });
+    expect(removeTask).toEqual({ message: Constants.MSG_OK, info: 'Todo salio bien' });
   });
 });

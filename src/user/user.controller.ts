@@ -8,6 +8,8 @@ import {
   Logger,
   UseGuards,
   Param,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,6 +21,9 @@ import { User as UserEntity } from '../user/entities/user.entity';
 import { UserDecorator as User } from '../common/decorators/user.decorator';
 import { Auth } from '../common/decorators/auth.decorator';
 import { UserReponse } from '../common/swagger/response/user.response';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { fileFilter, maxSizeFile } from '../common/helpers/fileFilter.helper';
+import { GenericResponse } from '../common/swagger/response';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -27,7 +32,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
   private readonly logger = new Logger(UserController.name);
 
-  //@Auth('admin')
+  @Auth('admin')
   @Post()
   @ApiOperation({ summary: 'Creacion de nuevo usuario' })
   @ApiResponse(UserReponse.createUser)
@@ -40,14 +45,9 @@ export class UserController {
   @Get()
   @ApiOperation({ summary: 'Listado de todos los usuarios' })
   @ApiResponse(UserReponse.findAll)
-  async findAll() {
+  findAll() {
     this.logger.log('Listando Usuarios');
-    const users = await this.userService.findAll();
-    if (users.length === 0) {
-      this.logger.warn('No se encontraron usuarios');
-      return { message: 'No users found' };
-    }
-    return users;
+    return this.userService.findAll();
   }
 
   @UseGuards(JwtAuthGuard)
@@ -62,7 +62,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Patch()
   @ApiOperation({ summary: 'Actualizar usuario de manera administrativa' })
-  @ApiResponse(UserReponse.genericReponse)
+  @ApiResponse(GenericResponse.response)
   update(@Body() updateUserDto: UpdateUserDto) {
     this.logger.log('Actualizando usuario');
     return this.userService.update(updateUserDto);
@@ -71,9 +71,20 @@ export class UserController {
   @Auth('admin')
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar usuario del sistema' })
-  @ApiResponse(UserReponse.genericReponse)
+  @ApiResponse(GenericResponse.response)
   remove(@Param() deleteUserDto: DeleteUserDto) {
     this.logger.log('Eliminando usuario');
     return this.userService.remove(deleteUserDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/photo')
+  @ApiOperation({ summary: 'Registar la foto del usuario , no mayor 5MB' })
+  @UseInterceptors(FileInterceptor('file', { fileFilter: fileFilter }))
+  @ApiResponse(GenericResponse.response)
+  savePhotoUser(@UploadedFile() file: Express.Multer.File, @User() user: UserEntity) {
+    this.logger.log('Registrando foto usuario');
+    maxSizeFile(file);
+    return this.userService.savePhotoUser(file, user);
   }
 }

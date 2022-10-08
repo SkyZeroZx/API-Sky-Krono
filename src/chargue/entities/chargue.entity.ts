@@ -11,7 +11,6 @@ export class Chargue {
   @IsNotEmpty()
   name: string;
 
-
   @Column({ type: 'varchar', length: 255 })
   @IsNotEmpty()
   description: string;

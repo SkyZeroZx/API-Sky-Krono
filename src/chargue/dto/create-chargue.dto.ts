@@ -12,5 +12,5 @@ export class CreateChargueDto {
   @IsString()
   @MinLength(2)
   @MaxLength(255)
-  name : string
+  name: string;
 }

@@ -3,7 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as superTest from 'supertest';
 import { AppModule } from '../../../src/app.module';
 import { AuthModule } from '../../../src/auth/auth.module';
-import { Constant } from '../../../src/common/constants/Constant';
+import { Constants } from '../../../src/common/constants/Constant';
 import { TaskModule } from '../../../src/task/task.module';
 import { UserService } from '../../../src/user/user.service';
 import { AuthMockServiceE2E } from '../auth.mock.e2e.spec';
@@ -58,7 +58,7 @@ describe('Guard Strategy (e2e)', () => {
     // Igualmente con nuestra variables globares
     const { password, ...expectUserHabilitado } = userLoginOk;
     // Validamos la respuesta de nuestro servicio contra los datos de la variables
-    expect(message).toEqual(Constant.MENSAJE_OK);
+    expect(message).toEqual(Constants.MSG_OK);
     expect(token).toBeDefined();
     expect(recivedtUserHabilitado).toEqual(expectUserHabilitado);
     const spyGetUserById = jest

@@ -1,17 +1,4 @@
-import { getSchemaPath } from '@nestjs/swagger';
-import { User as UserEntity } from '../../../user/entities/user.entity';
 export class TaskResponse {
-  public static readonly genericReponse = {
-    status: 201,
-    description: 'Repuesta del servicio exitoso',
-    schema: {
-      properties: {
-        message: { type: 'string', description: 'Mensaje de respuesta exitoso' },
-        info: { type: 'string', description: 'Informacion relacionada' },
-      },
-    },
-  };
-
   public static readonly getUserByTask = {
     status: 201,
     description: 'Devolucion exitosa',

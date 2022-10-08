@@ -4,7 +4,8 @@ import { CreateUserDto } from '../../src/user/dto/create-user.dto';
 import * as config from '../config-e2e.json';
 const {
   users: {
-    userUpdate: { username, id, status }, userLoginOk : { username: usernameLoginOk}
+    userUpdate: { username, id, status },
+    userLoginOk: { username: usernameLoginOk },
   },
 } = config.env;
 export class UserMockE2E {
@@ -46,9 +47,9 @@ export class UserMockE2E {
     },
   };
 
-  static readonly deleteUserDto : DeleteUserDto = {
-    id: id
-  }
+  static readonly deleteUserDto: DeleteUserDto = {
+    id: id,
+  };
 
   readonly createUserNew: CreateUserDto = {
     username: `${this.generateRandomString(10)}@mail.com`,

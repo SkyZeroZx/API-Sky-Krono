@@ -1,4 +1,3 @@
- 
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
@@ -9,5 +8,4 @@ export class CreateAttendanceDto {
   @MinLength(2)
   @MaxLength(255)
   description: string;
- 
 }

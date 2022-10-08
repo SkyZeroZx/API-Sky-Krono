@@ -13,12 +13,13 @@ import {
 } from 'typeorm';
 import { MinLength, IsNotEmpty, IsEmail, MaxLength } from 'class-validator';
 import * as bcrypt from 'bcryptjs';
-import { Notificacion } from '../../notificacion/entities/notificacion.entity';
 import { TaskToUser } from '../../task_to_user/entities/task_to_user.entity';
-import { Constant } from '../../common/constants/Constant';
+import { Constants } from '../../common/constants/Constant';
 import { Chargue } from '../../chargue/entities/chargue.entity';
 import { Schedule } from '../../schedule/entities/schedule.entity';
 import { Attendance } from '../../attendance/entities/attendance.entity';
+import { Licence } from '../../licence/entities/licence.entity';
+import { Notification } from '../../notification/entities/notification.entity';
 
 @Entity()
 @Unique(['username'])
@@ -28,10 +29,13 @@ export class User {
     nullable: false,
   })
   @JoinColumn()
-  @OneToMany(() => Notificacion, (Notificacion) => Notificacion.id, {
+  @OneToMany(() => Notification, (Notificacion) => Notificacion.id, {
     nullable: false,
   })
   @OneToMany(() => Attendance, (Attendance) => Attendance.id, {
+    nullable: false,
+  })
+  @OneToMany(() => Licence, (Licence) => Licence.id, {
     nullable: false,
   })
   id: number;
@@ -124,7 +128,7 @@ export class User {
 
   @BeforeUpdate()
   async firstLoginStatus() {
-    if (this.status === Constant.STATUS_USER.HABILITADO) {
+    if (this.status === Constants.STATUS_USER.HABILITADO) {
       this.firstLogin = false;
     } else {
       this.firstLogin = true;

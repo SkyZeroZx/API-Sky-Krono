@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { transporter } from '../config/mailer/mailer';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -10,6 +10,8 @@ import { User } from './entities/user.entity';
 import { generate } from 'generate-password';
 import { Chargue } from '../chargue/entities/chargue.entity';
 import { Schedule } from '../schedule/entities/schedule.entity';
+import { AwsS3Service } from '../aws-s3/aws-s3.service';
+import { fileNamer } from '../common/helpers';
 
 @Injectable()
 export class UserService {
@@ -17,11 +19,12 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly awsS3Service: AwsS3Service,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
     const { message } = await this.findByEmail(createUserDto.username);
-    if (message !== Constant.MENSAJE_OK) {
+    if (message !== Constants.MSG_OK) {
       return { message: message };
     }
 
@@ -45,10 +48,10 @@ export class UserService {
         from: 'Sky Krono',
         to: createUserDto.username,
         subject: 'Creacion de nuevo usuario SkyKrono',
-        html: Constant.replaceText(
+        html: Constants.replaceText(
           ['{{username}}', '{{randomPassword}}'],
           [createUserDto.username, generatePassword],
-          Constant.MAIL.CREATE_NEW_USER,
+          Constants.MAIL.CREATE_NEW_USER,
         ),
       });
       this.logger.log(
@@ -62,7 +65,7 @@ export class UserService {
     delete user.password;
     this.logger.log({ message: `Usuario creado exitosamente`, user });
     return {
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Usuario Creado Correctamente',
       user,
     };
@@ -89,7 +92,7 @@ export class UserService {
       this.logger.error(`Sucedio un error al realizar la busqueda del usuario ${email}`, { error });
       throw new InternalServerErrorException({ message: 'Sucedio un error' });
     }
-    return { message: Constant.MENSAJE_OK };
+    return { message: Constants.MSG_OK };
   }
 
   async findAll() {
@@ -112,6 +115,7 @@ export class UserService {
       .addSelect('SCHEDULE.name', 'schedule')
       .innerJoin(Chargue, 'CHARGUE', 'CHARGUE.id = USER.codChargue')
       .innerJoin(Schedule, 'SCHEDULE', 'SCHEDULE.id = USER.codSchedule')
+      .cache(1000)
       .getRawMany();
   }
 
@@ -138,7 +142,7 @@ export class UserService {
 
     this.logger.log({ message: `Se actualizo exitosamente el usuario`, updateUserDto });
     return {
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Usuario Actualizado Correctamente',
     };
   }
@@ -155,7 +159,7 @@ export class UserService {
 
     this.logger.log({ message: 'Se elimino exitosamente al usuario ', deleteUserDto });
     return {
-      message: Constant.MENSAJE_OK,
+      message: Constants.MSG_OK,
       info: 'Usuario Eliminado Correctamente',
     };
   }
@@ -192,18 +196,31 @@ export class UserService {
         })
         .where('username = :username', { username: userCreateNewPassword.username })
         .execute();
-
       if (affected == 1) {
         this.logger.log(`Se cambio satisfactoriamente la contraseña del usuario ${user.username}`);
-        return { message: Constant.MENSAJE_OK, info: 'Se cambio exitosamente la contraseña' };
+        return { message: Constants.MSG_OK, info: 'Se cambio exitosamente la contraseña' };
       }
-
       this.logger.warn(`Sucedio un error al cambiar la contraseña , usuario : ${user.username}`);
-      return { message: 'Sucedio un error al cambiar la contraseña' };
+      throw new InternalServerErrorException('Sucedio un error al cambiar la contraseña');
     } catch (error) {
       this.logger.error(`Sucedio un error al cambiar la contraseña del usuario ${user.username}`);
       this.logger.error(error);
       throw new InternalServerErrorException('Sucedio un error al cambiar la contraseña');
+    }
+  }
+
+  async savePhotoUser(file: Express.Multer.File, { username, id }: User) {
+    this.logger.log(`Registrando el avatar del usuario ${username}`);
+    try {
+      const { Location } = await this.awsS3Service.uploadFile(
+        file.buffer,
+        fileNamer(file, username),
+      );
+      await this.userRepository.update({ id }, { photo: Location });
+      return { message: Constants.MSG_OK, info: 'Se subio exitosamente la foto' };
+    } catch (error) {
+      this.logger.error({ message: 'Sucedio un error al subir foto del usuario', error });
+      throw new InternalServerErrorException('Sucedio un error al subir su foto');
     }
   }
 }

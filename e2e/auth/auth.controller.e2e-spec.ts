@@ -4,7 +4,7 @@ import * as superTest from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { AuthModule } from '../../src/auth/auth.module';
 import * as config from '../config-e2e.json';
-import { Constant } from '../../src/common/constants/Constant';
+import { Constants } from '../../src/common/constants/Constant';
 import { AuthMockServiceE2E } from './auth.mock.e2e.spec';
 import { UserService } from '../../src/user/user.service';
 import { AuthService } from '../../src/auth/auth.service';
@@ -84,7 +84,7 @@ describe('AuthController (e2e)', () => {
     // Igualmente con nuestra variables globares
     const { password, ...expectUserHabilitado } = userLoginOk;
     // Validamos la respuesta de nuestro servicio contra los datos de la variables
-    expect(message).toEqual(Constant.MENSAJE_OK);
+    expect(message).toEqual(Constants.MSG_OK);
     expect(token).toBeDefined();
     expect(recivedtUserHabilitado).toEqual(expectUserHabilitado);
   });
@@ -97,7 +97,7 @@ describe('AuthController (e2e)', () => {
     // Igualmente con nuestra variables globares
     const { password, ...expectUserReseteado } = userReseteado;
     // Validamos la respuesta de nuestro servicio contra los datos de la variables
-    expect(message).toEqual(Constant.MENSAJE_OK);
+    expect(message).toEqual(Constants.MSG_OK);
     expect(token).toBeDefined();
     expect(recivedtUserReseteado).toEqual(expectUserReseteado);
   });
@@ -110,7 +110,7 @@ describe('AuthController (e2e)', () => {
     // Igualmente con nuestra variables globares
     const { password, ...expectUserCreado } = userCreado;
     // Validamos la respuesta de nuestro servicio contra los datos de la variables
-    expect(message).toEqual(Constant.MENSAJE_OK);
+    expect(message).toEqual(Constants.MSG_OK);
     expect(token).toBeDefined();
     expect(recivedtUserCreado).toEqual(expectUserCreado);
   });
@@ -143,7 +143,7 @@ describe('AuthController (e2e)', () => {
     const spyMockOkAuthSaveNewPassword = jest
       .spyOn(userServiceMock, 'saveNewPassword')
       .mockImplementationOnce(async () => {
-        return { message: Constant.MENSAJE_OK, info: 'Todo salio bien soy fake' };
+        return { message: Constants.MSG_OK, info: 'Todo salio bien soy fake' };
       });
 
     const changePassswordOK = await request
@@ -151,7 +151,7 @@ describe('AuthController (e2e)', () => {
       .set(jwtToken)
       .send({ newPassword: 'AdminNewPass@12', oldPassword: userLoginOk.password })
       .expect(201);
-    expect(changePassswordOK.body.message).toEqual(Constant.MENSAJE_OK);
+    expect(changePassswordOK.body.message).toEqual(Constants.MSG_OK);
     expect(spyMockOkAuthSaveNewPassword).toBeCalled();
   });
 
@@ -180,7 +180,7 @@ describe('AuthController (e2e)', () => {
     expect(spyExecute).toBeCalled();
     expect(spyFindByEmailOk).toBeCalled();
     expect(spyCreateQueryBuilderError).toBeCalled();
-    expect(changePassswordExecuteOK.body.message).toEqual(Constant.MENSAJE_OK);
+    expect(changePassswordExecuteOK.body.message).toEqual(Constants.MSG_OK);
   });
 
   it('/CHANGE-PASSWORD (POST) ERROR (MOCK)', async () => {
@@ -266,13 +266,13 @@ describe('AuthController (e2e)', () => {
     const spyMockOkAuthSaveNewPassword = jest
       .spyOn(userServiceMock, 'saveNewPassword')
       .mockImplementation(async () => {
-        return { message: Constant.MENSAJE_OK, info: 'Todo salio bien soy fake' };
+        return { message: Constants.MSG_OK, info: 'Todo salio bien soy fake' };
       });
     const userReseteadoOk = await request
       .post('/auth/reset-password')
       .set(jwtToken)
       .send({ username: userCreado.username, password: 'CUALQUIER_COSA' });
-    expect(userReseteadoOk.body.message).toEqual(Constant.MENSAJE_OK);
+    expect(userReseteadoOk.body.message).toEqual(Constants.MSG_OK);
     expect(spyMockOkAuthSaveNewPassword).toBeCalled();
   });
 
@@ -319,7 +319,7 @@ describe('AuthController (e2e)', () => {
 
   it('/AUTH/VERIFY-REGISTRATION (POST) OK (MOCK)', async () => {
     const spySave = jest.spyOn(authenticationServiceMock, 'save').mockImplementation(async () => {
-      return { message: Constant.MENSAJE_OK };
+      return { message: Constants.MSG_OK };
     });
     const spyVerifyAuthWeb = jest
       .spyOn(webAuthn, 'verifyAuthWeb')
@@ -328,7 +328,7 @@ describe('AuthController (e2e)', () => {
       .post('/auth/verify-registration')
       .set(jwtToken)
       .send({ id: 666 });
-    expect(userGenerateRegistrationOptions.body.message).toEqual(Constant.MENSAJE_OK);
+    expect(userGenerateRegistrationOptions.body.message).toEqual(Constants.MSG_OK);
     // Validamos se llamen nuestro mockeos de nuestras funciones
     expect(spyVerifyAuthWeb).toBeCalled();
     expect(spySave).toBeCalled();

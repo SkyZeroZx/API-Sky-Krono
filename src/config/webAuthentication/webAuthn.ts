@@ -7,16 +7,16 @@ import {
 import { Authentication } from '../../auth/entities/autentication.entity';
 import { User } from '../../user/entities/user.entity';
 
-// Utilitarios de AuthnWeb
+// Utils for Web Authentication
 
 // Human-readable title for your website
-const rpName = 'Sky Calendar App';
+const rpName = 'Sky Krono App';
 // A unique identifier for your website
 const rpID = process.env.RP_ID;
 
-const rpIDArray = JSON.parse(process.env.RP_ID_ARRAY);
+const rpIDArray = JSON.parse(process.env.RP_ID_ARRAY ? process.env.RP_ID_ARRAY : '[]');
 // The URL at which registrations and authentications should occur
-const origin = JSON.parse(process.env.ORIGIN);
+const origin = JSON.parse(process.env.ORIGIN ? process.env.ORIGIN : '[]');
 
 export function generateRegistrationOption(user: User, userAuthenticators: Authentication[]) {
   return generateRegistrationOptions({

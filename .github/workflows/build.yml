@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -10,15 +11,15 @@ jobs:
     name: Build
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
       - name: Run Install Dependences
         run: npm i
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: restore-build
         with:
           path: ./*
@@ -28,20 +29,20 @@ jobs:
     needs: build
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0  
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: restore-build
         with:
           path: ./*
           key: ${{ github.sha }}
       - name: Run All Unit Tests
         run:  npm run test:cov
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: build-unit-test
         with:
           path: ./*
@@ -49,41 +50,19 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: reports-unit-test
-          path: coverage/*
-  e2e-testing: 
-    name: E2E Testing SuperTest
-    needs: build
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 16
-      - uses: actions/cache@v2
-        id: restore-build
-        with:
-          path: ./*
-          key: ${{ github.sha }}
-      - name : E2E Test
-        run: npm run test:e2e:cov
-      - uses: actions/upload-artifact@v3
-        with:
-          name: reports-e2e-test
-          path: coverage-e2e/*          
+          path: coverage/*        
   sonarcloud: 
     name: SonarCloud
     needs: [build , unit-test]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0  
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: build-unit-test
         with:
           path: ./*

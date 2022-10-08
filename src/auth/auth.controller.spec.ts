@@ -1,7 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { UserServiceMock } from '../user/user.mock.spec';
 import { UserService } from '../user/user.service';
 import { AuthController } from './auth.controller';
@@ -60,7 +60,7 @@ describe('AuthController', () => {
       AuthMockService.userResetado,
     );
     expect(spyGenerateToken).toBeCalledWith(AuthMockService.userResetado);
-    expect(loginOkReseteado.message).toEqual(Constant.MENSAJE_OK);
+    expect(loginOkReseteado.message).toEqual(Constants.MSG_OK);
     // Validamos para el caso de usuario HABILITADO
 
     const loginOkHabilitado: any = await controller.login(
@@ -68,7 +68,7 @@ describe('AuthController', () => {
       AuthMockService.userHabilitado,
     );
     expect(spyGenerateToken).toHaveBeenNthCalledWith(2, AuthMockService.userHabilitado);
-    expect(loginOkHabilitado.message).toEqual(Constant.MENSAJE_OK);
+    expect(loginOkHabilitado.message).toEqual(Constants.MSG_OK);
 
     // Validamos para el caso de usuario CREADO
     const loginOkCreado: any = await controller.login(
@@ -77,20 +77,26 @@ describe('AuthController', () => {
     );
     expect(spyGenerateToken).toHaveBeenNthCalledWith(3, AuthMockService.userCreate);
 
-    expect(loginOkHabilitado.message).toEqual(Constant.MENSAJE_OK);
+    expect(loginOkHabilitado.message).toEqual(Constants.MSG_OK);
 
     // En caso contario cualquier otro usuario como el status bloqueado no puede logearse
     let userBloqueado = AuthMockService.userResetado;
-    userBloqueado.status = Constant.STATUS_USER.BLOQUEADO;
-    const loginBloqueado: any = await controller.login(AuthMockService.loginDto, userBloqueado);
+    userBloqueado.status = Constants.STATUS_USER.BLOQUEADO;
+    const loginBloqueado: any = controller.login(AuthMockService.loginDto, userBloqueado);
+
+    await expect(loginBloqueado).rejects.toThrowError(
+      new BadRequestException({
+        message: `El usuario tiene un status ${userBloqueado.status}`,
+      }),
+    );
     expect(spyGenerateToken).not.toBeCalledTimes(4);
-    expect(loginBloqueado).toEqual({
-      message: `El usuario tiene un status ${userBloqueado.status}`,
-    });
   });
 
   it('Validamos generateRegistration', async () => {
-    const spyGenerateRegistrationOption = jest.spyOn(webAuthn, 'generateRegistrationOption');
+    const mockReturn: any = { register: { challenge: null } };
+    const spyGenerateRegistrationOption = jest
+      .spyOn(webAuthn, 'generateRegistrationOption')
+      .mockReturnValueOnce(mockReturn);
     const spyGenerateToken = jest
       .spyOn(authService, 'getUserAuthenticators')
       .mockImplementation(async () => {
@@ -150,7 +156,7 @@ describe('AuthController', () => {
     const { oldPassword, newPassword } = AuthMockService.changePasswordDto;
     let newUserPassword = user;
     newUserPassword.firstLogin = false;
-    newUserPassword.status = Constant.STATUS_USER.HABILITADO;
+    newUserPassword.status = Constants.STATUS_USER.HABILITADO;
     newUserPassword.password = newPassword;
     const spyChangePassword = jest.spyOn(authService, 'changePassword').mockResolvedValue(null);
     await controller.changePassword(AuthMockService.changePasswordDto, user);

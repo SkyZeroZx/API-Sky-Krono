@@ -13,7 +13,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { UserDecorator as User } from '../common/decorators/user.decorator';
 import { User as UserEntity } from '../user/entities/user.entity';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { Constant } from '../common/constants/Constant';
+import { Constants } from '../common/constants/Constant';
 import { LoginDto } from './dtos/login.dto';
 import { ResetUserDto } from './dtos/reset.dto';
 import { ChangePasswordDto } from './dtos/changePasssword.dto';
@@ -40,14 +40,14 @@ export class AuthController {
     this.logger.log('Retornando datos');
     // Segun el status de nuestro usuario retornamos una respuesta
     switch (user.status) {
-      case Constant.STATUS_USER.CREADO:
-      case Constant.STATUS_USER.HABILITADO:
-      case Constant.STATUS_USER.RESETEADO:
+      case Constants.STATUS_USER.CREADO:
+      case Constants.STATUS_USER.HABILITADO:
+      case Constants.STATUS_USER.RESETEADO:
         const data = this.authService.generateToken(user);
-        Object.assign(data, { message: Constant.MENSAJE_OK });
+        Object.assign(data, { message: Constants.MSG_OK });
         return data;
       default:
-        return { message: `El usuario tiene un status ${user.status}` };
+        throw new BadRequestException(`El usuario tiene un status ${user.status}`);
     }
   }
 
@@ -76,14 +76,14 @@ export class AuthController {
   @Post('generate-authentication-options')
   @ApiOperation({ summary: 'Generacion de autentificador usuario a logear' })
   async generateAuthenticationOptions(@Body() user) {
-    this.logger.log('Generando Authentication Options Authn Web username', user.username);
+    this.logger.log({ message: 'Generando Authentication Options Authn Web username', user });
     const userAuthenticators = await this.authService.getUserAuthenticatorsByUsername(
       user.username,
     );
     this.logger.log('userAuthenticators ', userAuthenticators);
     const authOptions = await generateAuthenticationOption(userAuthenticators);
     this.rememberChallenge = authOptions.challenge;
-    this.logger.log('Se genero authOptions', authOptions);
+    this.logger.log({ message: 'Se genero authOptions', authOptions });
     return authOptions;
   }
 
@@ -138,7 +138,7 @@ export class AuthController {
     // En caso sea el primer cambio de contraseña o reseteado cambiamos el status a false
     user.firstLogin = false;
     // Al ser cambio de contraseña el status pasa a ser habilitado
-    user.status = Constant.STATUS_USER.HABILITADO;
+    user.status = Constants.STATUS_USER.HABILITADO;
     return this.authService.changePassword(user, oldPassword);
   }
 }

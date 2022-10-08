@@ -10,7 +10,7 @@ export class Type {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   @IsNotEmpty()
-  typeDescription: string;
+  description: string;
 
   @Column({ type: 'varchar', length: 120 })
   @IsNotEmpty()

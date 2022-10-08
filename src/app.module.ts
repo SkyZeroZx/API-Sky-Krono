@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
-import { NotificacionModule } from './notificacion/notificacion.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   DATABASE_HOST,
@@ -11,6 +10,7 @@ import {
   DATABASE_USERNAME,
   DATABASE_PASSWORD,
   DATABASE_NAME,
+  ENABLED_MYSQL_CACHE,
 } from './common/constants/Constant';
 import { AuthModule } from './auth/auth.module';
 import { TaskModule } from './task/task.module';
@@ -20,6 +20,9 @@ import { ScheduleModule as ScheduleModuleNestJs } from '@nestjs/schedule';
 import { ChargueModule } from './chargue/chargue.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { LicenceModule } from './licence/licence.module';
+import { AwsS3Module } from './aws-s3/aws-s3.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -34,6 +37,7 @@ import { ScheduleModule } from './schedule/schedule.module';
         database: config.get<string>(DATABASE_NAME),
         timezone: 'Z',
         entities: [__dirname + './**/**/*entity{.ts,.js}'],
+        cache: config.get<boolean>(ENABLED_MYSQL_CACHE),
         autoLoadEntities: true,
         synchronize: true,
         logging: false,
@@ -48,11 +52,13 @@ import { ScheduleModule } from './schedule/schedule.module';
     TaskModule,
     TypeModule,
     UserModule,
-    NotificacionModule,
+    NotificationModule,
     TaskToUserModule,
     ChargueModule,
     AttendanceModule,
-    ScheduleModule
+    ScheduleModule,
+    LicenceModule,
+    AwsS3Module,
   ],
   controllers: [AppController],
   providers: [AppService],

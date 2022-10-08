@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Constant } from '../../../common/constants/Constant';
+import { Constants } from '../../../common/constants/Constant';
 
 import { UserService } from '../../../user/user.service';
 import { AuthMockService } from '../../auth.mock.spec';
@@ -77,7 +77,7 @@ describe('JWT Strategy ', () => {
     });
     await expect(jwtStrategy.validate(payloadMock)).rejects.toThrowError(
       new UnauthorizedException({
-        message: `Su usuario no se encuentra autorizado , tiene un status ${Constant.STATUS_USER.BLOQUEADO}`,
+        message: `Su usuario no se encuentra autorizado , tiene un status ${Constants.STATUS_USER.BLOQUEADO}`,
       }),
     );
 
