@@ -13,8 +13,8 @@
 
 - [Pre-Requisitos](#pre-requisitos-)
 - [Instalación](#instalación-)
-  - [Scripts SQL](#Scripts)
-  - [Env](#Environment)
+  - [Scripts SQL](#Scripts-SQL)
+  - [Environment](#Environment)
 - [Desarrollo](#desarrollo-%EF%B8%8F)
   - [Unit-Test](#unit-test)
   - [Build](#build)
@@ -22,7 +22,7 @@
 - [Analisis de Codigo](#analisis-de-codigo-)
 - [Integración Continua](#integración-continua)
 - [Logger](#logger)
-- [Documentacion](#documentacion)
+- [Documentación](#documentacion)
 - [Construido](#construido-con-)
 
 ## Comenzando 🚀

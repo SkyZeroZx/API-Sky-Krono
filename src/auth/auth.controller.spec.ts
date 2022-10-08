@@ -93,7 +93,10 @@ describe('AuthController', () => {
   });
 
   it('Validamos generateRegistration', async () => {
-    const spyGenerateRegistrationOption = jest.spyOn(webAuthn, 'generateRegistrationOption');
+    const mockReturn: any = { register: { challenge: null } };
+    const spyGenerateRegistrationOption = jest
+      .spyOn(webAuthn, 'generateRegistrationOption')
+      .mockReturnValueOnce(mockReturn);
     const spyGenerateToken = jest
       .spyOn(authService, 'getUserAuthenticators')
       .mockImplementation(async () => {

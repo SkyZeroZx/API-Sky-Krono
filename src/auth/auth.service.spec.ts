@@ -170,7 +170,7 @@ describe('AuthService', () => {
       .mockImplementationOnce(async () => {
         return { message: Constants.MSG_OK, info: 'Todo salio bien' };
       });
-    const spyTransporterEmail = jest.spyOn(transporter, 'sendMail');
+    const spyTransporterEmail = jest.spyOn(transporter, 'sendMail').mockImplementationOnce(async () => {return null});
     const resetPassword = await authService.resetPassword(email);
     expect(spySaveNewPassword).toBeCalled();
     expect(resetPassword).toEqual({
