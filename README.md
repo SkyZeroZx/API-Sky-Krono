@@ -1,7 +1,6 @@
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
-
   <h1 align="center">Sky Krono API NestJS</h1>
   <p align="center">Es el API REST para la WebAPP/PWA SkyKrono integrado con Web Authentication para el inicio de sesion passworless</p>
 <p align="center">
@@ -14,14 +13,16 @@
 
 - [Pre-Requisitos](#pre-requisitos-)
 - [Instalación](#instalación-)
+  - [Scripts SQL](#Scripts)
+  - [Env](#Environment)
 - [Desarrollo](#desarrollo-%EF%B8%8F)
   - [Unit-Test](#unit-test)
-  - [E2E-Test](#E2E-test)
   - [Build](#build)
 - [Despligue](#despliegue-)  
 - [Analisis de Codigo](#analisis-de-codigo-)
 - [Integración Continua](#integración-continua)
 - [Logger](#logger)
+- [Documentacion](#documentacion)
 - [Construido](#construido-con-)
 
 ## Comenzando 🚀
@@ -36,7 +37,7 @@ _Software requerido_
 NodeJS >= 14.X
 NPM >= 8.X
 NestJS >= 9.X
-MySQL >=7.X
+MySQL >=8.X
 ```
 
 _Software opcional_
@@ -63,6 +64,20 @@ _Previamente a ejecutar el servidor en desarrollo configurar el archivo .env con
 
 _Dirigirse a la ruta http://localhost:3000/ donde tendra el API REST levantada_
 
+### Scripts SQL
+
+_Se tiene el archivo ```script.sql``` en la raiz del proyecto , el cual contiene los scripts de creacion de Store Procedure y Events/Jobs en MySQL_
+
+_Se requiere ejecutar para el correcto funcionamiento de las tareas programadas como registro de licencias , dias libres de los trabajadores_
+
+![Scripts SQL](/docs/sql/sql.png)
+
+### Environment
+
+_Se tiene el archivo ```env.template``` , el cual posee un ejemplo de cada valor de las valores de entorno para poder desplegarlas en nuestro propio ambiente local o cloud_
+
+![Env](/docs/env/env.png)
+
 ## Desarrollo ⚙️
 
 _Las siguientes instrucciones serviran para ejecutar en su entorno local la pruebas unitarias realizadas para el proyecto_
@@ -78,22 +93,6 @@ _Para ejecutar todos los Unit Test desarrollados en Jest y reporte de cobertura 
 _La carpeta con la cobertura del codigo se creara en la raiz del proyecto con la siguiente ruta coverage/Icov-report/index.html el cual se puede visualizar_
 
 ![Unit Test Coverage](/docs/unit-test/unit-test-coverage.png)
-
-### E2E Test
-
-_Los test fueron desarrollados en Jest con ayuda de SuperTest realizados a la API , para validar el funcionamiento adecuado en un entorno más real_
-
-_Para ejecutar todos los E2E Test y reporte de cobertura de codigo ejecutar el comando_
-
-```
- npm run test:e2e:cov
-```
-
-_La carpeta con la cobertura del codigo se creara en la raiz del proyecto con la siguiente ruta coverage-e2e/Icov-report/index.html el cual se puede visualizar_
-
-![E2E Test Coverage 1](/docs/e2e/e2e-test-1.png)
-
-![E2E Test Coverage 1](/docs/e2e/e2e-test-2.png)
 
 ### Build
 
@@ -162,6 +161,15 @@ _Se creo la carpeta `.github/workflows` con el archivo `build.yml` que contiene 
 ![CI 1](/docs/ci/ci-1.png)
 
 
+## Documentacion
+
+_Se realizo la documentación del API Rest usando Swagger el cual puede encontrar en la ruta http://localhost:3000/docs/  en la configuración por default_
+
+
+![Swagger 1](/docs/swagger/swagger-1.jpg)
+
+![Swagger 2](/docs/swagger/swagger-2.jpg)
+
 ## Logger
 
 _Se integro winston para reemplazar el logger de NestJS para realizar seguimiento y conservacion de los logs segun sea requerido_
@@ -194,6 +202,7 @@ _Las herramientas utilizadas son:_
 - [Prettier](https://prettier.io/) - Formateador de Codigo
 - [WebAuthn](https://webauthn.guide/) - Estándar web del proyecto FIDO2 de la Alianza FIDO
 - [TabNine](https://www.tabnine.com/) - Autocompletador de Codigo
+- [Swagger](https://swagger.io/) - Automatización de Documentación
 - [Winston](https://github.com/winstonjs/winston) - Logger para NodeJS
 
 ## Versionado 📌

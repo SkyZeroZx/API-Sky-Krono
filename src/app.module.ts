@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
-import { NotificacionModule } from './notificacion/notificacion.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   DATABASE_HOST,
@@ -23,6 +22,7 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { LicenceModule } from './licence/licence.module';
 import { AwsS3Module } from './aws-s3/aws-s3.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -52,7 +52,7 @@ import { AwsS3Module } from './aws-s3/aws-s3.module';
     TaskModule,
     TypeModule,
     UserModule,
-    NotificacionModule,
+    NotificationModule,
     TaskToUserModule,
     ChargueModule,
     AttendanceModule,

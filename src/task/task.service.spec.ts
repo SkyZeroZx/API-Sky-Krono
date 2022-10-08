@@ -2,7 +2,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Constants } from '../common/constants/Constant';
-import { NotificacionService } from '../notificacion/notificacion.service';
+import { NotificationService } from '../notification/notification.service';
 import { TaskToUser } from '../task_to_user/entities/task_to_user.entity';
 import { TaskToUserMock } from '../task_to_user/task_to_user.mock.spec';
 import { TaskToUserService } from '../task_to_user/task_to_user.service';
@@ -15,7 +15,7 @@ import { TaskService } from './task.service';
 describe('TaskService', () => {
   let taskService: TaskService;
   let mockService: TaskServiceMock = new TaskServiceMock();
-  let notificacionService: NotificacionService;
+  let notificationService: NotificationService;
   let taskToUserService: TaskToUserService;
 
   beforeEach(async () => {
@@ -27,7 +27,7 @@ describe('TaskService', () => {
           useValue: mockService,
         },
         {
-          provide: NotificacionService,
+          provide: NotificationService,
           useValue: mockService,
         },
         {
@@ -37,7 +37,7 @@ describe('TaskService', () => {
       ],
     }).compile();
     taskService = module.get<TaskService>(TaskService);
-    notificacionService = module.get<NotificacionService>(NotificacionService);
+    notificationService = module.get<NotificationService>(NotificationService);
     taskToUserService = module.get<TaskToUserService>(TaskToUserService);
   });
 
@@ -47,7 +47,7 @@ describe('TaskService', () => {
 
   it('should be defined', () => {
     expect(taskService).toBeDefined();
-    expect(notificacionService).toBeDefined();
+    expect(notificationService).toBeDefined();
     expect(taskToUserService).toBeDefined();
   });
 
@@ -263,7 +263,7 @@ describe('TaskService', () => {
 
   it('Validamos removeTask OK', async () => {
     const spyFindTokensByTask = jest
-      .spyOn(notificacionService, 'findTokensByTask')
+      .spyOn(notificationService, 'findTokensByTask')
       .mockResolvedValueOnce([]);
     const spyDelete = jest.spyOn(mockService, 'delete').mockResolvedValueOnce({ affected: 1 });
     const spySendNotification = jest.spyOn(mockService, 'sendNotification');
@@ -305,13 +305,16 @@ describe('TaskService', () => {
     expect(spyDelete).toBeCalled();
     expect(spyFindTokensByTask).toBeCalled();
     spyDelete.mockResolvedValueOnce({ affected: 0 });
-    const data = await taskService.removeTask(TaskServiceMock.deleteTaskDto);
-    expect(data.message).toEqual('Sucedio un error');
+    await expect(taskService.removeTask(TaskServiceMock.deleteTaskDto)).rejects.toThrowError(
+      new InternalServerErrorException({
+        message: 'Sucedio un error al eliminar la tarea',
+      }),
+    );
   });
 
   it('Validamos removeUserToTask OK', async () => {
     const spyFindTokensByTask = jest
-      .spyOn(notificacionService, 'findTokensByUser')
+      .spyOn(notificationService, 'findTokensByUser')
       .mockResolvedValue([]);
     const spySendNotification = jest.spyOn(mockService, 'sendNotification');
     const spyRemoveTaskToUser = jest
@@ -342,7 +345,7 @@ describe('TaskService', () => {
       .mockResolvedValueOnce({ message: Constants.MSG_OK, info: 'Todo salio bien' });
     const spySendNotification = jest.spyOn(mockService, 'sendNotification');
     const spyFindTokensByUser = jest
-      .spyOn(notificacionService, 'findTokensByUser')
+      .spyOn(notificationService, 'findTokensByUser')
       .mockResolvedValue(TaskServiceMock.tokenByUser);
     const removeUserToTask = await taskService.addUserToTask(TaskToUserMock.taskToUserDto);
 

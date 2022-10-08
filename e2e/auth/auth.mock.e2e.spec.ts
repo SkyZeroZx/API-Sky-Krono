@@ -3,7 +3,7 @@ import { LoginDto } from '../../src/auth/dtos/login.dto';
 import { ResetUserDto } from '../../src/auth/dtos/reset.dto';
 import { Constants } from '../../src/common/constants/Constant';
 import { User } from '../../src/user/entities/user.entity';
- 
+
 export class AuthMockServiceE2E {
   public save = jest.fn();
 
@@ -28,12 +28,12 @@ export class AuthMockServiceE2E {
   public createQueryBuilder = jest.fn(() => ({
     where: this.where,
     select: this.select,
-    update : this.update,
+    update: this.update,
     addSelect: this.addSelect,
     innerJoin: this.innerJoin,
     getRawMany: this.getRawMany,
     execute: this.execute,
-    set : this.set,
+    set: this.set,
     getRawOne: this.getRawOne,
   }));
 
@@ -47,7 +47,6 @@ export class AuthMockServiceE2E {
   public getUserAuthenticatorsById = jest.fn().mockReturnThis();
 
   public getUserAuthenticatorsByUsername = jest.fn().mockReturnThis();
-
 
   public findByEmail = jest.fn().mockReturnThis();
 

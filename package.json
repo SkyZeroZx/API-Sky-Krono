@@ -2,15 +2,16 @@
   "name": "sky-krono-api",
   "version": "1.0.0",
   "description": "Awesome API Krono NestJS",
+  "repository": "https://github.com/SkyZeroZx/API-Sky-Krono",
   "author": "SkyZeroZx",
   "private": true,
   "engines": {
-    "node": "16.16.0"
+    "node": "16.17.0"
   },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"e2e/**/*.ts\"",
     "start": "node dist/main",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -131,8 +132,11 @@
       "!**/*.module.(t|j)s",
       "!**/*.swagger.(t|j)s",
       "!**/*.enum.(t|j)s",
-      "!**/common/*.(t|j)s",
-      "!**/config/*.(t|j)s",
+ 
+      "!**/config/logger/**.(t|j)s",
+      "!**/config/mailer/**.(t|j)s",
+      "!**/config/webAuthentication/**.(t|j)s",
+      "!**/config/webpush/**.(t|j)s",
       "!**common/helpers/*.(t|j)s",
       "!**common/swagger/**.(t|j)s",
       "!**main.(t|j)s"

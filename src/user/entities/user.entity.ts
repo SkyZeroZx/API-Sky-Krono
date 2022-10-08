@@ -13,13 +13,13 @@ import {
 } from 'typeorm';
 import { MinLength, IsNotEmpty, IsEmail, MaxLength } from 'class-validator';
 import * as bcrypt from 'bcryptjs';
-import { Notificacion } from '../../notificacion/entities/notificacion.entity';
 import { TaskToUser } from '../../task_to_user/entities/task_to_user.entity';
 import { Constants } from '../../common/constants/Constant';
 import { Chargue } from '../../chargue/entities/chargue.entity';
 import { Schedule } from '../../schedule/entities/schedule.entity';
 import { Attendance } from '../../attendance/entities/attendance.entity';
 import { Licence } from '../../licence/entities/licence.entity';
+import { Notification } from '../../notification/entities/notification.entity';
 
 @Entity()
 @Unique(['username'])
@@ -29,7 +29,7 @@ export class User {
     nullable: false,
   })
   @JoinColumn()
-  @OneToMany(() => Notificacion, (Notificacion) => Notificacion.id, {
+  @OneToMany(() => Notification, (Notificacion) => Notificacion.id, {
     nullable: false,
   })
   @OneToMany(() => Attendance, (Attendance) => Attendance.id, {

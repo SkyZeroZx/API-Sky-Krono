@@ -79,7 +79,7 @@ export class AuthService {
       const response = await this.userService.saveNewPassword(userReset);
       if (response.message == Constants.MSG_OK) {
         await transporter.sendMail({
-          from: 'SkyCalendar <sky-admin@gmail.com>',
+          from: 'SkyKrono <sky-admin@gmail.com>',
           to: username,
           subject: 'Reseteo de contraseña',
           html: Constants.replaceText(

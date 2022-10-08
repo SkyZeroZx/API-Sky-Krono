@@ -9,13 +9,16 @@ import {
   Logger,
   ParseIntPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Auth } from '../common/decorators/auth.decorator';
+import { GenericResponse } from '../common/swagger/response';
 import { ChargueService } from './chargue.service';
 import { CreateChargueDto } from './dto/create-chargue.dto';
 import { UpdateChargueDto } from './dto/update-chargue.dto';
 
 @ApiTags('Chargue')
 @ApiBearerAuth()
+@Auth('admin')
 @Controller('chargue')
 export class ChargueController {
   private readonly logger = new Logger(ChargueController.name);
@@ -23,6 +26,7 @@ export class ChargueController {
 
   @Post()
   @ApiOperation({ summary: 'Registrar un nuevo Chargue' })
+  @ApiResponse(GenericResponse.response)
   create(@Body() createChargueDto: CreateChargueDto) {
     this.logger.log('Creando Chargue');
     return this.chargueService.create(createChargueDto);
@@ -37,6 +41,7 @@ export class ChargueController {
 
   @Patch()
   @ApiOperation({ summary: 'Actualizar un Chargue' })
+  @ApiResponse(GenericResponse.response)
   update(@Body() updateChargueDto: UpdateChargueDto) {
     this.logger.log('Actualizando Chargue');
     return this.chargueService.update(updateChargueDto);
@@ -44,6 +49,7 @@ export class ChargueController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Elimiar un Chargue' })
+  @ApiResponse(GenericResponse.response)
   remove(@Param('id', ParseIntPipe) id: number) {
     this.logger.log('Elimiando Chargue');
     return this.chargueService.remove(id);

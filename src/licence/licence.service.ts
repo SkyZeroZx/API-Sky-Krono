@@ -27,6 +27,7 @@ export class LicenceService {
       await this.licenceRepository.save(newLicence);
     } catch (error) {
       this.logger.error({ message: 'Sucedio un error al registrar la licencia', error });
+      throw new InternalServerErrorException('Sucedio un error al registrar la licencia');
     }
 
     this.logger.log('Licencia registrada exitosamente');
@@ -51,10 +52,6 @@ export class LicenceService {
       )
       .innerJoin(User, 'USER', 'USER.id = LICENCE.codUser')
       .getRawMany();
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} licence`;
   }
 
   async update(updateLicenceDto: UpdateLicenceDto) {
@@ -86,6 +83,7 @@ export class LicenceService {
       await this.licenceRepository.delete(id);
     } catch (error) {
       this.logger.error({ message: 'Sucedio un error al eliminar la licencia', error });
+      throw new InternalServerErrorException('Sucedio un error al eliminar la licencia');
     }
     this.logger.log('Se elimino exitosamente la licencia');
     return { message: Constants.MSG_OK, info: 'Se elimino exitosamente la licencia' };

@@ -19,7 +19,7 @@ export class TypeService {
     return this.typeRepository.find();
   }
 
-  async createType(createTypeDto: CreateTypeDto) {
+  async create(createTypeDto: CreateTypeDto) {
     this.logger.log({ message: 'Creando nuevo tipo', createTypeDto });
     try {
       await this.typeRepository.save(createTypeDto);
@@ -34,7 +34,7 @@ export class TypeService {
     };
   }
 
-  async updateType(updateTypeDto: UpdateTypeDto) {
+  async update(updateTypeDto: UpdateTypeDto) {
     this.logger.log({ message: 'Creando nuevo tipo', updateTypeDto });
     try {
       const updateSchedule = this.typeRepository.create(updateTypeDto);
@@ -50,11 +50,11 @@ export class TypeService {
       throw new InternalServerErrorException('Sucedio un error al actualizar el Type');
     } catch (error) {
       this.logger.error({ message: 'Sucedio un error al crear nuevo tipo', error });
-      throw new InternalServerErrorException('Sucedio un error al registrar nuevo tipo');
+      throw new InternalServerErrorException('Sucedio un error al actualizar el Type');
     }
   }
 
-  async deleteType(codType: number) {
+  async remove(codType: number) {
     try {
       await this.typeRepository.delete(codType);
     } catch (error) {

@@ -6,28 +6,27 @@ import { Constants } from '../constants/Constant';
 export class Util {
   static formatLocalDate() {
     let date = new Date();
-    return formatInTimeZone(date, process.env.TIME_ZONE, 'yyyy-MM-dd HH:mm');
+    return formatInTimeZone(date, process.env.TZ, 'yyyy-MM-dd HH:mm');
   }
 
   static formatDateId(): number {
     let date = new Date();
-    return parseInt(formatInTimeZone(date, process.env.TIME_ZONE, 'yyyyMMdd'));
+    return parseInt(formatInTimeZone(date, process.env.TZ, 'yyyyMMdd'));
   }
 
   static getDayOfWeek(): number {
     let date = new Date();
-    return parseInt(formatInTimeZone(date, process.env.TIME_ZONE, 'i'));
+    return parseInt(formatInTimeZone(date, process.env.TZ, 'i'));
   }
 
   static validateRegisterDate(schedule: Schedule): boolean {
-    //TODO Validate isPermissions
     const dayOfWeek = Util.getDayOfWeek();
     return schedule[Constants.DAYS_OF_WEEK[dayOfWeek - 1]];
   }
 
   static isLater({ entryHour, toleranceTime }: Schedule): boolean {
     const date = new Date();
-    const currentHour = formatInTimeZone(date, process.env.TIME_ZONE, 'HH:mm');
+    const currentHour = formatInTimeZone(date, process.env.TZ, 'HH:mm');
     const currentTime =
       hoursToMinutes(parseInt(currentHour.slice(0, 2))) + parseInt(currentHour.slice(3, 5));
     const entryHourTime =

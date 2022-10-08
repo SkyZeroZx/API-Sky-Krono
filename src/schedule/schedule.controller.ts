@@ -13,11 +13,13 @@ import {
 import { ScheduleService } from './schedule.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { User as UserEntity } from '../user/entities/user.entity';
 import { UserDecorator as User } from '../common/decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Util } from '../common/utils/util';
+import { Auth } from '../common/decorators/auth.decorator';
+import { GenericResponse } from '../common/swagger/response';
 
 @ApiTags('Schedule')
 @ApiBearerAuth()
@@ -26,15 +28,16 @@ export class ScheduleController {
   private readonly logger = new Logger(ScheduleController.name);
   constructor(private readonly scheduleService: ScheduleService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @Auth('admin')
   @Post()
   @ApiOperation({ summary: 'Crea un nuevo Schedule' })
+  @ApiResponse(GenericResponse.response)
   create(@Body() createScheduleDto: CreateScheduleDto) {
     this.logger.log('Creando nuevo Schedule');
     return this.scheduleService.create(createScheduleDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Auth('admin')
   @Get()
   @ApiOperation({ summary: 'Lista todos los Schedule' })
   findAll() {
@@ -42,17 +45,19 @@ export class ScheduleController {
     return this.scheduleService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Auth('admin')
   @Patch()
-  @ApiOperation({ summary: 'Permite editar un Schedule' })
+  @ApiOperation({ summary: 'Actualiza un Schedule' })
+  @ApiResponse(GenericResponse.response)
   update(@Body() updateScheduleDto: UpdateScheduleDto) {
     this.logger.log('Actualizando Schedule');
     return this.scheduleService.update(updateScheduleDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Auth('admin')
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar un Schedule' })
+  @ApiOperation({ summary: 'Elimina un Schedule' })
+  @ApiResponse(GenericResponse.response)
   remove(@Param('id', ParseIntPipe) id: number) {
     this.logger.log('Eliminando Schedule');
     return this.scheduleService.remove(id);

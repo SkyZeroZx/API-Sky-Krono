@@ -5,7 +5,7 @@ import { CronJob, CronTime } from 'cron';
 import { Repository } from 'typeorm';
 import { Constants } from '../common/constants/Constant';
 import { Util } from '../common/utils/util';
-import { NotificacionService } from '../notificacion/notificacion.service';
+import { NotificationService } from '../notification/notification.service';
 import { User } from '../user/entities/user.entity';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
@@ -18,21 +18,18 @@ export class ScheduleService implements OnModuleInit {
     @InjectRepository(Schedule)
     private readonly scheduleRepository: Repository<Schedule>,
     private readonly schedulerRegistry: SchedulerRegistry,
-    private readonly notificacionService: NotificacionService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   onModuleInit() {
     this.logger.log('Se esta inicializado el servicio Scheduler se registraran los cron jobs');
-    //RESTART_SAVE_CRONS
     this.restartSavedCrons();
   }
 
   async create(createScheduleDto: CreateScheduleDto) {
     this.logger.log({ message: 'Creando un nuevo Schedule', createScheduleDto });
     try {
-      //ADD CRON
       const schedule = await this.scheduleRepository.save(createScheduleDto);
-      console.log('Mi registro guardado es ', schedule);
       this.registerCronJob(schedule);
     } catch (error) {
       this.logger.error({ message: 'Sucedio un error al crear el nuevo Schedule', error });
@@ -79,11 +76,7 @@ export class ScheduleService implements OnModuleInit {
       );
 
       if (affected == 1) {
-        // UPDATE CRON JOB setTime(time: CronTime) or DELETE
-        const updateJob = this.schedulerRegistry.getCronJob(
-          updateScheduleDto.codSchedule.toString(),
-        );
-        updateJob.setTime(new CronTime(Util.formatCronJob(updateScheduleDto as any)));
+        this.updateCronJob(updateScheduleDto);
         this.logger.log('Se actualizo satisfactoriamente el Schedule');
         return { message: Constants.MSG_OK, info: 'Se actualizo exitosamente el Schedule' };
       }
@@ -95,9 +88,49 @@ export class ScheduleService implements OnModuleInit {
     }
   }
 
+  updateCronJob(updateScheduleDto: UpdateScheduleDto): void {
+    if (updateScheduleDto.notificationIsActive) {
+      const updateJob = this.schedulerRegistry.getCronJob(updateScheduleDto.codSchedule.toString());
+      updateJob.setTime(new CronTime(Util.formatCronJob(updateScheduleDto as any)));
+    } else {
+      this.schedulerRegistry.deleteCronJob(updateScheduleDto.codSchedule.toString());
+    }
+  }
+
+  async restartSavedCrons() {
+    const listSchedule = await this.scheduleRepository.find({
+      where: { notificationIsActive: true },
+    });
+    this.logger.log({ message: 'List Schedule Active', listSchedule });
+    listSchedule.forEach((schedule) => {
+      this.registerCronJob(schedule);
+    });
+  }
+
+  registerCronJob(schedule: Schedule) {
+    this.logger.log(`Se va registrar el cron Job ${schedule.name}`);
+
+    const userSyncJob = new CronJob(
+      Util.formatCronJob(schedule),
+      this.sendNotificationBySchedule.bind(this, schedule),
+    );
+    this.schedulerRegistry.addCronJob(schedule.id.toString(), userSyncJob);
+    userSyncJob.start();
+  }
+
+  async sendNotificationBySchedule(schedule: Schedule) {
+    this.logger.log({ message: 'Se van enviar las notificaciones', schedule });
+    const listTokens = await this.notificationService.findTokensBySchedule(schedule.id);
+    listTokens.forEach((token) => {
+      this.notificationService.sendNotification(
+        token.tokenPush,
+        Constants.NOTIFICATION_REMEMBER_ATTEDANCE,
+      );
+    });
+  }
+
   async remove(id: number) {
     try {
-      //DELETE CRON JOB
       await this.scheduleRepository.delete(id);
       this.schedulerRegistry.deleteCronJob(id.toString());
     } catch (error) {
@@ -110,36 +143,5 @@ export class ScheduleService implements OnModuleInit {
       message: Constants.MSG_OK,
       info: 'Se elimino exitosamente el Schedule',
     };
-  }
-
-  async restartSavedCrons() {
-    const listSchedule = await this.scheduleRepository.find({
-      where: { notificationIsActive: true },
-    });
-    this.logger.log({ message: 'List Schedule', listSchedule });
-    listSchedule.forEach((schedule) => {
-      this.registerCronJob(schedule);
-    });
-  }
-
-  registerCronJob(schedule: Schedule) {
-    this.logger.log(`Se va registrar el cron Job ${schedule.name}`);
-    console.log('Cron Time is', Util.formatCronJob(schedule));
-    const userSyncJob = new CronJob(Util.formatCronJob(schedule), () =>
-      this.sendNotificationByScheduler(schedule),
-    );
-    this.schedulerRegistry.addCronJob(schedule.id.toString(), userSyncJob);
-    userSyncJob.start();
-  }
-
-  async sendNotificationByScheduler(schedule: Schedule) {
-    this.logger.log({ message: 'Se van enviar las notificaciones', schedule });
-    const listTokens = await this.notificacionService.findTokensBySchedule(schedule.id);
-    listTokens.forEach((token) => {
-      this.notificacionService.sendNotification(
-        token.tokenPush,
-        Constants.NOTIFICATION_REMEMBER_ATTEDANCE,
-      );
-    });
   }
 }

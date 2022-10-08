@@ -3,12 +3,11 @@ import { DeleteTaskDto } from '../../src/task/dto/delete-task.dto';
 import { TaskToUserDto } from '../../src/task_to_user/dto/task-to-user.dto';
 import * as config from '../config-e2e.json';
 const {
- 
-  users: { userLoginOk, userReseteado,userSuscrito },
+  users: { userLoginOk, userReseteado, userSuscrito },
 }: any = config.env;
 
 export class TaskMockServiceE2E {
-  public save = jest.fn() ;
+  public save = jest.fn();
 
   public delete = jest.fn().mockReturnThis();
 
@@ -80,12 +79,12 @@ export class TaskMockServiceE2E {
     users: [userLoginOk, userReseteado],
   };
 
-  public static readonly taskToUserDto  :TaskToUserDto = {
+  public static readonly taskToUserDto: TaskToUserDto = {
     codUser: userSuscrito.id,
-    codTask: 5
-  }
+    codTask: 5,
+  };
 
-  public static readonly deleteTaskDto : DeleteTaskDto = {
-    codTask: 23
-  }
+  public static readonly deleteTaskDto: DeleteTaskDto = {
+    codTask: 23,
+  };
 }

@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Logger,
   Param,
   ParseIntPipe,
   Patch,
@@ -16,13 +15,22 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TypeResponse } from '../common/swagger/response/type.response';
 import { CreateTypeDto } from './dto/create-type.dto';
 import { UpdateTypeDto } from './dto/update-type.dto';
+import { GenericResponse } from '../common/swagger/response';
+import { Auth } from '../common/decorators/auth.decorator';
 
 @ApiTags('Type')
 @ApiBearerAuth()
 @Controller('type')
 export class TypeController {
-  private readonly logger = new Logger(TypeController.name);
   constructor(private readonly typeService: TypeService) {}
+
+  @Auth('admin')
+  @Post()
+  @ApiOperation({ summary: 'Creación de un nuevo tipo' })
+  @ApiResponse(GenericResponse.response)
+  create(@Body() createTypeDto: CreateTypeDto) {
+    return this.typeService.create(createTypeDto);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get()
@@ -32,24 +40,19 @@ export class TypeController {
     return this.typeService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post()
-  @ApiOperation({ summary: 'Creación de un nuevo tipo' })
-  create(@Body() createTypeDto: CreateTypeDto) {
-    return this.typeService.createType(createTypeDto);
-  }
-
-  @UseGuards(JwtAuthGuard)
+  @Auth('admin')
   @Patch()
   @ApiOperation({ summary: 'Actualización de un tipo' })
+  @ApiResponse(GenericResponse.response)
   update(@Body() updateTypeDto: UpdateTypeDto) {
-    return this.typeService.updateType(updateTypeDto);
+    return this.typeService.update(updateTypeDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Auth('admin')
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un tipo' })
+  @ApiResponse(GenericResponse.response)
   delete(@Param('id', ParseIntPipe) id: number) {
-    return this.typeService.deleteType(id);
+    return this.typeService.remove(id);
   }
 }

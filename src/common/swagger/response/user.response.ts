@@ -12,16 +12,6 @@ export class UserReponse {
       },
     },
   };
-  public static readonly genericReponse = {
-    status: 201,
-    description: 'Repuesta del servicio exitoso',
-    schema: {
-      properties: {
-        message: { type: 'string', description: 'Mensaje de respuesta exitoso' },
-        info: { type: 'string', description: 'Informacion relacionada' },
-      },
-    },
-  };
 
   public static readonly profile = {
     status: 201,

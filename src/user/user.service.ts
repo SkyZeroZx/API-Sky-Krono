@@ -214,7 +214,7 @@ export class UserService {
     try {
       const { Location } = await this.awsS3Service.uploadFile(
         file.buffer,
-        fileNamer(username, file),
+        fileNamer(file, username),
       );
       await this.userRepository.update({ id }, { photo: Location });
       return { message: Constants.MSG_OK, info: 'Se subio exitosamente la foto' };

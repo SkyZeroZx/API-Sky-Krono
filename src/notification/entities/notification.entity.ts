@@ -3,7 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from 't
 import { User } from '../../user/entities/user.entity';
 
 @Entity()
-export class Notificacion {
+export class Notification {
   @PrimaryGeneratedColumn()
   id: number;
 

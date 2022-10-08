@@ -1,5 +1,5 @@
-import { CreateNotificacionDto } from './dto/create-notificacion.dto';
-import { SendNotificacionDto } from './dto/send-notificacion.dto';
+import { CreateNotificationDto } from './dto/create-notification.dto';
+import { SendNotificationDto } from './dto/send-notification.dto';
 
 export class NotificationMockService {
   public save = jest.fn().mockReturnThis();
@@ -21,11 +21,14 @@ export class NotificationMockService {
   public execute = jest.fn().mockReturnThis();
   public getRawMany = jest.fn().mockReturnThis();
   public innerJoin = jest.fn().mockReturnThis();
-  public static readonly createNotificacionDto: CreateNotificacionDto = {
+
+  public static codSchedule: number = 1;
+
+  public static readonly createNotificationDto: CreateNotificationDto = {
     tokenPush: 'TokenPush25',
   };
 
-  public static readonly sendNotificacionDto: SendNotificacionDto = {
+  public static readonly sendNotificationDto: SendNotificationDto = {
     users: [],
   };
 }

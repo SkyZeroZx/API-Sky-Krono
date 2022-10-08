@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Constants } from '../common/constants/Constant';
-import { NotificacionService } from '../notificacion/notificacion.service';
+import { NotificationService } from '../notification/notification.service';
 import { TaskToUserMock } from '../task_to_user/task_to_user.mock.spec';
 import { TaskToUserService } from '../task_to_user/task_to_user.service';
 import { UserServiceMock } from '../user/user.mock.spec';
@@ -24,7 +24,7 @@ describe('TaskController', () => {
           useValue: mockService,
         },
         {
-          provide: NotificacionService,
+          provide: NotificationService,
           useValue: mockService,
         },
         {
@@ -66,13 +66,13 @@ describe('TaskController', () => {
     const spyFindByUser = jest
       .spyOn(taskService, 'findByUser')
       .mockResolvedValueOnce(TaskServiceMock.taskFindAll);
-    const getTaskByUserData = await controller.getTaskByUser(UserServiceMock.mockResultCreateUser);
-    expect(spyFindByUser).toBeCalledWith(UserServiceMock.mockResultCreateUser.id);
+    const getTaskByUserData = await controller.getTaskByUser(UserServiceMock.userMock);
+    expect(spyFindByUser).toBeCalledWith(UserServiceMock.userMock.id);
     expect(getTaskByUserData).toEqual(TaskServiceMock.taskFindAll);
     // Validamos para el caso que findByUser del servicio nos retorne un array vacio
     spyFindByUser.mockResolvedValue([]);
-    const getTaskByUserVoid = await controller.getTaskByUser(UserServiceMock.mockResultCreateUser);
-    expect(spyFindByUser).toHaveBeenNthCalledWith(2, UserServiceMock.mockResultCreateUser.id);
+    const getTaskByUserVoid = await controller.getTaskByUser(UserServiceMock.userMock);
+    expect(spyFindByUser).toHaveBeenNthCalledWith(2, UserServiceMock.userMock.id);
     expect(getTaskByUserVoid).toEqual({ message: 'No se encontraron task' });
   });
 

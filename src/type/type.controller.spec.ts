@@ -1,60 +1,50 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
-import { Type } from './entities/type.entity';
 import { TypeController } from './type.controller';
+import { TypeServiceMock } from './type.mock.spec';
 import { TypeService } from './type.service';
 
 describe('TypeController', () => {
-  let controller: TypeController;
-  let service: TypeService;
-  const listaTypes: Type[] = [
-    {
-      codType: 1,
-      description: 'TEST',
-      backgroundColor: '#ffff',
-      borderColor: '#ffff',
-      start: new Date(),
-      end: new Date(),
-      display: 'TEST DISPLAY',
-    },
-    {
-      codType: 2,
-      description: 'TEST 2',
-      backgroundColor: '#ffff',
-      borderColor: '#ffff',
-      start: new Date(),
-      end: new Date(),
-      display: 'TEST DISPLAY 2',
-    },
-  ];
+  let typeController: TypeController;
+  let typeService: TypeService;
+  let mockService: TypeServiceMock = new TypeServiceMock();
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TypeController],
-      providers: [
-        TypeService,
-        {
-          provide: getRepositoryToken(Type),
-          useClass: Repository,
-        },
-      ],
+      providers: [{ provide: TypeService, useValue: mockService }],
     }).compile();
-
-    controller = module.get<TypeController>(TypeController);
-    service = module.get<TypeService>(TypeService);
+    typeController = module.get<TypeController>(TypeController);
+    typeService = module.get<TypeService>(TypeService);
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(typeController).toBeDefined();
+  });
+
+  it('Validate create', () => {
+    const spyCreate = jest.spyOn(typeService, 'create');
+    typeController.create(TypeServiceMock.createTypeDto);
+    expect(spyCreate).toBeCalledWith(TypeServiceMock.createTypeDto);
+  });
+
+  it('Validate update', () => {
+    const spyUpdate = jest.spyOn(typeService, 'update');
+    typeController.update(TypeServiceMock.updateTypeDto);
+    expect(spyUpdate).toBeCalled();
+  });
+
+  it('Validate remove', () => {
+    const spyRemove = jest.spyOn(typeService, 'remove');
+    typeController.delete(TypeServiceMock.type.codType);
+    expect(spyRemove).toBeCalledWith(TypeServiceMock.type.codType);
   });
 
   it('Validamos findAll', async () => {
-    const spyCreate = jest.spyOn(service, 'findAll').mockImplementation(async () => {
-      return listaTypes;
-    });
-    const types = await controller.findAll();
+    const spyCreate = jest
+      .spyOn(typeService, 'findAll')
+      .mockResolvedValueOnce(TypeServiceMock.listType);
+    const listType = await typeController.findAll();
     expect(spyCreate).toBeCalled();
-    expect(types).toEqual(listaTypes);
+    expect(listType).toEqual(TypeServiceMock.listType);
   });
 });

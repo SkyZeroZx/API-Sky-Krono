@@ -23,10 +23,10 @@ import { Auth } from '../common/decorators/auth.decorator';
 import { UserReponse } from '../common/swagger/response/user.response';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilter, maxSizeFile } from '../common/helpers/fileFilter.helper';
+import { GenericResponse } from '../common/swagger/response';
 
 @ApiTags('Users')
 @ApiBearerAuth()
-//@UseInterceptors(CacheInterceptor)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -62,7 +62,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Patch()
   @ApiOperation({ summary: 'Actualizar usuario de manera administrativa' })
-  @ApiResponse(UserReponse.genericReponse)
+  @ApiResponse(GenericResponse.response)
   update(@Body() updateUserDto: UpdateUserDto) {
     this.logger.log('Actualizando usuario');
     return this.userService.update(updateUserDto);
@@ -71,7 +71,7 @@ export class UserController {
   @Auth('admin')
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar usuario del sistema' })
-  @ApiResponse(UserReponse.genericReponse)
+  @ApiResponse(GenericResponse.response)
   remove(@Param() deleteUserDto: DeleteUserDto) {
     this.logger.log('Eliminando usuario');
     return this.userService.remove(deleteUserDto);
@@ -79,8 +79,9 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Post('/photo')
-  @ApiOperation({ summary: 'Registar la foto del usuario' })
+  @ApiOperation({ summary: 'Registar la foto del usuario , no mayor 5MB' })
   @UseInterceptors(FileInterceptor('file', { fileFilter: fileFilter }))
+  @ApiResponse(GenericResponse.response)
   savePhotoUser(@UploadedFile() file: Express.Multer.File, @User() user: UserEntity) {
     this.logger.log('Registrando foto usuario');
     maxSizeFile(file);

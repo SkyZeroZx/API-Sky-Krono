@@ -214,10 +214,10 @@ describe('AuthService', () => {
 
   it('Validamos getUserAuthenticators', async () => {
     const spyFind = jest.spyOn(mockService, 'find');
-    await authService.getUserAuthenticators(UserServiceMock.mockResultCreateUser);
+    await authService.getUserAuthenticators(UserServiceMock.userMock);
     expect(spyFind).toBeCalledWith({
       where: {
-        codUser: UserServiceMock.mockResultCreateUser.id,
+        codUser: UserServiceMock.userMock.id,
       },
     });
   });
@@ -281,7 +281,7 @@ describe('AuthService', () => {
     });
     const spySave = jest.spyOn(mockService, 'save');
     await authService.saveUserAuthenticators(
-      UserServiceMock.mockResultCreateUser,
+      UserServiceMock.userMock,
       codUser,
       AuthMockService.dataWebAuthn,
     );

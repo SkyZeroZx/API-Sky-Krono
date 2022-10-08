@@ -110,9 +110,14 @@ describe('TaskController (e2e)', () => {
 
   it('/TASK (POST) ERROR (MOCK)', async () => {
     // Validamos el caso que Save de TypeORM de Task falle , lo mockeamos para ello
-    const spySaveTaskError = jest.spyOn(taskRepositoryMock, 'save').mockRejectedValueOnce(new Error('Algo salio mal '));
+    const spySaveTaskError = jest
+      .spyOn(taskRepositoryMock, 'save')
+      .mockRejectedValueOnce(new Error('Algo salio mal '));
     // Hacemos la llamada a nuestro endpoint correspondiente y pasamos la data valida y esperamos un status 500
-    const taskCreateErrorSave = await request.post('/task').send(TaskMockServiceE2E.createTaskDto).expect(500);
+    const taskCreateErrorSave = await request
+      .post('/task')
+      .send(TaskMockServiceE2E.createTaskDto)
+      .expect(500);
     // Validamos las respuestas de nuestro response
     expect(taskCreateErrorSave.body.message).toEqual('Sucedio un error al crear el task');
     expect(spySaveTaskError).toBeCalled();
@@ -122,32 +127,48 @@ describe('TaskController (e2e)', () => {
       .spyOn(taskToUserServiceMock, 'saveTaskToUser')
       .mockRejectedValueOnce(new Error('Algo salio mal '));
 
-    const saveTaskToUserError = await request.post('/task').send(TaskMockServiceE2E.createTaskDto).expect(500);
-    expect(saveTaskToUserError.body.message).toEqual('Sucedio un error al asignar la tarea al usuario');
+    const saveTaskToUserError = await request
+      .post('/task')
+      .send(TaskMockServiceE2E.createTaskDto)
+      .expect(500);
+    expect(saveTaskToUserError.body.message).toEqual(
+      'Sucedio un error al asignar la tarea al usuario',
+    );
     expect(spyTaskToUserServiceError).toBeCalled();
   });
 
   it('/TASK (DELETE) OK (MOCK)', async () => {
-    const {codUser , codTask}  =TaskMockServiceE2E.taskToUserDto
-    const spyDeleteTaskToUser = jest.spyOn(taskToUserRepositoryMock, 'delete').mockResolvedValueOnce(null);
-    const taskDeleteOk = await request.delete(`/task?codTask=${codTask}&codUser=${codUser}`)
-    expect(taskDeleteOk.body.message).toEqual(Constants.MSG_OK)
+    const { codUser, codTask } = TaskMockServiceE2E.taskToUserDto;
+    const spyDeleteTaskToUser = jest
+      .spyOn(taskToUserRepositoryMock, 'delete')
+      .mockResolvedValueOnce(null);
+    const taskDeleteOk = await request.delete(`/task?codTask=${codTask}&codUser=${codUser}`);
+    expect(taskDeleteOk.body.message).toEqual(Constants.MSG_OK);
     expect(spyDeleteTaskToUser).toBeCalled();
   });
 
   it('/TASK (DELETE) ERROR (MOCK)', async () => {
-    const {codUser , codTask}  =TaskMockServiceE2E.taskToUserDto
+    const { codUser, codTask } = TaskMockServiceE2E.taskToUserDto;
     const spyDeleteTaskToUser = jest
       .spyOn(taskToUserRepositoryMock, 'delete')
       .mockRejectedValue(new Error('Sucedio un error'));
-    const taskDeleteError = await request.delete(`/task?codTask=${codTask}&codUser=${codUser}`).expect(500);
-    expect(taskDeleteError.body.message).toEqual('Sucedio un error al eliminar al usuario de la tarea seleccionada');
+    const taskDeleteError = await request
+      .delete(`/task?codTask=${codTask}&codUser=${codUser}`)
+      .expect(500);
+    expect(taskDeleteError.body.message).toEqual(
+      'Sucedio un error al eliminar al usuario de la tarea seleccionada',
+    );
     expect(spyDeleteTaskToUser).toBeCalled();
   });
 
   it('/TASK/ADD_USER (POST) OK', async () => {
-    const spySaveTaskToUserRepositoryOk = jest.spyOn(taskToUserRepositoryMock, 'save').mockResolvedValueOnce(null);
-    const addUsertToTaskOk = await request.post('/task/add_user').send(TaskMockServiceE2E.taskToUserDto).expect(201);
+    const spySaveTaskToUserRepositoryOk = jest
+      .spyOn(taskToUserRepositoryMock, 'save')
+      .mockResolvedValueOnce(null);
+    const addUsertToTaskOk = await request
+      .post('/task/add_user')
+      .send(TaskMockServiceE2E.taskToUserDto)
+      .expect(201);
     expect(addUsertToTaskOk.body.message).toEqual(Constants.MSG_OK);
     expect(spySaveTaskToUserRepositoryOk).toBeCalled();
   });
@@ -156,8 +177,13 @@ describe('TaskController (e2e)', () => {
     const spySaveTaskToUserRepositoryError = jest
       .spyOn(taskToUserRepositoryMock, 'save')
       .mockRejectedValueOnce(new Error('Algo salio mal '));
-    const addUsertToTaskError = await request.post('/task/add_user').send(TaskMockServiceE2E.taskToUserDto).expect(500);
-    expect(addUsertToTaskError.body.message).toEqual('Sucedio un error al agregar al usuario a la tarea seleccionada');
+    const addUsertToTaskError = await request
+      .post('/task/add_user')
+      .send(TaskMockServiceE2E.taskToUserDto)
+      .expect(500);
+    expect(addUsertToTaskError.body.message).toEqual(
+      'Sucedio un error al agregar al usuario a la tarea seleccionada',
+    );
     expect(spySaveTaskToUserRepositoryError).toBeCalled();
   });
 
@@ -175,38 +201,53 @@ describe('TaskController (e2e)', () => {
       dateRange: ['2022-08-13T07:00:00', '2022-08-13T07:00:00'],
       users: [],
     };
-    const updateTaskErrorNotUpdate = await request.patch('/task').send(updateTaskNotExist).expect(200);
+    const updateTaskErrorNotUpdate = await request
+      .patch('/task')
+      .send(updateTaskNotExist)
+      .expect(200);
     expect(updateTaskErrorNotUpdate.body.message).toEqual('No se actualizo ningun registro');
-    const spyExecuteError = jest.spyOn(taskRepositoryMock, 'createQueryBuilder').mockImplementationOnce(async () => {
-      new Error('Algo salio mal');
-    });
+    const spyExecuteError = jest
+      .spyOn(taskRepositoryMock, 'createQueryBuilder')
+      .mockImplementationOnce(async () => {
+        new Error('Algo salio mal');
+      });
 
-    const updateTaskExecuteError = await request.patch('/task').send(updateTaskNotExist).expect(500);
+    const updateTaskExecuteError = await request
+      .patch('/task')
+      .send(updateTaskNotExist)
+      .expect(500);
     expect(updateTaskExecuteError.body.message).toEqual('Sucedio un error al actualizar al task');
     expect(spyExecuteError).toBeCalled();
   });
 
-  it('/TASK/REMOVE_TASK (DELETE) OK (MOCK)', async ()=> {
-    const spyDeleteTaskRepository = jest.spyOn(taskRepositoryMock,'delete').mockResolvedValueOnce({affected:1})
-    const removeTaskOk = await request.delete(`/task/remove_task/${TaskMockServiceE2E.deleteTaskDto.codTask}`)
-    
+  it('/TASK/REMOVE_TASK (DELETE) OK (MOCK)', async () => {
+    const spyDeleteTaskRepository = jest
+      .spyOn(taskRepositoryMock, 'delete')
+      .mockResolvedValueOnce({ affected: 1 });
+    const removeTaskOk = await request.delete(
+      `/task/remove_task/${TaskMockServiceE2E.deleteTaskDto.codTask}`,
+    );
+
     expect(removeTaskOk.body.message).toEqual(Constants.MSG_OK);
-    expect(spyDeleteTaskRepository).toBeCalled()
+    expect(spyDeleteTaskRepository).toBeCalled();
+  });
 
-  })
-
-  it('/TASK/REMOVE_TASK (DELETE) ERROR (MOCK)', async ()=> {
-    const {codTask} = TaskMockServiceE2E.deleteTaskDto
-    const spyDeleteTaskRepositoryError = jest.spyOn(taskRepositoryMock,'delete').mockResolvedValueOnce({affected:0})
-    const removeTaskError= await request.delete(`/task/remove_task/${codTask}`)
+  it('/TASK/REMOVE_TASK (DELETE) ERROR (MOCK)', async () => {
+    const { codTask } = TaskMockServiceE2E.deleteTaskDto;
+    const spyDeleteTaskRepositoryError = jest
+      .spyOn(taskRepositoryMock, 'delete')
+      .mockResolvedValueOnce({ affected: 0 });
+    const removeTaskError = await request.delete(`/task/remove_task/${codTask}`);
     expect(removeTaskError.body.message).toEqual('Sucedio un error');
-    expect(spyDeleteTaskRepositoryError).toBeCalled()
+    expect(spyDeleteTaskRepositoryError).toBeCalled();
 
-
-    const spyDeleteTaskRepositoryInternalError= jest.spyOn(taskRepositoryMock,'delete').mockRejectedValueOnce(new Error('Algo salio mal '));
-    const removeTaskInternalError= await request.delete(`/task/remove_task/${codTask}`).expect(500)
-    expect(spyDeleteTaskRepositoryInternalError).toBeCalled()
-    expect(removeTaskInternalError.body.message).toEqual('Sucedio un error al eliminar la tarea')
-
-  })
+    const spyDeleteTaskRepositoryInternalError = jest
+      .spyOn(taskRepositoryMock, 'delete')
+      .mockRejectedValueOnce(new Error('Algo salio mal '));
+    const removeTaskInternalError = await request
+      .delete(`/task/remove_task/${codTask}`)
+      .expect(500);
+    expect(spyDeleteTaskRepositoryInternalError).toBeCalled();
+    expect(removeTaskInternalError.body.message).toEqual('Sucedio un error al eliminar la tarea');
+  });
 });

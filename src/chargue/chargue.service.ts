@@ -28,7 +28,7 @@ export class ChargueService {
     };
   }
 
-  async findAll() {
+  findAll() {
     this.logger.log('Listando Chargues');
     return this.chargueRepository.find();
   }
