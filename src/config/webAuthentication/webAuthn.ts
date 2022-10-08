@@ -14,7 +14,7 @@ const rpName = 'Sky Krono App';
 // A unique identifier for your website
 const rpID = process.env.RP_ID;
 
-const rpIDArray = JSON.parse(process.env.RP_ID_ARRAY);
+const rpIDArray = JSON.parse(process.env.RP_ID_ARRAY ? process.env.RP_ID_ARRAY : "[localhost,skyzerozx.com]");
 // The URL at which registrations and authentications should occur
 const origin = JSON.parse(process.env.ORIGIN);
 
