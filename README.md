@@ -2,11 +2,33 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
   <h1 align="center">Sky Krono API NestJS</h1>
-  <p align="center">Es el API REST para la WebAPP/PWA SkyKrono integrado con Web Authentication para el inicio de sesion passworless</p>
+  <p align="center">Es el API REST para la WebAPP/PWA SkyKrono integrado con Web Authentication para el inicio de sesion passworless para la 
+          <a href="https://github.com/SkyZeroZx/Sky-Krono-App" target="_blank">Web App SkyKrono</a>
+  </p>
 <p align="center">
- 
-<img src="https://badgen.net/badge/Built%20With/TypeScript/bl" alt="Build With TypeScript" />
-<img src="https://img.shields.io/badge/Made%20for-VSCode-1f425f.svg" alt="Build With TypeScript" />
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=alert_status" alt="Quality Gate" />
+  </a>
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=coverage" alt="Coverage" />
+  </a>
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=vulnerabilities" alt="Vulnerabilities" />
+  </a>
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=bugs" alt="Bugs" />
+  </a>
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=security_rating" alt="Security Rating" />
+  </a>
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=code_smells" alt="Code Smells"/>
+  </a>
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=sqale_rating" alt="Maintainability Rating"/>
+    </a>
+  <img src="https://badgen.net/badge/Built%20With/TypeScript/bl" alt="Build With TypeScript" />
+  <img src="https://img.shields.io/badge/Made%20for-VSCode-1f425f.svg" alt="Build With TypeScript" />
 </p>
 
 ## :ledger: Index
@@ -18,7 +40,7 @@
 - [Desarrollo](#desarrollo-%EF%B8%8F)
   - [Unit-Test](#unit-test)
   - [Build](#build)
-- [Despligue](#despliegue-)  
+- [Despligue](#despliegue-)
 - [Analisis de Codigo](#analisis-de-codigo-)
 - [Integración Continua](#integración-continua)
 - [Logger](#logger)
@@ -66,7 +88,7 @@ _Dirigirse a la ruta http://localhost:3000/ donde tendra el API REST levantada_
 
 ### Scripts SQL
 
-_Se tiene el archivo ```script.sql``` en la raiz del proyecto , el cual contiene los scripts de creacion de Store Procedure y Events/Jobs en MySQL_
+_Se tiene el archivo `script.sql` en la raiz del proyecto , el cual contiene los scripts de creacion de Store Procedure y Events/Jobs en MySQL_
 
 _Se requiere ejecutar para el correcto funcionamiento de las tareas programadas como registro de licencias , dias libres de los trabajadores_
 
@@ -74,7 +96,7 @@ _Se requiere ejecutar para el correcto funcionamiento de las tareas programadas 
 
 ### Environment
 
-_Se tiene el archivo ```env.template``` , el cual posee un ejemplo de cada valor de las valores de entorno para poder desplegarlas en nuestro propio ambiente local o cloud_
+_Se tiene el archivo `env.template` , el cual posee un ejemplo de cada valor de las valores de entorno para poder desplegarlas en nuestro propio ambiente local o cloud_
 
 ![Env](/docs/env/env.png)
 
@@ -104,9 +126,9 @@ _Para generar el build de producción del proyecto ejecutar el siguiente comando
 
 ## Despliegue 👨🏻‍💻
 
-_Para desplegar el proyecto mediante Docker se tiene los archivos ```Dockerfile``` y ```docker-compose.prod.yaml```, los cuales tienen preconfigurado la imagen y dependencias necesarias para levantar el proyecto_
+_Para desplegar el proyecto mediante Docker se tiene los archivos `Dockerfile` y `docker-compose.prod.yaml`, los cuales tienen preconfigurado la imagen y dependencias necesarias para levantar el proyecto_
 
-_Para construir la imagen y ejecutarla tenemos el siguiente comando , el cual tambien tomara nuestras variable de entorno del archivo ```env```_
+_Para construir la imagen y ejecutarla tenemos el siguiente comando , el cual tambien tomara nuestras variable de entorno del archivo `env`_
 
 _Ejecutar el siguiente comando en la raiz del proyecto_
 
@@ -160,11 +182,9 @@ _Se creo la carpeta `.github/workflows` con el archivo `build.yml` que contiene 
 
 ![CI 1](/docs/ci/ci-1.png)
 
-
 ## Documentacion
 
-_Se realizo la documentación del API Rest usando Swagger el cual puede encontrar en la ruta http://localhost:3000/docs/  en la configuración por default_
-
+_Se realizo la documentación del API Rest usando Swagger el cual puede encontrar en la ruta http://localhost:3000/docs/ en la configuración por default_
 
 ![Swagger 1](/docs/swagger/swagger-1.jpg)
 
@@ -182,6 +202,7 @@ DATE_PATTERN=YYYY-MM-DD
 MAX_SIZE=20m
 MAX_DAYS=14d
 ```
+
 _Por default la carpeta donde se guardan los logs es `LOG` , el formato configurado es JSON_
 
 ![LOGGER 1](/docs/logger/logger-1.png)
