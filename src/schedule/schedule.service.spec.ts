@@ -194,11 +194,9 @@ describe('ScheduleService', () => {
   });
 
   it('Validate updateCronJob Disabled Notifications', async () => {
-    const spyDeleteCronJob = jest.spyOn(mockService, 'deleteCronJob');
+    const spyCronJobStop = jest.spyOn(mockService, 'stop');
     scheduleService.updateCronJob(ScheduleServiceMock.disabledNotifications);
-    expect(spyDeleteCronJob).toBeCalledWith(
-      ScheduleServiceMock.updateScheduleDto.codSchedule.toString(),
-    );
+    expect(spyCronJobStop).toBeCalled();
   });
 
   it('Validate restartSavedCrons OK', async () => {

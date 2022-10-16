@@ -1,6 +1,7 @@
 import {
   generateAuthenticationOptions,
   generateRegistrationOptions,
+  VerifiedAuthenticationResponse,
   verifyAuthenticationResponse,
   verifyRegistrationResponse,
 } from '@simplewebauthn/server';
@@ -44,7 +45,7 @@ export function generateRegistrationOption(user: User, userAuthenticators: Authe
   });
 }
 
-export async function verifyAuthWeb(body, expectedChallenge) {
+export async function verifyAuthWeb(body, expectedChallenge: string) {
   try {
     return await verifyRegistrationResponse({
       credential: body,
@@ -53,7 +54,7 @@ export async function verifyAuthWeb(body, expectedChallenge) {
       expectedRPID: rpIDArray,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return error;
   }
 }
@@ -76,7 +77,11 @@ export async function generateAuthenticationOption(userAuthenticators: Authentic
   });
 }
 
-export async function verifyAuthenticationOption(body, expectedChallenge, authenticator) {
+export async function verifyAuthenticationOption(
+  body,
+  expectedChallenge: string,
+  authenticator: Authentication,
+) : Promise<VerifiedAuthenticationResponse> {
   try {
     return verifyAuthenticationResponse({
       credential: body,
@@ -87,6 +92,6 @@ export async function verifyAuthenticationOption(body, expectedChallenge, authen
     });
   } catch (error) {
     console.error(error);
-    return { error: error.message };
+ 
   }
 }

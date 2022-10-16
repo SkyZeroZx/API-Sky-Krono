@@ -4,12 +4,12 @@ import * as superTest from 'supertest';
 import { AppModule } from '../../src/app.module';
 import * as config from '../config-e2e.json';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import webPush from '../../src/config/webpush';
+
 import { Constants } from '../../src/common/constants/Constant';
 import { UserModule } from '../../src/user/user.module';
 import { User } from '../../src/user/entities/user.entity';
 import { UserMockE2E } from './user.mock.e2e.spec';
-import { transporter } from '../../src/config/mailer';
+import { transporter } from '../../src/config/mailer/mailer';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -180,3 +180,7 @@ describe('UserController (e2e)', () => {
     expect(spyDeleteError).toBeCalled();
   });
 });
+function webPush() {
+  throw new Error('Function not implemented.');
+}
+

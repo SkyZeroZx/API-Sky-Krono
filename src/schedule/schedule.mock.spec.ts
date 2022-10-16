@@ -63,10 +63,11 @@ export class ScheduleServiceMock {
 
   public addCronJob = jest.fn().mockReturnThis();
   public start = jest.fn().mockReturnThis();
-
+  public stop = jest.fn().mockReturnThis();
   public getCronJob = jest.fn(() => ({
     setTime: this.setTime,
     start: this.start,
+    stop: this.stop,
   }));
 
   public static readonly cronTimeString: string = '* * * * *';

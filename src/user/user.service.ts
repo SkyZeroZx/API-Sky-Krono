@@ -23,7 +23,7 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const { message } = await this.findByEmail(createUserDto.username);
+    const { message } = await this.findUserByEmail(createUserDto.username);
     if (message !== Constants.MSG_OK) {
       return { message: message };
     }
@@ -71,7 +71,7 @@ export class UserService {
     };
   }
 
-  async findByEmail(email: string) {
+  async findUserByEmail(email: string) {
     let user: User;
     try {
       user = await this.userRepository

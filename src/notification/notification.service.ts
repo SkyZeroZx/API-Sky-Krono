@@ -59,9 +59,9 @@ export class NotificationService {
 
   async findTokensByUser(codUser: number) {
     return this.notificationService
-      .createQueryBuilder('NOTIFICACION')
-      .select('DISTINCT   (NOTIFICACION.tokenPush)', 'tokenPush')
-      .innerJoin(User, 'USER', ' USER.id = NOTIFICACION.codUser')
+      .createQueryBuilder('NOTIFICATION')
+      .select('DISTINCT   (NOTIFICATION.tokenPush)', 'tokenPush')
+      .innerJoin(User, 'USER', ' USER.id = NOTIFICATION.codUser')
       .where('USER.id = :id', {
         id: codUser,
       })
@@ -70,9 +70,9 @@ export class NotificationService {
 
   async findTokensByTask(codTask: number) {
     return this.notificationService
-      .createQueryBuilder('NOTIFICACION')
-      .select('DISTINCT   (NOTIFICACION.tokenPush)', 'tokenPush')
-      .innerJoin(User, 'USER', ' USER.id = NOTIFICACION.codUser')
+      .createQueryBuilder('NOTIFICATION')
+      .select('DISTINCT   (NOTIFICATION.tokenPush)', 'tokenPush')
+      .innerJoin(User, 'USER', ' USER.id = NOTIFICATION.codUser')
       .innerJoin(TaskToUser, 'TASK_TO_USER', ' TASK_TO_USER.codUser = USER.id')
       .where('TASK_TO_USER.codTask = :codTask', {
         codTask: codTask,
@@ -82,9 +82,9 @@ export class NotificationService {
 
   async findTokensBySchedule(codSchedule: number) {
     return this.notificationService
-      .createQueryBuilder('NOTIFICACION')
-      .select('DISTINCT   (NOTIFICACION.tokenPush)', 'tokenPush')
-      .innerJoin(User, 'USER', ' USER.id = NOTIFICACION.codUser')
+      .createQueryBuilder('NOTIFICATION')
+      .select('DISTINCT   (NOTIFICATION.tokenPush)', 'tokenPush')
+      .innerJoin(User, 'USER', ' USER.id = NOTIFICATION.codUser')
       .innerJoin(Schedule, 'SCHEDULE', ' SCHEDULE.id = USER.codSchedule')
       .where('SCHEDULE.id = :codSchedule', {
         codSchedule: codSchedule,
@@ -100,11 +100,11 @@ export class NotificationService {
         tokensPerUser.push(this.findTokensByUser(user.id));
       });
 
-      tokensPerUser = await Promise.all(tokensPerUser);
+      const listTokensPerUser = await Promise.all(tokensPerUser);
 
-      tokensPerUser.forEach((tokens) => {
-        tokens.forEach((token) => {
-          this.sendNotification(token.tokenPush, Constants.NOTIFICATION_NEW_TASK);
+      listTokensPerUser.forEach((tokens) => {
+        tokens.forEach(({tokenPush}) => {
+          this.sendNotification(tokenPush, Constants.NOTIFICATION_NEW_TASK);
         });
       });
 

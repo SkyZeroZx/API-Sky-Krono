@@ -41,7 +41,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Auth('admin')
+  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({ summary: 'Listado de todos los usuarios' })
   @ApiResponse(UserReponse.findAll)

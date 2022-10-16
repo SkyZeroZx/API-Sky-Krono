@@ -89,11 +89,12 @@ export class ScheduleService implements OnModuleInit {
   }
 
   updateCronJob(updateScheduleDto: UpdateScheduleDto): void {
+    const updateJob = this.schedulerRegistry.getCronJob(updateScheduleDto.codSchedule.toString());
     if (updateScheduleDto.notificationIsActive) {
-      const updateJob = this.schedulerRegistry.getCronJob(updateScheduleDto.codSchedule.toString());
       updateJob.setTime(new CronTime(Util.formatCronJob(updateScheduleDto as any)));
+      updateJob.start();
     } else {
-      this.schedulerRegistry.deleteCronJob(updateScheduleDto.codSchedule.toString());
+      updateJob.stop();
     }
   }
 
@@ -109,7 +110,6 @@ export class ScheduleService implements OnModuleInit {
 
   registerCronJob(schedule: Schedule) {
     this.logger.log(`Se va registrar el cron Job ${schedule.name}`);
-
     const userSyncJob = new CronJob(
       Util.formatCronJob(schedule),
       this.sendNotificationBySchedule.bind(this, schedule),

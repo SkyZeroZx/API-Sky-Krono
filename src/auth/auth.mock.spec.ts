@@ -3,6 +3,7 @@ import { User } from '../user/entities/user.entity';
 import { ChangePasswordDto } from './dtos/changePasssword.dto';
 import { LoginDto } from './dtos/login.dto';
 import { ResetUserDto } from './dtos/reset.dto';
+import { Challenge } from './entities/challenge.entity';
 
 export class AuthMockService {
   public save = jest.fn().mockReturnThis();
@@ -19,6 +20,8 @@ export class AuthMockService {
 
   public getUserById = jest.fn().mockReturnThis();
 
+  public findOneOrFail  = jest.fn().mockReturnThis();
+
   public createQueryBuilder = jest.fn(() => ({
     where: this.where,
     select: this.select,
@@ -28,6 +31,8 @@ export class AuthMockService {
     execute: this.execute,
     getRawOne: this.getRawOne,
   }));
+
+  public upsert = jest.fn().mockReturnThis();
 
   public changePassword = jest.fn().mockReturnThis();
 
@@ -66,6 +71,12 @@ export class AuthMockService {
   public addSelect = jest.fn().mockReturnThis();
 
   public getRawOne = jest.fn().mockReturnThis();
+
+  public findUserByEmail = jest.fn().mockReturnThis();
+
+  public getCurrentChallenge = jest.fn().mockReturnThis();
+
+  public registerCurrentChallenge = jest.fn().mockReturnThis();
 
   public sign = jest
     .fn()
@@ -232,5 +243,17 @@ export class AuthMockService {
       credentialDeviceType: null,
       credentialBackedUp: true,
     },
+  };
+
+  public static readonly challenge: Challenge = {
+    id: '1',
+    codUser: 1,
+    username: 'skyzerozx@mail.com',
+    currentChallenge: 'mockChallengeUnitTest',
+  };
+
+  public static readonly samePassword: ChangePasswordDto = {
+    oldPassword: 'samePassword123',
+    newPassword: 'samePassword123',
   };
 }

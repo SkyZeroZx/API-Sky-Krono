@@ -25,6 +25,9 @@ export class UserMockE2E {
     motherLastName: 'Exist',
     fatherLastName: 'Exist',
     role: 'admin',
+    codChargue: 0,
+    codSchedule: 0,
+    phone: ''
   };
 
   static readonly updateUserExist: UpdateUserDto = {
@@ -37,7 +40,7 @@ export class UserMockE2E {
     fatherLastName: 'TEST E2E API',
     createdAt: new Date(),
     updateAt: new Date(),
-    role: 'viewer',
+    role: 'employee',
     firstLogin: false,
     hashPassword: function (): Promise<void> {
       return;
@@ -56,6 +59,9 @@ export class UserMockE2E {
     name: 'TEST E2E API',
     motherLastName: 'TEST E2E API',
     fatherLastName: 'TEST E2E API',
-    role: 'viewer',
+    role: 'employee',
+    codChargue: 0,
+    codSchedule: 0,
+    phone: ''
   };
 }

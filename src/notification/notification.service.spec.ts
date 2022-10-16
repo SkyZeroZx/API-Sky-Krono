@@ -12,7 +12,7 @@ import { NotificationMockService } from './notification.mock.spec';
 import * as webpush from 'web-push';
 import { Schedule } from '../schedule/entities/schedule.entity';
 
-describe('NotificacionService', () => {
+describe('NotificationService', () => {
   let notificationService: NotificationService;
   let mockService: NotificationMockService = new NotificationMockService();
   beforeEach(async () => {
@@ -118,9 +118,9 @@ describe('NotificacionService', () => {
 
     // Llamamos nuestro servicio y le paso el codUser
     await notificationService.findTokensByUser(1);
-    expect(spyCreateQueryBuilder).toBeCalledWith('NOTIFICACION');
-    expect(spySelect).toBeCalledWith('DISTINCT   (NOTIFICACION.tokenPush)', 'tokenPush');
-    expect(spyInnerJoin).toBeCalledWith(User, 'USER', ' USER.id = NOTIFICACION.codUser');
+    expect(spyCreateQueryBuilder).toBeCalledWith('NOTIFICATION');
+    expect(spySelect).toBeCalledWith('DISTINCT   (NOTIFICATION.tokenPush)', 'tokenPush');
+    expect(spyInnerJoin).toBeCalledWith(User, 'USER', ' USER.id = NOTIFICATION.codUser');
     expect(spyWhere).toBeCalledWith('USER.id = :id', {
       id: 1,
     });
@@ -135,13 +135,13 @@ describe('NotificacionService', () => {
     const spyGetRawMany = jest.spyOn(mockService, 'getRawMany');
     // Llamamos nuestro servicio y le paso el codUser
     await notificationService.findTokensByTask(1);
-    expect(spyCreateQueryBuilder).toBeCalledWith('NOTIFICACION');
-    expect(spySelect).toBeCalledWith('DISTINCT   (NOTIFICACION.tokenPush)', 'tokenPush');
+    expect(spyCreateQueryBuilder).toBeCalledWith('NOTIFICATION');
+    expect(spySelect).toBeCalledWith('DISTINCT   (NOTIFICATION.tokenPush)', 'tokenPush');
     expect(spyInnerJoin).toHaveBeenNthCalledWith(
       1,
       User,
       'USER',
-      ' USER.id = NOTIFICACION.codUser',
+      ' USER.id = NOTIFICATION.codUser',
     );
     expect(spyInnerJoin).toHaveBeenNthCalledWith(
       2,
@@ -218,13 +218,13 @@ describe('NotificacionService', () => {
     const spyWhere = jest.spyOn(mockService, 'where');
     const spyGetRawMany = jest.spyOn(mockService, 'getRawMany');
     await notificationService.findTokensBySchedule(NotificationMockService.codSchedule);
-    expect(spyCreateQueryBuilder).toBeCalledWith('NOTIFICACION');
-    expect(spySelect).toBeCalledWith('DISTINCT   (NOTIFICACION.tokenPush)', 'tokenPush');
+    expect(spyCreateQueryBuilder).toBeCalledWith('NOTIFICATION');
+    expect(spySelect).toBeCalledWith('DISTINCT   (NOTIFICATION.tokenPush)', 'tokenPush');
     expect(spyInnerJoin).toHaveBeenNthCalledWith(
       1,
       User,
       'USER',
-      ' USER.id = NOTIFICACION.codUser',
+      ' USER.id = NOTIFICATION.codUser',
     );
     expect(spyInnerJoin).toHaveBeenNthCalledWith(
       2,

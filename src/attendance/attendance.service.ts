@@ -100,11 +100,6 @@ export class AttendanceService {
   }
 
   async findOne(user: User) {
-    const scheduleByUser = await this.scheduleService.findScheduleByUser(user.id);
-    if (!Util.validateRegisterDate(scheduleByUser)) {
-      throw new BadRequestException('Se encuentra fuera de horario');
-    }
-
     try {
       return await this.attendanceRepository.findOneBy({
         codUser: user.id,

@@ -45,7 +45,7 @@ describe('UserService', () => {
   it('Validate Create Ok', async () => {
     // Ahora validamos para el caso OK
     const spyFindByEmailMockOk = jest
-      .spyOn(userService, 'findByEmail')
+      .spyOn(userService, 'findUserByEmail')
       .mockImplementationOnce(async () => UserServiceMock.mockResultOk);
     const spySave = jest.spyOn(mockService, 'save');
     const spyCreate = jest.spyOn(mockService, 'create').mockImplementationOnce(() => {
@@ -66,9 +66,9 @@ describe('UserService', () => {
   });
 
   it('Validate Create Error', async () => {
-    // Espiamos y mockeamos findByEmail , se evaluara el caso donde es diferente de Constant.MENSAJE_OK
+    // Espiamos y mockeamos findUserByEmail , se evaluara el caso donde es diferente de Constant.MENSAJE_OK
     const spyFindByEmailMockSomething = jest
-      .spyOn(userService, 'findByEmail')
+      .spyOn(userService, 'findUserByEmail')
       .mockImplementation(async () => {
         return { message: 'SOMETHING' };
       });
@@ -81,7 +81,7 @@ describe('UserService', () => {
 
     // Validamos el caso la funcion save de error
     const spyFindByEmailMockOk = jest
-      .spyOn(userService, 'findByEmail')
+      .spyOn(userService, 'findUserByEmail')
       .mockImplementation(async () => UserServiceMock.mockResultOk);
     // Mockeamos la funciona save de mockService para que nos retorne error
     const mockSaveError = jest
@@ -122,7 +122,7 @@ describe('UserService', () => {
     // Realizamos el mockeo para que solo una vez nos retorne el valor null
     mockService.getOne.mockReturnValueOnce(false);
     // Llamamos nuestra funcion findByEmail y le paso el email fake
-    const userNoExist = await userService.findByEmail(username);
+    const userNoExist = await userService.findUserByEmail(username);
     // Validamos que nuestros mocks fueran llamado
     expect(spyQueryBuilder).toHaveBeenNthCalledWith(1, 'user');
     expect(spyGetOne).toBeCalledTimes(1);
@@ -134,7 +134,7 @@ describe('UserService', () => {
     // Ahora validamos para el caso nos retorne un usuario
     mockService.getOne.mockReturnValueOnce(UserServiceMock.userMock);
     // Llamamos nuestra funcion findByEmail y le paso el email fake
-    const userExist = await userService.findByEmail(username);
+    const userExist = await userService.findUserByEmail(username);
     // Validamos que nuestros espias fueran llamados en este caso por segunda vez
     expect(spyQueryBuilder).toHaveBeenNthCalledWith(2, 'user');
     expect(spyGetOne).toBeCalledTimes(2);
@@ -151,7 +151,7 @@ describe('UserService', () => {
     // Forzamos a getOne a que nos retorne un error para entrar en la exception de nuestro try catch
     mockService.getOne.mockRejectedValueOnce(new Error('Sucedio un error'));
     //Validamos el lanzamiento de nuestra excepcion InternalServerErrorException
-    await expect(userService.findByEmail('errormail@example.mail.to')).rejects.toThrowError(
+    await expect(userService.findUserByEmail('errormail@example.mail.to')).rejects.toThrowError(
       new InternalServerErrorException({ message: 'Sucedio un error' }),
     );
   });

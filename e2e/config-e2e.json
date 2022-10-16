@@ -81,7 +81,7 @@
         "name": "TEST E2E API",
         "fatherLastName": "TEST E2E API",
         "motherLastName": "TEST E2E API",
-        "rol": "viewer",
+        "rol": "employee",
         "status": "CREADO"
       },
       "userViewer": {

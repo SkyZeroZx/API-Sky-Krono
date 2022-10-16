@@ -1,4 +1,4 @@
-import { InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -11,6 +11,7 @@ import { UserService } from '../user/user.service';
 import { AuthMockService } from './auth.mock.spec';
 import { AuthService } from './auth.service';
 import { Authentication } from './entities/autentication.entity';
+import { Challenge } from './entities/challenge.entity';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -18,6 +19,7 @@ describe('AuthService', () => {
   let jwtService: JwtService;
   let mockService: AuthMockService = new AuthMockService();
   const { email, pass, codUser } = AuthMockService.userMockData;
+  const { currentChallenge } = AuthMockService.challenge;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,7 +29,10 @@ describe('AuthService', () => {
           provide: getRepositoryToken(Authentication),
           useValue: mockService,
         },
-
+        {
+          provide: getRepositoryToken(Challenge),
+          useValue: mockService,
+        },
         {
           provide: JwtService,
           useValue: mockService,
@@ -52,12 +57,14 @@ describe('AuthService', () => {
     expect(authService).toBeDefined();
   });
 
-  it('Validamos validateUser', async () => {
+  it('Validate validateUser', async () => {
     const { password: passwordEncripted } = UserServiceMock.mockFindAllUserData[0];
 
-    const spyFindByEmail = jest.spyOn(userService, 'findByEmail').mockImplementation(async () => {
-      return { user: undefined, message: 'devolvi user undefined' };
-    });
+    const spyFindByEmail = jest
+      .spyOn(userService, 'findUserByEmail')
+      .mockImplementation(async () => {
+        return { user: undefined, message: 'devolvi user undefined' };
+      });
     const spyCompare = jest.spyOn(bcrypt, 'compare').mockImplementation(async () => {
       return true;
     });
@@ -85,11 +92,12 @@ describe('AuthService', () => {
     expect(valiteUserFalseCompare).toBeNull();
   });
 
-  it('Validamos changePassword Ok', async () => {
-    const { password: passwordEncripted } = UserServiceMock.mockFindAllUserData[0];
-    const spyFindByEmail = jest.spyOn(userService, 'findByEmail').mockImplementation(async () => {
-      return { user: UserServiceMock.mockFindAllUserData[0], message: Constants.MSG_OK };
-    });
+  it('Validate changePassword Ok', async () => {
+    const spyFindByEmail = jest
+      .spyOn(userService, 'findUserByEmail')
+      .mockImplementation(async () => {
+        return { user: UserServiceMock.mockFindAllUserData[0], message: Constants.MSG_OK };
+      });
     const spyCompare = jest.spyOn(bcrypt, 'compare').mockImplementation(async () => {
       return true;
     });
@@ -100,18 +108,36 @@ describe('AuthService', () => {
         return null;
       });
 
-    await authService.changePassword(UserServiceMock.mockFindAllUserData[0], pass);
+    await authService.changePassword(
+      UserServiceMock.mockFindAllUserData[0],
+      AuthMockService.changePasswordDto,
+    );
 
     expect(spyFindByEmail).toBeCalled();
-    expect(spyCompare).toBeCalledWith(pass, passwordEncripted);
+    expect(spyCompare).toBeCalled();
     expect(spySaveNewPassword).toBeCalled();
   });
 
-  it('Validamos changePassword Error', async () => {
+  it('Validate ChangePassword error same oldPassword & newPassword', async () => {
+    await expect(
+      authService.changePassword(
+        UserServiceMock.mockFindAllUserData[0],
+        AuthMockService.samePassword,
+      ),
+    ).rejects.toThrowError(
+      new BadRequestException({
+        message: 'No puede repetir la contraseña antigua para la nueva contraseña',
+      }),
+    );
+  });
+
+  it('Validate changePassword Error', async () => {
     const { password: passwordEncripted } = UserServiceMock.mockFindAllUserData[0];
-    const spyFindByEmail = jest.spyOn(userService, 'findByEmail').mockImplementation(async () => {
-      return { user: UserServiceMock.mockFindAllUserData[0], message: Constants.MSG_OK };
-    });
+    const spyFindByEmail = jest
+      .spyOn(userService, 'findUserByEmail')
+      .mockImplementation(async () => {
+        return { user: UserServiceMock.mockFindAllUserData[0], message: Constants.MSG_OK };
+      });
     const spyCompare = jest.spyOn(bcrypt, 'compare').mockImplementation(async () => {
       return false;
     });
@@ -119,7 +145,10 @@ describe('AuthService', () => {
     const spySaveNewPassword = jest.spyOn(userService, 'saveNewPassword');
 
     await expect(
-      authService.changePassword(UserServiceMock.mockFindAllUserData[0], pass),
+      authService.changePassword(
+        UserServiceMock.mockFindAllUserData[0],
+        AuthMockService.changePasswordDto,
+      ),
     ).rejects.toThrowError(
       new InternalServerErrorException({
         message: 'Hubo un error al cambiar la contraseña , validar',
@@ -131,12 +160,14 @@ describe('AuthService', () => {
     expect(spySaveNewPassword).not.toBeCalled();
   });
 
-  it('Validamos generateTokenWithAuthnWeb', async () => {
+  it('Validate generateTokenWithAuthnWeb', async () => {
     const { password, ...user } = UserServiceMock.mockFindAllUserData[0];
     const spyJwtServiceSing = jest.spyOn(jwtService, 'sign');
-    const spyFindByEmail = jest.spyOn(userService, 'findByEmail').mockImplementation(async () => {
-      return { user: UserServiceMock.mockFindAllUserData[0], message: Constants.MSG_OK };
-    });
+    const spyFindByEmail = jest
+      .spyOn(userService, 'findUserByEmail')
+      .mockImplementation(async () => {
+        return { user: UserServiceMock.mockFindAllUserData[0], message: Constants.MSG_OK };
+      });
 
     const spyGenerateToken = jest.spyOn(authService, 'generateToken');
     const generateTokenWithAuthnWeb = await authService.generateTokenWithAuthnWeb(email);
@@ -151,10 +182,10 @@ describe('AuthService', () => {
     expect(generateTokenWithAuthnWeb).toEqual({ ...user, token: AuthMockService.token });
   });
 
-  it('Validamos generateToken', async () => {
+  it('Validate generateToken', async () => {
     const { password, ...user } = UserServiceMock.mockFindAllUserData[0];
     const spyJwtServiceSing = jest.spyOn(jwtService, 'sign');
-    const generateToken = await authService.generateToken(UserServiceMock.mockFindAllUserData[0]);
+    const generateToken = authService.generateToken(UserServiceMock.mockFindAllUserData[0]);
     expect(spyJwtServiceSing).toBeCalledWith({
       userId: user.id,
       username: user.username,
@@ -164,13 +195,46 @@ describe('AuthService', () => {
     expect(generateToken).toEqual({ ...user, token: AuthMockService.token });
   });
 
-  it('Validamos resetPassword OK', async () => {
+  it('Validate generateToken status create', async () => {
+    const spyJwtServiceSing = jest.spyOn(jwtService, 'sign');
+    const userReseteado: User = {
+      id: 1,
+      username: 'skyzerozx@mail.com',
+      role: 'admin',
+      firstLogin: false,
+      status: Constants.STATUS_USER.CREADO,
+    } as any;
+    authService.generateToken(userReseteado);
+    expect(spyJwtServiceSing).toBeCalled();
+  });
+
+  it('Validate generateToken Status Invalid', async () => {
+    const userInvalidStatus: User = {
+      id: 1,
+      username: 'skyzerozx@mail.com',
+      role: 'admin',
+      firstLogin: false,
+      status: Constants.STATUS_USER.BLOQUEADO,
+    } as any;
+
+    try {
+      authService.generateToken(userInvalidStatus);
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
+    }
+  });
+
+  it('Validate resetPassword OK', async () => {
     const spySaveNewPassword = jest
       .spyOn(userService, 'saveNewPassword')
       .mockImplementationOnce(async () => {
         return { message: Constants.MSG_OK, info: 'Todo salio bien' };
       });
-    const spyTransporterEmail = jest.spyOn(transporter, 'sendMail').mockImplementationOnce(async () => {return null});
+    const spyTransporterEmail = jest
+      .spyOn(transporter, 'sendMail')
+      .mockImplementationOnce(async () => {
+        return null;
+      });
     const resetPassword = await authService.resetPassword(email);
     expect(spySaveNewPassword).toBeCalled();
     expect(resetPassword).toEqual({
@@ -180,7 +244,7 @@ describe('AuthService', () => {
     expect(spyTransporterEmail).toBeCalled();
   });
 
-  it('Validamos resetPassword Error', async () => {
+  it('Validate resetPassword Error', async () => {
     const spySaveNewPassword = jest
       .spyOn(userService, 'saveNewPassword')
       .mockImplementationOnce(async () => {
@@ -189,40 +253,23 @@ describe('AuthService', () => {
         });
       });
     const spyTransporterEmail = jest.spyOn(transporter, 'sendMail');
-    //Validamos que se lance nuestra exception y la capturamos para validar
     await expect(authService.resetPassword(email)).rejects.toThrowError(
-      new InternalServerErrorException({
-        message: 'Hubo un error al enviar el correo de reseteo',
-      }),
+      new InternalServerErrorException('Hubo un error al enviar el correo de reseteo'),
     );
     expect(spyTransporterEmail).not.toBeCalled();
     expect(spySaveNewPassword).toBeCalled();
-    // Ahora validamos para el caso que el enviar email una excepcion y validamos
+
     spyTransporterEmail.mockImplementationOnce(async () => {
-      throw new InternalServerErrorException({
-        message: 'Tranporter Email Error!!!',
-      });
+      throw new InternalServerErrorException('Tranporter Email Error!!!');
     });
 
     await expect(authService.resetPassword(email)).rejects.toThrowError(
-      new InternalServerErrorException({
-        message: 'Hubo un error al enviar el correo de reseteo',
-      }),
+      new InternalServerErrorException('Hubo un error al enviar el correo de reseteo'),
     );
     expect(spySaveNewPassword).toBeCalledTimes(2);
   });
 
-  it('Validamos getUserAuthenticators', async () => {
-    const spyFind = jest.spyOn(mockService, 'find');
-    await authService.getUserAuthenticators(UserServiceMock.userMock);
-    expect(spyFind).toBeCalledWith({
-      where: {
-        codUser: UserServiceMock.userMock.id,
-      },
-    });
-  });
-
-  it('Validamos getUserAuthenticatorsById', async () => {
+  it('Validate getUserAuthenticatorsById', async () => {
     const spyQueryBuilder = jest.spyOn(mockService, 'createQueryBuilder');
     const spySelect = jest.spyOn(mockService, 'select');
     const spyAddSelect = jest.spyOn(mockService, 'addSelect');
@@ -249,7 +296,7 @@ describe('AuthService', () => {
     expect(spyGetRawOne).toBeCalled();
   });
 
-  it('Validamos getUserAuthenticatorsByUsername', async () => {
+  it('Validate getUserAuthenticatorsByUsername', async () => {
     const spyQueryBuilder = jest.spyOn(mockService, 'createQueryBuilder');
     const spySelect = jest.spyOn(mockService, 'select');
     const spyAddSelect = jest.spyOn(mockService, 'addSelect');
@@ -275,7 +322,7 @@ describe('AuthService', () => {
     expect(spyGetRawMany).toBeCalled();
   });
 
-  it('Validamos saveUserAuthenticators', async () => {
+  it('Validate saveUserAuthenticators', async () => {
     const spyCreate = jest.spyOn(mockService, 'create').mockImplementationOnce(() => {
       return Authentication;
     });
@@ -287,5 +334,48 @@ describe('AuthService', () => {
     );
     expect(spyCreate).toBeCalled();
     expect(spySave).toBeCalledWith(Authentication);
+  });
+
+  it('Validate registerCurrentChallenge Ok', async () => {
+    const spyUpsert = jest.spyOn(mockService, 'upsert');
+    await authService.registerCurrentChallenge(UserServiceMock.userMock, currentChallenge);
+    expect(spyUpsert).toBeCalledWith(
+      {
+        currentChallenge,
+        username: UserServiceMock.userMock.username,
+        codUser: UserServiceMock.userMock.id,
+      },
+      { conflictPaths: ['username'] },
+    );
+  });
+
+  it('Validate registerCurrentChallenge Error', async () => {
+    const spyUpsertError = jest.spyOn(mockService, 'upsert').mockRejectedValueOnce(new Error());
+    await expect(
+      authService.registerCurrentChallenge(UserServiceMock.userMock, currentChallenge),
+    ).rejects.toThrowError(
+      new InternalServerErrorException('Sucedio un error al registrar challenge user'),
+    );
+    expect(spyUpsertError).toBeCalled();
+  });
+
+  it('Validate getCurrentChallenge Ok', async () => {
+    const spyFindOneOrFail = jest.spyOn(mockService, 'findOneOrFail');
+    await authService.getCurrentChallenge(UserServiceMock.userMock.username);
+    expect(spyFindOneOrFail).toBeCalledWith({
+      where: { username: UserServiceMock.userMock.username },
+    });
+  });
+
+  it('Validate registerCurrentChallenge Error', async () => {
+    const spyFindOneOrFail = jest
+      .spyOn(mockService, 'findOneOrFail')
+      .mockRejectedValueOnce(new Error());
+    await expect(
+      authService.getCurrentChallenge(UserServiceMock.userMock.username),
+    ).rejects.toThrowError(
+      new InternalServerErrorException('Sucedio un error al obtener challenge user'),
+    );
+    expect(spyFindOneOrFail).toBeCalled();
   });
 });

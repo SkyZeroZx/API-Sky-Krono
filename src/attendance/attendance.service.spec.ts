@@ -203,25 +203,11 @@ describe('AttendanceService', () => {
   });
 
   it('Validate findOne OK', async () => {
-    const spyUtilValidateRegisterDate = jest
-      .spyOn(Util, 'validateRegisterDate')
-      .mockReturnValueOnce(true);
-    const spyFindScheduleByUser = jest
-      .spyOn(mockService, 'findScheduleByUser')
-      .mockResolvedValueOnce(ScheduleServiceMock.schedule);
+    const spyUtilFormatDateId = jest.spyOn(Util, 'formatDateId').mockReturnValue(null);
+    const spyFindOne = jest.spyOn(mockService, 'findOneBy').mockResolvedValueOnce(null);
     await attendanceService.findOne(UserServiceMock.userMock);
-    expect(spyUtilValidateRegisterDate).toBeCalledWith(ScheduleServiceMock.schedule);
-    expect(spyFindScheduleByUser).toBeCalled();
-  });
-
-  it('Validate findOne is invalid register date ', async () => {
-    const spyUtilValidateRegisterDate = jest
-      .spyOn(Util, 'validateRegisterDate')
-      .mockReturnValueOnce(false);
-    await expect(attendanceService.findOne(UserServiceMock.userMock)).rejects.toThrowError(
-      new BadRequestException('Se encuentra fuera de horario'),
-    );
-    expect(spyUtilValidateRegisterDate).toBeCalled();
+    expect(spyFindOne).toBeCalled();
+    expect(spyUtilFormatDateId).toBeCalled();
   });
 
   it('Validate findOne Error', async () => {
