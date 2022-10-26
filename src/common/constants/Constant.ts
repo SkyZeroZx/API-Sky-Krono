@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 export const JWT_TOKEN = 'JWT_TOKEN';
 export const DATABASE_HOST = 'DATABASE_HOST';
 export const DATABASE_PORT = 'DATABASE_PORT';
@@ -38,9 +41,11 @@ export class Constants {
     'saturday',
   ];
 
-  static readonly LOGO_APP = 'https://skyzerozx.000webhostapp.com/images/logo_app.png';
-  static readonly LOGO_ICON = 'https://skyzerozx.000webhostapp.com/images/favicon0.ico';
-  static readonly URL_WEB = 'https://sky-krono-app.vercel.app/#/login';
+  static readonly LOGO_APP = process.env.LOGO_APP;
+
+  static readonly LOGO_ICON = process.env.LOGO_ICON;
+
+  static readonly URL_WEB = process.env.URL_WEB;
 
   static readonly MAIL = {
     CREATE_NEW_USER:

@@ -35,6 +35,7 @@ export class UserService {
         length: 10,
         numbers: true,
       });
+
       user.password = generatePassword;
       const newUser = this.userRepository.create(user);
       user = await this.userRepository.save(newUser);
@@ -115,7 +116,6 @@ export class UserService {
       .addSelect('SCHEDULE.name', 'schedule')
       .innerJoin(Chargue, 'CHARGUE', 'CHARGUE.id = USER.codChargue')
       .innerJoin(Schedule, 'SCHEDULE', 'SCHEDULE.id = USER.codSchedule')
-      .cache(1000)
       .getRawMany();
   }
 

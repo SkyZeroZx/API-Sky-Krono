@@ -1,5 +1,8 @@
 {
   "material-icon-theme.folders.associations": {},
-  "material-icon-theme.files.associations": {},
+  "material-icon-theme.files.associations": {
+    "nginxdockerfile": "Docker",
+ 
+  },
   "material-icon-theme.activeIconPack": "nest"
 }

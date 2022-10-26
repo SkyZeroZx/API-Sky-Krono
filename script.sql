@@ -10,19 +10,20 @@ DROP PROCEDURE IF EXISTS REGISTER_ABSENT_ATTENDANCE_BY_USER;
 DELIMITER //
 CREATE PROCEDURE `REGISTER_ABSENT_ATTENDANCE_BY_USER` ()
 BEGIN
+  SET @CURRENT_DAY := (SELECT DATE_FORMAT( convert_tz(now(),@@session.time_zone,'-05:00') ,"%Y-%m-%d") FROM DUAL);
   SET @ATTENDANCE_ID:= (SELECT DATE_FORMAT( convert_tz(now(),@@session.time_zone,'-05:00') ,"%Y%m%d") FROM DUAL);
 	INSERT IGNORE  INTO `attendance`  (`attendance`.`codUser`, `attendance`.`id`,    `attendance`.`description`, `attendance`.`isAbsent` ,`attendance`.`isLater`  ,`attendance`.`isActive`,`attendance`.`entryTime`,`attendance`.`exitTime`,`attendance`.`date`) 
     SELECT SCHEDULE_VALID_BY_USER.CODUSER ,  @ATTENDANCE_ID, "User is absent" , 1 , 0  ,  0, @ATTENDANCE_ID,  @ATTENDANCE_ID,  @ATTENDANCE_ID  FROM
     (
     SELECT U.id AS 'CODUSER', 
     CASE 
-    WHEN   (MONDAY = 1 AND DAYOFWEEK(NOW())=2) THEN 'TRUE'
-    WHEN   (TUESDAY = 1 AND DAYOFWEEK(NOW())=3) THEN 'TRUE'
-    WHEN   (WEDNESDAY = 1 AND DAYOFWEEK(NOW())=4) THEN 'TRUE'
-    WHEN   (THURSDAY = 1 AND DAYOFWEEK(NOW())=5) THEN 'TRUE'
-    WHEN   (FRIDAY = 1 AND DAYOFWEEK(NOW())=6) THEN 'TRUE'
-    WHEN   (SATURDAY = 1 AND DAYOFWEEK(NOW())=7) THEN 'TRUE'
-    WHEN   (SUNDAY = 1 AND DAYOFWEEK(NOW())=1) THEN 'TRUE' 
+    WHEN   (MONDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=2) THEN 'TRUE'
+    WHEN   (TUESDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=3) THEN 'TRUE'
+    WHEN   (WEDNESDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=4) THEN 'TRUE'
+    WHEN   (THURSDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=5) THEN 'TRUE'
+    WHEN   (FRIDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=6) THEN 'TRUE'
+    WHEN   (SATURDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=7) THEN 'TRUE'
+    WHEN   (SUNDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=1) THEN 'TRUE' 
     ELSE "FALSE"
     END AS 'IS_ENABLED'
     FROM `schedule` S
@@ -37,19 +38,20 @@ DROP PROCEDURE IF EXISTS REGISTER_DAYOFF_ATTENDANCE_BY_USER;
 DELIMITER //
 CREATE PROCEDURE `REGISTER_DAYOFF_ATTENDANCE_BY_USER` ()
 BEGIN
+  SET @CURRENT_DAY := (SELECT DATE_FORMAT( convert_tz(now(),@@session.time_zone,'-05:00') ,"%Y-%m-%d") FROM DUAL);
   SET @ATTENDANCE_ID:= (SELECT DATE_FORMAT( convert_tz(now(),@@session.time_zone,'-05:00') ,"%Y%m%d") FROM DUAL);
 	INSERT IGNORE  INTO `attendance`  (`attendance`.`codUser`, `attendance`.`id`,    `attendance`.`description`, `attendance`.`isAbsent` ,`attendance`.`isLater`  ,`attendance`.`isActive`,`attendance`.`isDayOff`,`attendance`.`entryTime`,`attendance`.`exitTime`,`attendance`.`date`) 
     SELECT SCHEDULE_VALID_BY_USER.CODUSER ,  @ATTENDANCE_ID, "User is dayOff" , 0 , 0  ,  0 , 1 , @ATTENDANCE_ID,  @ATTENDANCE_ID,  @ATTENDANCE_ID FROM
     (
     SELECT U.id AS 'CODUSER', 
     CASE 
-    WHEN   (MONDAY = 1 AND DAYOFWEEK(NOW())=2) THEN 'TRUE'
-    WHEN   (TUESDAY = 1 AND DAYOFWEEK(NOW())=3) THEN 'TRUE'
-    WHEN   (WEDNESDAY = 1 AND DAYOFWEEK(NOW())=4) THEN 'TRUE'
-    WHEN   (THURSDAY = 1 AND DAYOFWEEK(NOW())=5) THEN 'TRUE'
-    WHEN   (FRIDAY = 1 AND DAYOFWEEK(NOW())=6) THEN 'TRUE'
-    WHEN   (SATURDAY = 1 AND DAYOFWEEK(NOW())=7) THEN 'TRUE'
-    WHEN   (SUNDAY = 1 AND DAYOFWEEK(NOW())=1) THEN 'TRUE' 
+    WHEN   (MONDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=2) THEN 'TRUE'
+    WHEN   (TUESDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=3) THEN 'TRUE'
+    WHEN   (WEDNESDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=4) THEN 'TRUE'
+    WHEN   (THURSDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=5) THEN 'TRUE'
+    WHEN   (FRIDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=6) THEN 'TRUE'
+    WHEN   (SATURDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=7) THEN 'TRUE'
+    WHEN   (SUNDAY = 1 AND DAYOFWEEK(@CURRENT_DAY)=1) THEN 'TRUE'  
     ELSE "FALSE"
     END AS 'IS_ENABLED'
     FROM `schedule` S
@@ -70,12 +72,35 @@ BEGIN
     SELECT CODUSER ,  @ATTENDANCE_ID, "User is licence" , 0 , 0  ,  0 , 0, 1  from licence 
     where @CURRENT_DAY <= date(dateEnd) AND  @CURRENT_DAY >=date(dateInit);
 END//
-DELIMITER;
+DELIMITER ;
 
 -- CHECK CREATION OF STORE PROCEDURE 
 SHOW PROCEDURE STATUS;
 
 
+-- CREATE STORE PROCEDURE FOR ATTENDANCE REPORT OF USERS
+DROP PROCEDURE IF EXISTS REPORT_ATTENDANCE_BY_USER;
+DELIMITER //
+CREATE PROCEDURE `REPORT_ATTENDANCE_BY_USER` (id varchar(10) , initDate varchar(10) , endDate varchar(10))
+BEGIN
+SELECT 
+    DATE_FORMAT( convert_tz(attendance.date ,@@session.time_zone,'-05:00') ,"%Y-%m-%d") AS 'date',
+    attendance.description as 'description' ,
+    CASE 
+        WHEN attendance.isLater = 1  THEN 'TARDE' 
+        WHEN attendance.isAbsent = 1  THEN 'FALTA' 
+        WHEN attendance.isDayOff = 1  THEN 'DIA LIBRE' 
+        WHEN attendance.isLicence = 1  THEN 'LICENCIA' 
+    ELSE 'PUNTUAL' END  AS 'status' , 
+    CONCAT( user.name , " " , user.fatherLastName , " " , user.motherLastName) as 'fullName',
+    DATE_FORMAT( convert_tz(attendance.entryTime ,@@session.time_zone,'-05:00') ,"%Y-%m-%d") AS 'entryTime',
+    DATE_FORMAT( convert_tz(attendance.exitTime ,@@session.time_zone,'-05:00') ,"%H:%i") as 'exitTime'
+    FROM  attendance   
+    JOIN user 
+    ON user.id = attendance.codUser
+    WHERE user.id = id AND DATE_FORMAT( convert_tz(attendance.date ,@@session.time_zone,'-05:00') ,"%Y-%m-%d")  between initDate AND endDate;
+END//
+DELIMITER ;
 
 -- CREATION JOB REGISTER ABSENTS  OF USERS
 DROP EVENT IF EXISTS JOB_REGISTER_ABSENT_ATTENDANCE_BY_USER;
@@ -107,3 +132,6 @@ CREATE EVENT JOB_REGISTER_PERMISSIONS_OF_USERS
 
 -- CHECK CREATION OF JOBS
 SHOW EVENTS;
+
+-- ALTERNATIVE OF A CREATE OF JOBS OF MYSQL IF USE A SHAREHOSTING USE A PHP CRON JOB IN CPANEL
+-- More information https://blog.cpanel.com/how-to-configure-a-cron-job/

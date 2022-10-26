@@ -38,7 +38,7 @@ export class NotificationService {
       throw new InternalServerErrorException('Sucedio un error al guardar el token');
     }
 
-    this.logger.log('Se guardo el Token Task To User');
+    this.logger.log(`Se guardo el token para el usuario codigo ${codUser}`);
     return { message: Constants.MSG_OK, info: 'Se guardo el token exitosamente' };
   }
 
@@ -103,7 +103,7 @@ export class NotificationService {
       const listTokensPerUser = await Promise.all(tokensPerUser);
 
       listTokensPerUser.forEach((tokens) => {
-        tokens.forEach(({tokenPush}) => {
+        tokens.forEach(({ tokenPush }) => {
           this.sendNotification(tokenPush, Constants.NOTIFICATION_NEW_TASK);
         });
       });

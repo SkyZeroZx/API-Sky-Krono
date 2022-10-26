@@ -161,7 +161,7 @@ describe('UserService', () => {
     const spySelect = jest.spyOn(mockService, 'select');
     const spyAddSelect = jest.spyOn(mockService, 'addSelect');
     const spyInnerJoin = jest.spyOn(mockService, 'innerJoin');
-    const spyCache = jest.spyOn(mockService, 'cache');
+    //  const spyCache = jest.spyOn(mockService, 'cache');
     const spyGetRawMany = jest.spyOn(mockService, 'getRawMany');
     await userService.findAll();
     expect(spyQueryBuilder).toBeCalled();
@@ -192,7 +192,7 @@ describe('UserService', () => {
       'SCHEDULE',
       'SCHEDULE.id = USER.codSchedule',
     );
-    expect(spyCache).toBeCalledWith(1000);
+    //    expect(spyCache).toBeCalledWith(1000);
     expect(spyGetRawMany).toBeCalled();
   });
 

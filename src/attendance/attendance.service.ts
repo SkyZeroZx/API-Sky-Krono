@@ -12,10 +12,11 @@ import { Attendance } from './entities/attendance.entity';
 import { User } from '../user/entities/user.entity';
 import { Util } from '../common/utils/util';
 import { ScheduleService } from '../schedule/schedule.service';
+import { ReportAttendanceDto } from './dto/report-attendance.dto';
 
 @Injectable()
 export class AttendanceService {
-  private readonly logger = new Logger(Attendance.name);
+  private readonly logger = new Logger(AttendanceService.name);
   constructor(
     @InjectRepository(Attendance)
     private readonly attendanceRepository: Repository<Attendance>,
@@ -117,7 +118,7 @@ export class AttendanceService {
   async historyAttendance({ id }: User) {
     const listHistoryStatusAttendance = await this.attendanceRepository
       .createQueryBuilder('ATTENDANCE')
-      .select('ATTENDANCE.date', 'date')
+      .select(`ATTENDANCE.date`, 'date')
       .addSelect('ATTENDANCE.isActive', 'isActive')
       .addSelect('ATTENDANCE.isLater', 'isLater')
       .addSelect('ATTENDANCE.isAbsent', 'isAbsent')
@@ -129,4 +130,14 @@ export class AttendanceService {
       .getRawMany();
     return { currentDate: Util.formatLocalDate(), listHistoryStatusAttendance };
   }
+
+  async reportAttendanceByUser({ id, dateRange: [initDate, endDate] }: ReportAttendanceDto) {
+    this.logger.log({ message: 'Generando reporte', initDate, endDate });
+    const [reportAttendance] = await this.attendanceRepository.query(
+      'CALL REPORT_ATTENDANCE_BY_USER(?,?,?)',
+      [id, initDate, endDate],
+    );
+    return reportAttendance;
+  }
+  
 }

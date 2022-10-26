@@ -4,15 +4,36 @@
   <h1 align="center">Sky Krono API NestJS</h1>
   <p align="center">Es el API REST para la WebAPP/PWA SkyKrono integrado con Web Authentication para el inicio de sesion passworless</p>
 <p align="center">
- 
-<img src="https://badgen.net/badge/Built%20With/TypeScript/bl" alt="Build With TypeScript" />
-<img src="https://img.shields.io/badge/Made%20for-VSCode-1f425f.svg" alt="Build With TypeScript" />
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=alert_status" alt="Quality Gate" />
+  </a>
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=coverage" alt="Coverage" />
+  </a>
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=vulnerabilities" alt="Vulnerabilities" />
+  </a>
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=bugs" alt="Bugs" />
+  </a>
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=security_rating" alt="Security Rating" />
+  </a>
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=code_smells" alt="Code Smells"/>
+  </a>
+  <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=sqale_rating" alt="Maintainability Rating"/>
+    </a>
+  <img src="https://badgen.net/badge/Built%20With/TypeScript/bl" alt="Build With TypeScript" />
+  <img src="https://img.shields.io/badge/Made%20for-VSCode-1f425f.svg" alt="Build With TypeScript" />
 </p>
 
 ## :ledger: Index
 
 - [Pre-Requisitos](#pre-requisitos-)
 - [Instalación](#instalación-)
+  - [Base de Datos](#base-de-datos)
   - [Scripts SQL](#Scripts-SQL)
   - [Environment](#Environment)
 - [Desarrollo](#desarrollo-%EF%B8%8F)
@@ -63,6 +84,12 @@ _Previamente a ejecutar el servidor en desarrollo configurar el archivo .env con
 ```
 
 _Dirigirse a la ruta http://localhost:3000/ donde tendra el API REST levantada_
+
+### Base de Datos
+
+_El diagrama de base de datos se construyo para el proyecto se describe en la imagen_
+
+![Database 1](/docs/database/database-1.jpg)
 
 ### Scripts SQL
 

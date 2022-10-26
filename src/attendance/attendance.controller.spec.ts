@@ -60,4 +60,10 @@ describe('AttendanceController', () => {
     attendanceController.update(UserServiceMock.userMock);
     expect(spyUpdate).toBeCalledWith(UserServiceMock.userMock);
   });
+
+  it('Validate reportAttendanceByUser', async () => {
+    const spyReportAttendance = jest.spyOn(attendanceService, 'reportAttendanceByUser');
+    await attendanceController.reportAttendanceByUser(AttendanceServiceMock.reportAttendanceDto);
+    expect(spyReportAttendance).toBeCalledWith(AttendanceServiceMock.reportAttendanceDto);
+  });
 });

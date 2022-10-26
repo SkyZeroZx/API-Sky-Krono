@@ -1,5 +1,5 @@
 import * as winston from 'winston';
-import 'winston-daily-rotate-file';
+import  'winston-daily-rotate-file';
 import { utilities as nestWinstonModuleUtilities, WinstonModule } from 'nest-winston';
 
 export const loggerConfig = {

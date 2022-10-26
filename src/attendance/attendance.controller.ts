@@ -6,6 +6,8 @@ import { UserDecorator as User } from '../common/decorators/user.decorator';
 import { AttendanceService } from './attendance.service';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
 import { AttendanceResponse, GenericResponse } from '../common/swagger/response';
+import { ReportAttendanceDto } from './dto/report-attendance.dto';
+import { Auth } from '../common/decorators/auth.decorator';
 
 @ApiTags('Attendance')
 @ApiBearerAuth()
@@ -40,5 +42,15 @@ export class AttendanceController {
   @ApiResponse(GenericResponse.response)
   update(@User() user: UserEntity) {
     return this.attendanceService.update(user);
+  }
+
+  @Post('/report')
+  @Auth('admin')
+  @ApiOperation({
+    summary: 'Reporte de asistencias del usuario seleccionado en un rango de fechas',
+  })
+  @ApiResponse(AttendanceResponse.reportAttendance)
+  reportAttendanceByUser(@Body() reportAttendanceDto: ReportAttendanceDto) {
+    return this.attendanceService.reportAttendanceByUser(reportAttendanceDto);
   }
 }

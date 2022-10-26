@@ -218,4 +218,18 @@ describe('AttendanceService', () => {
     );
     expect(spyFindOneError).toBeCalled();
   });
+
+  it('Validate reportAttendanceByUser', async () => {
+    const {
+      id,
+      dateRange: [initDate, endDate],
+    } = AttendanceServiceMock.reportAttendanceDto;
+    const spyQuery = jest.spyOn(mockService, 'query').mockResolvedValueOnce([]);
+    await attendanceService.reportAttendanceByUser(AttendanceServiceMock.reportAttendanceDto);
+    expect(spyQuery).toBeCalledWith('CALL REPORT_ATTENDANCE_BY_USER(?,?,?)', [
+      id,
+      initDate,
+      endDate,
+    ]);
+  });
 });
