@@ -132,7 +132,7 @@ jobs:
           envkey_LOG_FOLDER: ${{secrets.LOG_FOLDER}}
           envkey_TIMESTAMP_FORMAT: ${{secrets.TIMESTAMP_FORMAT}}
           some_other_variable: foobar
-          directory : ./src
+          directory : ../../../
           file_name: .env
           fail_on_empty: false
       - uses: actions/checkout@v3
