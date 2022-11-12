@@ -95,6 +95,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: 'Create env file'
         run: |
           touch ${{ github.workspace }}/.env
@@ -136,9 +139,6 @@ jobs:
           ls -a .
           echo "ls -a ${{ github.workspace }}"
           ls -a ${{ github.workspace }}
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 16
