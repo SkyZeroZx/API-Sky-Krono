@@ -94,6 +94,7 @@ jobs:
     name: E2E Testing
     needs: build
     runs-on: ubuntu-latest
+    environment: develop
     steps:
       - name: 'Create env file'
         run: |
@@ -143,9 +144,6 @@ jobs:
         with:
           path: ./*
           key: ${{ github.sha }}
-      - name: 'View Env'
-        run: |
-           cat  ${{ github.workspace }}/.env
       - name: 'list Env'
         run: |
           "ls"
