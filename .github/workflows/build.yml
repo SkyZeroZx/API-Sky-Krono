@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1.3
+        uses: SpicyPizza/create-envfile@v1.2
         with:
           envkey_DATABASE_HOST: ${{secrets.DATABASE_HOST}}
           envkey_DATABASE_PORT: ${{secrets.DATABASE_PORT}}
@@ -132,7 +132,8 @@ jobs:
           envkey_LOG_FOLDER: ${{secrets.LOG_FOLDER}}
           envkey_TIMESTAMP_FORMAT: ${{secrets.TIMESTAMP_FORMAT}}
           some_other_variable: foobar
-          directory : /home/runner/work/API-Sky-Krono/API-Sky-Krono
+          directory: ${{ github.workspace }}
+          # directory : /home/runner/work/API-Sky-Krono/API-Sky-Krono
           file_name: .env
           fail_on_empty: false
       - uses: actions/checkout@v3
