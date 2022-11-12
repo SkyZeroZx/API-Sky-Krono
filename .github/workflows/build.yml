@@ -147,6 +147,15 @@ jobs:
         with:
           path: ./*
           key: ${{ github.sha }}
+      - name: 'View Env'
+        run: |
+          echo `.env`
+      - name: 'list Env'
+        run: | 
+        ls
+      - name: 'list Env workspace'
+        run: | 
+        ls ${{ github.workspace }}
       - name: E2E Test
         run: npm run test:e2e:cov
       - uses: actions/upload-artifact@v3
