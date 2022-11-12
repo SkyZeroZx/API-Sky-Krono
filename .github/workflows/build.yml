@@ -51,7 +51,7 @@ jobs:
           envkey_LOGO_APP: ${{secrets.LOGO_APP}}
           envkey_LOGO_ICON: ${{secrets.LOGO_ICON}}
           envkey_URL_WEB: ${{secrets.URL_WEB}}
-          envkey_TZ: ${{secrets.TZ} # TIME ZONE PROPERTIES
+          envkey_TZ: ${{secrets.TZ}} # TIME ZONE PROPERTIES
           envkey_CACHE_MAX_ITEMS: ${{secrets.CACHE_MAX_ITEMS}} # CACHE PROPERTIES
           envkey_CACHE_TTL: ${{secrets.CACHE_TTL}}
           envkey_ENABLED_MYSQL_CACHE: ${{secrets.ENABLED_MYSQL_CACHE}}
