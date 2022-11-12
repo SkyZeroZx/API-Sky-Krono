@@ -21,11 +21,13 @@ transporter
     logger.log('Servidor de correos inicializado');
     logger.error('Process APP_NAME', process.env.APP_NAME)
     logger.error('Process DATABASE_HOST', process.env.DATABASE_HOST)
+    logger.error('some_other_variable ' + process.env.some_other_variable)
     logger.error('Process URL_WEB', process.env.URL_WEB) 
   })
   .catch((error) => {
     logger.error('Process APP_NAME', process.env.APP_NAME)
     logger.error('Process DATABASE_HOST', process.env.DATABASE_HOST)
     logger.error('Process URL_WEB', process.env.URL_WEB) 
+    logger.error('some_other_variable ' + process.env.some_other_variable)
     logger.error('Sucedio un error al iniciarlizar el servidor de correos', error);
   });
