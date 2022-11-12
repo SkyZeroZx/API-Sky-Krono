@@ -91,6 +91,9 @@ jobs:
           name: reports-unit-test
           path: coverage/*
   e2e-testing:
+    name: Unit Test Jest
+    needs: build
+    runs-on: ubuntu-latest
     steps:
       - name: Make envfile
         uses: SpicyPizza/create-envfile@v1.3
