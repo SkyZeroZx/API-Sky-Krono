@@ -98,39 +98,39 @@ jobs:
       - name: 'Create env file'
         run: |
           touch .env
-          echo DATABASE_HOST: ${{secrets.DATABASE_HOST}} > .env
-          echo DATABASE_PORT: ${{secrets.DATABASE_PORT}} > .env
-          echo DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}} > .env
-          echo DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}} > .env
-          echo DATABASE_NAME: ${{secrets.DATABASE_NAME}} > .env
-          echo JWT_TOKEN: ${{secrets.JWT_TOKEN}} > .env
-          echo EMAIL_HOST: ${{secrets.EMAIL_HOST}}  > .env
-          echo EMAIL_PORT: ${{secrets.EMAIL_PORT}} > .env
-          echo EMAIL_USERNAME: ${{secrets.EMAIL_USERNAME}} > .env
-          echo EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}} > .env
-          echo PUBLIC_KEY: ${{secrets.PUBLIC_KEY}}  > .env
-          echo PRIVATE_KEY: ${{secrets.PRIVATE_KEY}} > .env
-          echo EMAIL_WEB_PUSH: ${{secrets.EMAIL_WEB_PUSH}} > .env
-          echo RP_ID: ${{secrets.RP_ID}} > .env
-          echo RP_ID_ARRAY: ${{secrets.RP_ID_ARRAY}} > .env
-          echo ORIGIN: ${{secrets.ORIGIN}} > .env
-          echo LOGO_APP: ${{secrets.LOGO_APP}} > .env
-          echo LOGO_ICON: ${{secrets.LOGO_ICON}} > .env
-          echo URL_WEB: ${{secrets.URL_WEB}} > .env
-          echo TZ: ${{secrets.TZ}}  > .env
-          echo CACHE_MAX_ITEMS: ${{secrets.CACHE_MAX_ITEMS}}  > .env
+          echo DATABASE_HOST: ${{secrets.DATABASE_HOST}} >> .env
+          echo DATABASE_PORT: ${{secrets.DATABASE_PORT}} >> .env
+          echo DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}} >> .env
+          echo DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}} >> .env
+          echo DATABASE_NAME: ${{secrets.DATABASE_NAME}} >> .env
+          echo JWT_TOKEN: ${{secrets.JWT_TOKEN}} >> .env
+          echo EMAIL_HOST: ${{secrets.EMAIL_HOST}}  >> .env
+          echo EMAIL_PORT: ${{secrets.EMAIL_PORT}} >> .env
+          echo EMAIL_USERNAME: ${{secrets.EMAIL_USERNAME}} >> .env
+          echo EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}} >> .env
+          echo PUBLIC_KEY: ${{secrets.PUBLIC_KEY}}  >> .env
+          echo PRIVATE_KEY: ${{secrets.PRIVATE_KEY}} >> .env
+          echo EMAIL_WEB_PUSH: ${{secrets.EMAIL_WEB_PUSH}} >> .env
+          echo RP_ID: ${{secrets.RP_ID}} >> .env
+          echo RP_ID_ARRAY: ${{secrets.RP_ID_ARRAY}} >> .env
+          echo ORIGIN: ${{secrets.ORIGIN}} >> .env
+          echo LOGO_APP: ${{secrets.LOGO_APP}} >> .env
+          echo LOGO_ICON: ${{secrets.LOGO_ICON}} >> .env
+          echo URL_WEB: ${{secrets.URL_WEB}} >> .env
+          echo TZ: ${{secrets.TZ}}  >> .env
+          echo CACHE_MAX_ITEMS: ${{secrets.CACHE_MAX_ITEMS}}  >> .env
           echo CACHE_TTL: ${{secrets.CACHE_TTL}} >> .env
-          echo ENABLED_MYSQL_CACHE: ${{secrets.ENABLED_MYSQL_CACHE}} > .env
-          echo AWS_REGION: ${{secrets.AWS_REGION}} > .env
-          echo AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}} > .env
-          echo AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}} > .env
-          echo AWS_BUCKET: ${{secrets.AWS_BUCKET}} > .env
-          echo DATE_PATTERN: ${{secrets.DATE_PATTERN}}  > .env
-          echo APP_NAME: ${{secrets.APP_NAME}} > .env
-          echo MAX_SIZE: ${{secrets.MAX_SIZE}} > .env
-          echo MAX_DAYS: ${{secrets.MAX_DAYS}} > .env
-          echo LOG_FOLDER: ${{secrets.LOG_FOLDER}} > .env
-          echo TIMESTAMP_FORMAT: ${{secrets.TIMESTAMP_FORMAT}} > .env
+          echo ENABLED_MYSQL_CACHE: ${{secrets.ENABLED_MYSQL_CACHE}} >> .env
+          echo AWS_REGION: ${{secrets.AWS_REGION}} >> .env
+          echo AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}} >> .env
+          echo AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}} >> .env
+          echo AWS_BUCKET: ${{secrets.AWS_BUCKET}} >> .env
+          echo DATE_PATTERN: ${{secrets.DATE_PATTERN}}  >> .env
+          echo APP_NAME: ${{secrets.APP_NAME}} >> .env
+          echo MAX_SIZE: ${{secrets.MAX_SIZE}} >> .env
+          echo MAX_DAYS: ${{secrets.MAX_DAYS}} >> .env
+          echo LOG_FOLDER: ${{secrets.LOG_FOLDER}} >> .env
+          echo TIMESTAMP_FORMAT: ${{secrets.TIMESTAMP_FORMAT}} >> .env
           cat .env
       - uses: actions/checkout@v3
         with:
