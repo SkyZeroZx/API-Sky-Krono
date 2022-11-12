@@ -45,7 +45,7 @@ jobs:
           envkey_PUBLIC_KEY: ${{secrets.PUBLIC_KEY}} # WEB PUSH PROPERTIES
           envkey_PRIVATE_KEY: ${{secrets.PRIVATE_KEY}}
           envkey_EMAIL_WEB_PUSH: ${{secrets.EMAIL_WEB_PUSH}}
-          envkey_RP_ID: ${{secrets.RP_ID} # WEB AUTH PROPERTIES
+          envkey_RP_ID: ${{secrets.RP_ID}} # WEB AUTH PROPERTIES
           envkey_RP_ID_ARRAY: ${{secrets.RP_ID_ARRAY}}
           envkey_ORIGIN: ${{secrets.ORIGIN}}
           envkey_LOGO_APP: ${{secrets.LOGO_APP}}
