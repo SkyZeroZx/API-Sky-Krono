@@ -98,45 +98,45 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: 'Create env file'
-        run: |
-          touch ${{ github.workspace }}/.env
-          echo DATABASE_HOST: ${{secrets.DATABASE_HOST}} >> ${{ github.workspace }}/.env
-          echo DATABASE_PORT: ${{secrets.DATABASE_PORT}} >> ${{ github.workspace }}/.env
-          echo DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}} >> ${{ github.workspace }}/.env
-          echo DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}} >> ${{ github.workspace }}/.env
-          echo DATABASE_NAME: ${{secrets.DATABASE_NAME}} >> ${{ github.workspace }}/.env
-          echo JWT_TOKEN: ${{secrets.JWT_TOKEN}} >> ${{ github.workspace }}/.env
-          echo EMAIL_HOST: ${{secrets.EMAIL_HOST}}  >> ${{ github.workspace }}/.env
-          echo EMAIL_PORT: ${{secrets.EMAIL_PORT}} >> ${{ github.workspace }}/.env
-          echo EMAIL_USERNAME: ${{secrets.EMAIL_USERNAME}} >> ${{ github.workspace }}/.env
-          echo EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}} >> ${{ github.workspace }}/.env
-          echo PUBLIC_KEY: ${{secrets.PUBLIC_KEY}}  >> ${{ github.workspace }}/.env
-          echo PRIVATE_KEY: ${{secrets.PRIVATE_KEY}} >> ${{ github.workspace }}/.env
-          echo EMAIL_WEB_PUSH: ${{secrets.EMAIL_WEB_PUSH}} >> ${{ github.workspace }}/.env
-          echo RP_ID: ${{secrets.RP_ID}} >> ${{ github.workspace }}/.env
-          echo LOGO_APP: ${{secrets.LOGO_APP}} >> ${{ github.workspace }}/.env
-          echo LOGO_ICON: ${{secrets.LOGO_ICON}} >> ${{ github.workspace }}/.env
-          echo URL_WEB: ${{secrets.URL_WEB}} >> ${{ github.workspace }}/.env
-          echo TZ: ${{secrets.TZ}}  >> ${{ github.workspace }}/.env
-          echo CACHE_MAX_ITEMS: ${{secrets.CACHE_MAX_ITEMS}}  >> ${{ github.workspace }}/.env
-          echo CACHE_TTL: ${{secrets.CACHE_TTL}} >> ${{ github.workspace }}/.env
-          echo ENABLED_MYSQL_CACHE: ${{secrets.ENABLED_MYSQL_CACHE}} >> ${{ github.workspace }}/.env
-          echo AWS_REGION: ${{secrets.AWS_REGION}} >> ${{ github.workspace }}/.env
-          echo AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}} >> ${{ github.workspace }}/.env
-          echo AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}} >> ${{ github.workspace }}/.env
-          echo AWS_BUCKET: ${{secrets.AWS_BUCKET}} >> ${{ github.workspace }}/.env
-          echo DATE_PATTERN: ${{secrets.DATE_PATTERN}}  >> ${{ github.workspace }}/.env
-          echo APP_NAME: ${{secrets.APP_NAME}} >> ${{ github.workspace }}/.env
-          echo MAX_SIZE: ${{secrets.MAX_SIZE}} >> ${{ github.workspace }}/.env
-          echo MAX_DAYS: ${{secrets.MAX_DAYS}} >> ${{ github.workspace }}/.env
-          echo LOG_FOLDER: ${{secrets.LOG_FOLDER}} >> ${{ github.workspace }}/.env
-          echo TIMESTAMP_FORMAT: ${{secrets.TIMESTAMP_FORMAT}} >> ${{ github.workspace }}/.env
-          cat  ${{ github.workspace }}/.env
-          echo "ls -a ."
-          ls -a .
-          echo "ls -a ${{ github.workspace }}"
-          ls -a ${{ github.workspace }}
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1.2
+        with:
+          envkey_DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+          envkey_DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+          envkey_DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
+          envkey_DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          envkey_DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+          envkey_JWT_TOKEN: ${{secrets.JWT_TOKEN}}
+          envkey_EMAIL_HOST: ${{secrets.EMAIL_HOST}} # MAIL PROPERTIES
+          envkey_EMAIL_PORT: ${{secrets.EMAIL_PORT}}
+          envkey_EMAIL_USERNAME: ${{secrets.EMAIL_USERNAME}}
+          envkey_EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}}
+          envkey_PUBLIC_KEY: ${{secrets.PUBLIC_KEY}} # WEB PUSH PROPERTIES
+          envkey_PRIVATE_KEY: ${{secrets.PRIVATE_KEY}}
+          envkey_EMAIL_WEB_PUSH: ${{secrets.EMAIL_WEB_PUSH}}
+          envkey_RP_ID: ${{secrets.RP_ID}} # WEB AUTH PROPERTIES
+          envkey_LOGO_APP: ${{secrets.LOGO_APP}}
+          envkey_LOGO_ICON: ${{secrets.LOGO_ICON}}
+          envkey_URL_WEB: ${{secrets.URL_WEB}}
+          envkey_TZ: ${{secrets.TZ}} # TIME ZONE PROPERTIES
+          envkey_CACHE_MAX_ITEMS: ${{secrets.CACHE_MAX_ITEMS}} # CACHE PROPERTIES
+          envkey_CACHE_TTL: ${{secrets.CACHE_TTL}}
+          envkey_ENABLED_MYSQL_CACHE: ${{secrets.ENABLED_MYSQL_CACHE}}
+          envkey_AWS_REGION: ${{secrets.AWS_REGION}} # AWS S3 PROPERTIES
+          envkey_AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          envkey_AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          envkey_AWS_BUCKET: ${{secrets.AWS_BUCKET}}
+          envkey_DATE_PATTERN: ${{secrets.DATE_PATTERN}} # LOGGER PROPERTIES
+          envkey_APP_NAME: ${{secrets.APP_NAME}}
+          envkey_MAX_SIZE: ${{secrets.MAX_SIZE}}
+          envkey_MAX_DAYS: ${{secrets.MAX_DAYS}}
+          envkey_LOG_FOLDER: ${{secrets.LOG_FOLDER}}
+          envkey_TIMESTAMP_FORMAT: ${{secrets.TIMESTAMP_FORMAT}}
+          some_other_variable: foobar
+          directory: ${{ github.workspace }}
+          # directory : /home/runner/work/API-Sky-Krono/API-Sky-Krono
+          file_name: .env
+          fail_on_empty: false
       - uses: actions/setup-node@v3
         with:
           node-version: 16
