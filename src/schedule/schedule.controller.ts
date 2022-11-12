@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Logger,
   UseGuards,
   ParseIntPipe,
 } from '@nestjs/common';
@@ -25,7 +24,6 @@ import { GenericResponse } from '../common/swagger/response';
 @ApiBearerAuth()
 @Controller('schedule')
 export class ScheduleController {
-  private readonly logger = new Logger(ScheduleController.name);
   constructor(private readonly scheduleService: ScheduleService) {}
 
   @Auth('admin')
@@ -33,7 +31,6 @@ export class ScheduleController {
   @ApiOperation({ summary: 'Crea un nuevo Schedule' })
   @ApiResponse(GenericResponse.response)
   create(@Body() createScheduleDto: CreateScheduleDto) {
-    this.logger.log('Creando nuevo Schedule');
     return this.scheduleService.create(createScheduleDto);
   }
 
@@ -41,7 +38,6 @@ export class ScheduleController {
   @Get()
   @ApiOperation({ summary: 'Lista todos los Schedule' })
   findAll() {
-    this.logger.log('Listando Schedule');
     return this.scheduleService.findAll();
   }
 
@@ -50,7 +46,6 @@ export class ScheduleController {
   @ApiOperation({ summary: 'Actualiza un Schedule' })
   @ApiResponse(GenericResponse.response)
   update(@Body() updateScheduleDto: UpdateScheduleDto) {
-    this.logger.log('Actualizando Schedule');
     return this.scheduleService.update(updateScheduleDto);
   }
 
@@ -59,7 +54,6 @@ export class ScheduleController {
   @ApiOperation({ summary: 'Elimina un Schedule' })
   @ApiResponse(GenericResponse.response)
   remove(@Param('id', ParseIntPipe) id: number) {
-    this.logger.log('Eliminando Schedule');
     return this.scheduleService.remove(id);
   }
 
@@ -67,7 +61,6 @@ export class ScheduleController {
   @Get('/user')
   @ApiOperation({ summary: 'Obtiene el Schedule del usuario logeado' })
   async findScheduleByUser(@User() user: UserEntity) {
-    this.logger.log({ message: 'Obteniendo Schedule del usuario', user });
     const schedule = await this.scheduleService.findScheduleByUser(user.id);
     return { dayIsValid: Util.validateRegisterDate(schedule), schedule };
   }

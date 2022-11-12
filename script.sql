@@ -93,12 +93,50 @@ SELECT
         WHEN attendance.isLicence = 1  THEN 'LICENCIA' 
     ELSE 'PUNTUAL' END  AS 'status' , 
     CONCAT( user.name , " " , user.fatherLastName , " " , user.motherLastName) as 'fullName',
-    DATE_FORMAT( convert_tz(attendance.entryTime ,@@session.time_zone,'-05:00') ,"%Y-%m-%d") AS 'entryTime',
+    DATE_FORMAT( convert_tz(attendance.entryTime ,@@session.time_zone,'-05:00') ,"%H:%i") AS 'entryTime',
     DATE_FORMAT( convert_tz(attendance.exitTime ,@@session.time_zone,'-05:00') ,"%H:%i") as 'exitTime'
     FROM  attendance   
     JOIN user 
     ON user.id = attendance.codUser
     WHERE user.id = id AND DATE_FORMAT( convert_tz(attendance.date ,@@session.time_zone,'-05:00') ,"%Y-%m-%d")  between initDate AND endDate;
+END//
+DELIMITER ;
+
+
+-- CREATE STORE PROCEDURE FOR CHART REPORT ALL USERS
+DROP PROCEDURE IF EXISTS REPORT_CHART_REPORT;
+DELIMITER //
+CREATE PROCEDURE `REPORT_CHART_REPORT` (initDate varchar(10) , endDate varchar(10))
+BEGIN
+SELECT 
+  DISTINCT( DATE_FORMAT( convert_tz(attendance.date ,@@session.time_zone,'-05:00') ,"%Y-%m-%d")) AS 'date',
+	COUNT(CASE WHEN attendance.isLater = 1 THEN 1 END) AS 'later',
+  COUNT(CASE WHEN attendance.isLater =0 AND attendance.isAbsent =0  THEN 1 END) AS 'onTime',
+	COUNT(CASE WHEN attendance.isAbsent =1 THEN 1 END) AS 'absent',
+	COUNT(CASE WHEN attendance.isLicence =1 THEN 1 END) AS 'licence'
+  FROM  attendance           
+  WHERE DATE_FORMAT( convert_tz(attendance.date ,@@session.time_zone,'-05:00') ,"%Y-%m-%d")  BETWEEN initDate AND endDate 
+  GROUP BY DATE_FORMAT( convert_tz(attendance.date ,@@session.time_zone,'-05:00') ,"%Y-%m-%d");
+END//
+DELIMITER ;
+
+-- CREATE STORE PROCEDURE FOR CHART REPORT BY USERS
+
+DROP PROCEDURE IF EXISTS REPORT_CHART_REPORT_BY_USER;
+DELIMITER //
+CREATE PROCEDURE `REPORT_CHART_REPORT_BY_USER` (id varchar(10) , initDate varchar(10) , endDate varchar(10))
+BEGIN
+SELECT 
+  DISTINCT( DATE_FORMAT( convert_tz(attendance.date ,@@session.time_zone,'-05:00') ,"%Y-%m-%d")) AS 'date',
+	COUNT(CASE WHEN attendance.isLater = 1 THEN 1 END) AS 'later',
+  COUNT(CASE WHEN attendance.isLater =0 AND attendance.isAbsent =0  THEN 1 END) AS 'onTime',
+	COUNT(CASE WHEN attendance.isAbsent =1 THEN 1 END) AS 'absent',
+	COUNT(CASE WHEN attendance.isLicence =1 THEN 1 END) AS 'licence'
+  FROM  attendance    
+  JOIN user 
+  ON user.id = attendance.codUser
+  WHERE user.id = id AND DATE_FORMAT( convert_tz(attendance.date ,@@session.time_zone,'-05:00') ,"%Y-%m-%d")  BETWEEN initDate AND endDate 
+  GROUP BY DATE_FORMAT( convert_tz(attendance.date ,@@session.time_zone,'-05:00') ,"%Y-%m-%d");
 END//
 DELIMITER ;
 

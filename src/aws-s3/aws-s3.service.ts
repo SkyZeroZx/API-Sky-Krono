@@ -18,7 +18,9 @@ export class AwsS3Service {
         },
       });
 
-      return parallelUploads3.done();
+      await parallelUploads3.done();
+      // For error certificate not recognized security
+      return { Location: `https://${process.env.AWS_BUCKET}.s3.amazonaws.com/${filename}` };
     } catch (error) {
       this.logger.error({ message: 'Sucedio un error al subir el archivo', error });
       throw new RequestTimeoutException('Sucedio un error al subir el archivo');

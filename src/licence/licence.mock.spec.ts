@@ -54,7 +54,7 @@ export class LicenceServiceMock {
   public remove = jest.fn().mockReturnThis();
   public static readonly createLicenceDto: CreateLicenceDto = {
     description: 'Mock Description',
-    dateRange: [new Date(), new Date()],
+    dateRange: [new Date().toDateString(), new Date().toDateString()],
     codUser: 1,
   };
 
@@ -62,7 +62,7 @@ export class LicenceServiceMock {
     id: 2,
     codUser: 1,
     description: 'Mock Description Update',
-    dateRange: [new Date(), new Date()],
+    dateRange: [new Date().toDateString(), new Date().toDateString()],
   };
 
   public static readonly licence: Licence = {

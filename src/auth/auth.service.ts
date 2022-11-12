@@ -37,7 +37,7 @@ export class AuthService {
    * @returns The user object is being returned.
    */
   async validateUser(email: string, pass: string) {
-    this.logger.log('Validando Usuario', AuthService.name);
+    this.logger.log('Validando Usuario');
     const { user } = await this.userService.findUserByEmail(email);
     if (typeof user == 'undefined') {
       this.logger.warn(`Login fallido usuario: ${email}`);
@@ -202,7 +202,7 @@ export class AuthService {
           token: this.jwtService.sign(payload),
         };
       default:
-        throw new BadRequestException(`El usuario tiene un status ${user.status}}`);
+        throw new BadRequestException(`El usuario tiene un status ${user.status}`);
     }
   }
 

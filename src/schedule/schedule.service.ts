@@ -48,6 +48,7 @@ export class ScheduleService implements OnModuleInit {
   }
 
   async findScheduleByUser(id: number): Promise<Schedule> {
+    this.logger.log('Listando Schedule por usuario');
     return this.scheduleRepository
       .createQueryBuilder('SCHEDULE')
       .select('SCHEDULE.entryHour', 'entryHour')

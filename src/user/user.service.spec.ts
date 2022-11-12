@@ -1,4 +1,4 @@
-import { InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AwsS3Service } from '../aws-s3/aws-s3.service';
@@ -73,11 +73,12 @@ describe('UserService', () => {
         return { message: 'SOMETHING' };
       });
     // Llamamos la funcion create de nuestro service
-    const dataSomething = await userService.create(UserServiceMock.mockCreateDto);
+
+    await expect(userService.create(UserServiceMock.mockCreateDto)).rejects.toThrowError(
+      new BadRequestException('El correo del usuario ya existe'),
+    );
     // Validamos que sea llamado spyFindByEmailMock
     expect(spyFindByEmailMockSomething).toBeCalledWith(UserServiceMock.mockCreateDto.username);
-    // Validamos que la data devuelva sea el mockeo de nuestro spyFindByEmail
-    expect(dataSomething).toEqual({ message: 'SOMETHING' });
 
     // Validamos el caso la funcion save de error
     const spyFindByEmailMockOk = jest

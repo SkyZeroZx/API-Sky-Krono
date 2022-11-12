@@ -13,6 +13,7 @@ import { User } from '../user/entities/user.entity';
 import { Util } from '../common/utils/util';
 import { ScheduleService } from '../schedule/schedule.service';
 import { ReportAttendanceDto } from './dto/report-attendance.dto';
+import { ReportChartAttendance } from './dto/report-chart-attendance';
 
 @Injectable()
 export class AttendanceService {
@@ -139,5 +140,25 @@ export class AttendanceService {
     );
     return reportAttendance;
   }
-  
+
+  async reportChartsAttendance({ dateRange: [initDate, endDate] }: ReportChartAttendance) {
+    this.logger.log('Generando charts');
+    const [reportCharts] = await this.attendanceRepository.query('CALL REPORT_CHART_REPORT(?,?)', [
+      initDate,
+      endDate,
+    ]);
+    return reportCharts;
+  }
+
+  async reportChartsAttendanceByUser({
+    id,
+    dateRange: [initDate, endDate],
+  }: ReportChartAttendance) {
+    this.logger.log({ message: 'Generando charts para usuario ', id });
+    const [reportChartByUser] = await this.attendanceRepository.query(
+      'CALL REPORT_CHART_REPORT_BY_USER(?,?,?)',
+      [id, initDate, endDate],
+    );
+    return reportChartByUser;
+  }
 }

@@ -7,7 +7,7 @@ import { Constants } from '../../../src/common/constants/Constant';
 import { TaskModule } from '../../../src/task/task.module';
 import { UserService } from '../../../src/user/user.service';
 import { AuthMockServiceE2E } from '../auth.mock.e2e.spec';
-import * as config from '../../config-e2e.json';
+import { e2e_config } from '../../e2e-config.spec';
 
 describe('Guard Strategy (e2e)', () => {
   let app: INestApplication;
@@ -18,7 +18,7 @@ describe('Guard Strategy (e2e)', () => {
   const {
     jwtToken,
     users: { userLoginOk },
-  } = config.env;
+  } = e2e_config.env;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -42,23 +42,25 @@ describe('Guard Strategy (e2e)', () => {
     request = superTest.agent(app.getHttpServer());
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     jest.clearAllMocks();
+    await app.close();
   });
 
   // Al finalizar todos nuevos test cerramos las conexiones para evitar memory leaks
   afterAll(async () => {
     await app.close();
   });
-  it('VALIDAMOS JWT STRATEGY', async () => {
+
+  it('VALIDATE JWT STRATEGY', async () => {
     // Hacemos nuestra peticion a nuestro servicio y esperamos respondan un status 201
     const userHabilitadoResponse = await request.post('/auth/login').send(userLoginOk).expect(201);
     // Recuperamos el body de nuestro response y desesctructuramos
-    const { message, token, ...recivedtUserHabilitado } = userHabilitadoResponse.body;
+    const { message, token, updateAt, ...recivedtUserHabilitado } = userHabilitadoResponse.body;
     // Igualmente con nuestra variables globares
-    const { password, ...expectUserHabilitado } = userLoginOk;
+    const { password, updateAt: updateAtExpect, ...expectUserHabilitado } = userLoginOk;
     // Validamos la respuesta de nuestro servicio contra los datos de la variables
-    expect(message).toEqual(Constants.MSG_OK);
+
     expect(token).toBeDefined();
     expect(recivedtUserHabilitado).toEqual(expectUserHabilitado);
     const spyGetUserById = jest

@@ -1,10 +1,11 @@
 import { CreateTaskDto } from '../../src/task/dto/create-task.dto';
 import { DeleteTaskDto } from '../../src/task/dto/delete-task.dto';
 import { TaskToUserDto } from '../../src/task_to_user/dto/task-to-user.dto';
-import * as config from '../config-e2e.json';
+import { e2e_config } from '../e2e-config.spec';
+ 
 const {
-  users: { userLoginOk, userReseteado, userSuscrito },
-}: any = config.env;
+  users: { userLoginOk, userReset, userSuscribe },
+}: any = e2e_config.env;
 
 export class TaskMockServiceE2E {
   public save = jest.fn();
@@ -76,15 +77,15 @@ export class TaskMockServiceE2E {
     title: 'Prueba E2E',
     description: 'Esto es una prueba E2E',
     dateRange: [new Date(), new Date()],
-    users: [userLoginOk, userReseteado],
+    users: [userLoginOk, userReset],
   };
 
   public static readonly taskToUserDto: TaskToUserDto = {
-    codUser: userSuscrito.id,
+    codUser: userSuscribe.id,
     codTask: 5,
   };
 
   public static readonly deleteTaskDto: DeleteTaskDto = {
-    codTask: 23,
+    codTask: 32,
   };
 }

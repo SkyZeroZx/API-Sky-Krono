@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -23,6 +23,15 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { LicenceModule } from './licence/licence.module';
 import { AwsS3Module } from './aws-s3/aws-s3.module';
 import { NotificationModule } from './notification/notification.module';
+import { HealthModule } from './health/health.module';
+import {
+  makeCounterProvider,
+  makeHistogramProvider,
+  PrometheusModule,
+} from '@willsoto/nestjs-prometheus';
+import { Histogram } from 'prom-client';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { HttpLoggingInterceptor } from './common/interceptor/http-logging.interceptor';
 
 @Module({
   imports: [
@@ -30,6 +39,7 @@ import { NotificationModule } from './notification/notification.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
+        keepConnectionAlive : true,
         host: config.get<string>(DATABASE_HOST),
         port: parseInt(config.get<string>(DATABASE_PORT), 10),
         username: config.get<string>(DATABASE_USERNAME),
@@ -47,6 +57,7 @@ import { NotificationModule } from './notification/notification.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    // PrometheusModule.register(),
     ScheduleModuleNestJs.forRoot(),
     AuthModule,
     TaskModule,
@@ -59,8 +70,26 @@ import { NotificationModule } from './notification/notification.module';
     ScheduleModule,
     LicenceModule,
     AwsS3Module,
+    HealthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: HttpLoggingInterceptor,
+    },
+    makeHistogramProvider({
+      name: 'http_request_duration_ms',
+      help: 'Duration of HTTP requests in ms',
+      labelNames: ['route', 'method', 'code'],
+      // buckets for response time from 0.1ms to 500ms
+      buckets: [0.1, 5, 15, 50, 100, 200, 300, 400, 500],
+    }),
+  ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(HttpLoggingInterceptor).forRoutes('*');
+  }
+}

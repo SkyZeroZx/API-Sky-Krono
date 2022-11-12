@@ -8,6 +8,7 @@ import { CreateAttendanceDto } from './dto/create-attendance.dto';
 import { AttendanceResponse, GenericResponse } from '../common/swagger/response';
 import { ReportAttendanceDto } from './dto/report-attendance.dto';
 import { Auth } from '../common/decorators/auth.decorator';
+import { ReportChartAttendance } from './dto/report-chart-attendance';
 
 @ApiTags('Attendance')
 @ApiBearerAuth()
@@ -52,5 +53,19 @@ export class AttendanceController {
   @ApiResponse(AttendanceResponse.reportAttendance)
   reportAttendanceByUser(@Body() reportAttendanceDto: ReportAttendanceDto) {
     return this.attendanceService.reportAttendanceByUser(reportAttendanceDto);
+  }
+
+  @Post('/chart')
+  @Auth('admin')
+  @ApiOperation({ summary: 'Reporte de graficos general' })
+  reportChartsAttendance(@Body() reportChartAttendance: ReportChartAttendance) {
+    return this.attendanceService.reportChartsAttendance(reportChartAttendance);
+  }
+
+  @Post('/chart-user')
+  @Auth('admin')
+  @ApiOperation({ summary: 'Reporte de graficos por usuario' })
+  reportChartsAttendanceByUser(@Body() reportChartAttendance: ReportChartAttendance) {
+    return this.attendanceService.reportChartsAttendanceByUser(reportChartAttendance);
   }
 }
