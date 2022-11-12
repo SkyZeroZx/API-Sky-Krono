@@ -94,7 +94,6 @@ jobs:
     name: E2E Testing
     needs: build
     runs-on: ubuntu-latest
-    environment: develop
     steps:
       - name: 'Create env file'
         run: |
@@ -133,6 +132,10 @@ jobs:
           echo LOG_FOLDER: ${{secrets.LOG_FOLDER}} >> ${{ github.workspace }}/.env
           echo TIMESTAMP_FORMAT: ${{secrets.TIMESTAMP_FORMAT}} >> ${{ github.workspace }}/.env
           cat  ${{ github.workspace }}/.env
+          echo "ls -a ."
+          ls -a .
+          echo "ls -a ${{ github.workspace }}"
+          ls -a ${{ github.workspace }}
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
