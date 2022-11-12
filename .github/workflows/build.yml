@@ -145,7 +145,7 @@ jobs:
           key: ${{ github.sha }}
       - name: 'View Env'
         run: |
-          echo `cat .env`
+           cat  ${{ github.workspace }}/.env
       - name: 'list Env'
         run: |
           "ls"
