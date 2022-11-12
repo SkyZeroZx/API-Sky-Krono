@@ -115,7 +115,7 @@ jobs:
           echo PRIVATE_KEY: ${{secrets.PRIVATE_KEY}} >> ${{ github.workspace }}/.env
           echo EMAIL_WEB_PUSH: ${{secrets.EMAIL_WEB_PUSH}} >> ${{ github.workspace }}/.env
           echo RP_ID: ${{secrets.RP_ID}} >> ${{ github.workspace }}/.env
-          echo RP_ID_ARRAY: ${{secrets.RP_ID_ARRAY}} >> ${{ github.workspace }}/.env
+          echo RP_ID_ARRAY: ["localhost","skyzerozx.com","skykrono.skyzerozx.com","api-sky-krono-production.up.railway.app", "sky-krono-app.vercel.app", "sky-krono-app.herokuapp.com"] >> ${{ github.workspace }}/.env
           echo ORIGIN: ${{secrets.ORIGIN}} >> ${{ github.workspace }}/.env
           echo LOGO_APP: ${{secrets.LOGO_APP}} >> ${{ github.workspace }}/.env
           echo LOGO_ICON: ${{secrets.LOGO_ICON}} >> ${{ github.workspace }}/.env
