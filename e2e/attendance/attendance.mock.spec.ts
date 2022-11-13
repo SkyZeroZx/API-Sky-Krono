@@ -9,7 +9,7 @@ export class AttendanceE2EMock {
   };
 
   static readonly reportAttendanceDto: ReportAttendanceDto = {
-    id: '1',
+    id: 1,
     dateRange: ['2022-10-24', '2022-10-30'],
   };
 
