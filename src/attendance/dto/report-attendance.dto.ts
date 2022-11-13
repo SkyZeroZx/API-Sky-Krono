@@ -4,7 +4,7 @@ import { IsArray, IsNotEmpty } from 'class-validator';
 export class ReportAttendanceDto {
   @ApiProperty()
   @IsNotEmpty()
-  id: string;
+  id: number;
 
   @ApiProperty()
   @IsArray()

@@ -1,5 +1,6 @@
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
 import { ReportAttendanceDto } from './dto/report-attendance.dto';
+import { ReportChartAttendance } from './dto/report-chart-attendance';
 import { Attendance } from './entities/attendance.entity';
 
 export class AttendanceServiceMock {
@@ -69,6 +70,10 @@ export class AttendanceServiceMock {
 
   public reportAttendanceByUser  = jest.fn().mockReturnThis();
 
+  public reportChartsAttendance = jest.fn().mockReturnThis();
+
+  public reportChartsAttendanceByUser = jest.fn().mockReturnThis();
+
   public static readonly createAttendanceDto: CreateAttendanceDto = {
     description: 'Mock Create Description',
   };
@@ -105,7 +110,12 @@ export class AttendanceServiceMock {
   ];
 
   public static readonly reportAttendanceDto: ReportAttendanceDto = {
-    id: '1',
+    id: 1,
     dateRange: ['2022-10-12', '2022-10-25'],
   };
+
+  public static readonly reportChartAttendance : ReportChartAttendance = {
+    id: 1,
+    dateRange: ['2022-10-12', '2022-10-25'],
+  }
 }

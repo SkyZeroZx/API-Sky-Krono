@@ -38,8 +38,10 @@
   - [Environment](#Environment)
 - [Desarrollo](#desarrollo-%EF%B8%8F)
   - [Unit-Test](#unit-test)
+  - [E2E-Test](#E2E-test)
   - [Build](#build)
 - [Despligue](#despliegue-)  
+- [Monitoreo](#monitoreo)  
 - [Analisis de Codigo](#analisis-de-codigo-)
 - [Integración Continua](#integración-continua)
 - [Logger](#logger)
@@ -121,6 +123,20 @@ _La carpeta con la cobertura del codigo se creara en la raiz del proyecto con la
 
 ![Unit Test Coverage](/docs/unit-test/unit-test-coverage.png)
 
+### E2E-Test
+
+_Los test fueron desarrollados en Jest con ayuda de SuperTest realizados a la API , para validar el funcionamiento adecuado en un entorno más real_
+
+_Previamente configurar los datos de pruebas en el archivo ```e2e-config.spec.ts``` de la carpeta  ```e2e```_
+
+_Para ejecutar todos los E2E Test y reporte de cobertura de codigo ejecutar el comando_
+
+```
+ npm run test:e2e:cov
+```
+
+![E2E Test Coverage](/docs/e2e-test/e2e-test-coverage.png)
+
 ### Build
 
 _Para generar el build de producción del proyecto ejecutar el siguiente comando:_
@@ -132,6 +148,8 @@ _Para generar el build de producción del proyecto ejecutar el siguiente comando
 ## Despliegue 👨🏻‍💻
 
 _Para desplegar el proyecto mediante Docker se tiene los archivos ```Dockerfile``` y ```docker-compose.prod.yaml```, los cuales tienen preconfigurado la imagen y dependencias necesarias para levantar el proyecto_
+
+_Se dockerizo sobre un servidor de proxy inverso nginx_
 
 _Para construir la imagen y ejecutarla tenemos el siguiente comando , el cual tambien tomara nuestras variable de entorno del archivo ```env```_
 
@@ -150,6 +168,20 @@ _En caso de requerir volver a ejecutar el contenedor del proyecto previamente cr
 ```
  docker-compose -f docker-compose.prod.yaml --env-file .env up
 ```
+
+## Monitoreo
+
+_Adicionalmente en Docker se adiciono Prometheus y Grafana para el monitorio de nuestra API_
+
+_Se configuro por default el puerto **9090** para Prometheus y para Grafana se configuro el puerto **9090**_
+
+
+_DashBoard para monitoreo del API en Grafana_
+
+![Grafana 1](/docs/graphana/graphana-1.png)
+
+
+![Grafana 2](/docs/graphana/graphana-2.png)
 
 ## Analisis de Codigo 🔩
 
@@ -223,6 +255,9 @@ _Las herramientas utilizadas son:_
 - [NPM](https://www.npmjs.com/) - Manejador de dependencias
 - [Jest](https://jestjs.io/) - Framework Testing para pruebas unitarias
 - [Docker](https://www.docker.com/) - Para el despliegue de aplicaciones basado en contenedores
+- [Nginx](https://www.nginx.com/) - Servidor de Proxy Inverso ligero
+- [Graphana](https://grafana.com/) - Para la creación de DashBoard interactivos
+- [Prometheus](https://prometheus.io/) -Aplicación para monitorear metricas en tiempo real
 - [SonarQube](https://www.sonarqube.org/) - Evaluacion de codigo on premise
 - [SonarCloud](https://sonarcloud.io/) - Evaluacion de codigo cloud
 - [Visual Studio Code](https://code.visualstudio.com/) - Editor de Codigo

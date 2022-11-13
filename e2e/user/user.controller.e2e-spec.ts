@@ -79,7 +79,6 @@ describe('UserController (e2e)', () => {
   it('/USER (POST) ERROR', async () => {
     //Intentamos registrar un usuario ya existe por lo cual tendremos un error
     const { body } = await request.post('/users').send(UserMockE2E.createUserExist).expect(400);
-    console.log('body is ', body);
     expect(body.message).toEqual('El correo del usuario ya existe');
 
     // Validamos para el caso que tengamos un error en base de datos al buscar al usuario para ello mockeamos
@@ -146,9 +145,10 @@ describe('UserController (e2e)', () => {
   });
 
   it('/UPDATE (PATCH) OK', async () => {
-    const { body } = await request.patch('/users').send(UserMockE2E.updateUserExist).expect(200);
-    console.log('Body is ', body);
-    expect(body.message).toEqual(Constants.MSG_OK);
+    const {
+      body: { message },
+    } = await request.patch('/users').send(UserMockE2E.updateUserExist).expect(200);
+    expect(message).toEqual(Constants.MSG_OK);
   });
 
   it('/UPDATE (PATCH) ERROR [MOCK]', async () => {
@@ -188,7 +188,6 @@ describe('UserController (e2e)', () => {
     mockUploadInstance.done.mockImplementationOnce(() => {
       throw new Error();
     });
-    const { body } = await request.post('/users/photo').attach('file', e2e_config.env.pathPhoto).expect(500);
-    console.log('Error body is ', body);
+    await request.post('/users/photo').attach('file', e2e_config.env.pathPhoto).expect(500);
   });
 });

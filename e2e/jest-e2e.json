@@ -1,6 +1,6 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
-  "modulePathIgnorePatterns": ["dist" , "config"],
+  "modulePathIgnorePatterns": ["dist", "config"],
   "moduleNameMapper": {
     "^@/(.*)$": "<rootDir>/src/$1",
     "^@test/(.*)$": "<rootDir>/e2e/$1"
@@ -19,6 +19,8 @@
     "!**/**.logger.(t|j)s",
     "!**/src/common/decorators/test/**.(t|j)s",
     "!**/src/common/decorators/test/*.(t|j)s",
+    "!**/src/common/utils/**",
+    "!**/src/health/**",
     "!**/config/**",
     "!**/src/common/helpers/*.(t|j)s",
     "!**/src/common/swagger/**",

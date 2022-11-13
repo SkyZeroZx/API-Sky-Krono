@@ -66,4 +66,18 @@ describe('AttendanceController', () => {
     await attendanceController.reportAttendanceByUser(AttendanceServiceMock.reportAttendanceDto);
     expect(spyReportAttendance).toBeCalledWith(AttendanceServiceMock.reportAttendanceDto);
   });
+
+  it('Validate reportChartsAttendance', async () => {
+    const spyReportAttendance = jest.spyOn(attendanceService, 'reportChartsAttendance');
+    await attendanceController.reportChartsAttendance(AttendanceServiceMock.reportChartAttendance);
+    expect(spyReportAttendance).toBeCalledWith(AttendanceServiceMock.reportChartAttendance);
+  });
+
+  it('Validate reportChartsAttendanceByUser', async () => {
+    const spyReportAttendance = jest.spyOn(attendanceService, 'reportChartsAttendanceByUser');
+    await attendanceController.reportChartsAttendanceByUser(
+      AttendanceServiceMock.reportChartAttendance,
+    );
+    expect(spyReportAttendance).toBeCalledWith(AttendanceServiceMock.reportChartAttendance);
+  });
 });

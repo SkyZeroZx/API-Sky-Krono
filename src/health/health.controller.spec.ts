@@ -1,20 +1,47 @@
+import {
+  HealthCheckService,
+  MemoryHealthIndicator,
+  TerminusModule,
+  TypeOrmHealthIndicator,
+} from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 import { HealthController } from './health.controller';
-import { HealthService } from './health.service';
 
 describe('HealthController', () => {
-  let controller: HealthController;
-
+  let healthController: HealthController;
+  let healthCheckService: HealthCheckService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [HealthController],
-      providers: [HealthService],
+      imports: [TerminusModule],
+      providers: [
+        {
+          provide: MemoryHealthIndicator,
+          useValue: {
+            checkHeap: jest.fn().mockResolvedValue(null),
+            checkRSS: jest.fn().mockResolvedValue(null),
+          },
+        },
+        {
+          provide: TypeOrmHealthIndicator,
+          useValue: {
+            pingCheck: jest.fn().mockResolvedValue(null),
+          },
+        },
+      ],
     }).compile();
-
-    controller = module.get<HealthController>(HealthController);
+    healthController = module.get<HealthController>(HealthController);
+    healthCheckService = module.get<HealthCheckService>(HealthCheckService);
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(healthController).toBeDefined();
+  });
+
+  it('Validate check', async () => {
+    const spyHealthCheckService = jest.spyOn(healthCheckService, 'check');
+
+    await healthController.check();
+    expect(spyHealthCheckService).toBeCalled();
   });
 });
