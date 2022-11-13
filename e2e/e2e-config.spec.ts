@@ -3,7 +3,7 @@ export const e2e_config = {
     pathPhoto: 'e2e/fixture/coffee.jpg',
     jwtToken: {
       Authorization:
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoic2t5emVyb2JvdDY0QGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE2NjgyMjAyNDUsImV4cCI6MTY2ODMwNjY0NX0.Ala2w6cMeu8-vjj80kj8l4odxw2-HS6KbgkAc4oOKNQ',
+        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoic2t5emVyb2JvdDY0QGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE2NjgzODA1MjksImV4cCI6MTY2ODQ2NjkyOX0.EzyfqThtcajBO2hDSjfvFArs6SJACrhjhDr9Jyd9YuEeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoic2t5emVyb2JvdDY0QGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE2NjgzODA1MjksImV4cCI6MTY2ODQ2NjkyOX0.EzyfqThtcajBO2hDSjfvFArs6SJACrhjhDr9Jyd9YuE',
     },
     jwtTokenFail: {
       Authorization: '',
