@@ -8,16 +8,23 @@ describe('HttpLoggingInterceptor', () => {
   let httpCounter: any = new HttpLoggingInterceptorMock();
 
   let responseSizeHistogram: any = new HttpLoggingInterceptorMock();
+  let requestSizeHistogram: any = new HttpLoggingInterceptorMock();
 
   let testValue = new HttpLoggingInterceptor(
     httpRequestDuration,
     httpCounter,
     responseSizeHistogram,
+    requestSizeHistogram,
   );
 
   it('should be defined', () => {
     expect(
-      new HttpLoggingInterceptor(httpRequestDuration, httpCounter, responseSizeHistogram),
+      new HttpLoggingInterceptor(
+        httpRequestDuration,
+        httpCounter,
+        responseSizeHistogram,
+        requestSizeHistogram,
+      ),
     ).toBeDefined();
   });
 

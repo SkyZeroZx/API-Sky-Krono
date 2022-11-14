@@ -21,7 +21,7 @@ async function bootstrap() {
   app.use(helmet());
   app.use(helmet.hidePoweredBy());
   initSwagger(app);
-  await app.listen(process.env.PORT || 3030);
+  await app.listen(process.env.PORT || 3000);
 
   webpush();
   logger.log(`Server Listening : ${await app.getUrl()}`);

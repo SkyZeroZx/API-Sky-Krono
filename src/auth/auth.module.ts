@@ -11,13 +11,11 @@ import { JWT_TOKEN } from '../common/constants/Constant';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Authentication } from './entities/autentication.entity';
 import { Challenge } from './entities/challenge.entity';
-import { makeHistogramProvider, PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Authentication]),
     TypeOrmModule.forFeature([Challenge]),
-    PrometheusModule.register(),
     PassportModule,
     UserModule,
     JwtModule.registerAsync({
@@ -29,10 +27,6 @@ import { makeHistogramProvider, PrometheusModule } from '@willsoto/nestjs-promet
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    LocalStrategy,
-    JwtStrategy
-  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
 })
 export class AuthModule {}

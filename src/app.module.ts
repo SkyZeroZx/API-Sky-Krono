@@ -30,10 +30,7 @@ import {
   PrometheusModule,
 } from '@willsoto/nestjs-prometheus';
 import { HttpLoggingInterceptor } from './common/interceptor/http-logging.interceptor';
-import { register } from 'prom-client';
 
-// for clear old registers
-register.clear();
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -90,6 +87,12 @@ register.clear();
     makeHistogramProvider({
       name: 'http_response_size_bytes',
       help: 'Size in bytes of response',
+      labelNames: ['route', 'method', 'code'],
+      buckets: [0.1, 5, 15, 50, 100, 200, 300, 400, 500],
+    }),
+    makeHistogramProvider({
+      name: 'http_request_size_bytes',
+      help: 'Size in bytes of request',
       labelNames: ['route', 'method', 'code'],
       buckets: [0.1, 5, 15, 50, 100, 200, 300, 400, 500],
     }),

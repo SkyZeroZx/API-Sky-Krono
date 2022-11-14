@@ -149,7 +149,7 @@ _Para generar el build de producción del proyecto ejecutar el siguiente comando
 
 _Para desplegar el proyecto mediante Docker se tiene los archivos ```Dockerfile``` y ```docker-compose.prod.yaml```, los cuales tienen preconfigurado la imagen y dependencias necesarias para levantar el proyecto_
 
-_Se dockerizo sobre un servidor de proxy inverso nginx_
+_Se dockerizo sobre un servidor de proxy inverso nginx el cual se expone en el puerto **80** por default_
 
 _Para construir la imagen y ejecutarla tenemos el siguiente comando , el cual tambien tomara nuestras variable de entorno del archivo ```env```_
 
@@ -173,7 +173,7 @@ _En caso de requerir volver a ejecutar el contenedor del proyecto previamente cr
 
 _Adicionalmente en Docker se adiciono Prometheus y Grafana para el monitorio de nuestra API_
 
-_Se configuro por default el puerto **9090** para Prometheus y para Grafana se configuro el puerto **9090**_
+_Se configuro por default el puerto **9090** para Prometheus y para Grafana se configuro el puerto **2525**_
 
 
 _DashBoard para monitoreo del API en Grafana_
