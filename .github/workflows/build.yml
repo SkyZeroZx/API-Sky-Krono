@@ -105,14 +105,7 @@ jobs:
         with:
           path: ./*
           key: ${{ github.sha }}
-      - name: 'list Env A'
-        run: |
-          echo "ls -a ."
-          ls -a .
-      - name: 'list Env workspace'
-        run: |
-          ls -a ${{ github.workspace }}
-      - name: E2E Test
+      - name: Run All E2E Test
         run: npm run test:e2e:cov
       - uses: actions/upload-artifact@v3
         with:

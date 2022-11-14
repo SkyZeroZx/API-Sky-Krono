@@ -2,7 +2,7 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
   <h1 align="center">Sky Krono API NestJS</h1>
-  <p align="center">Es el API REST para la WebAPP/PWA SkyKrono integrado con Web Authentication para el inicio de sesion passworless</p>
+  <p align="center">Es el API REST para la <a target="blank" href="https://github.com/SkyZeroZx/Sky-Krono-App"> WebAPP/PWA SkyKrono </a> integrado con Web Authentication para el inicio de sesion passworless</p>
 <p align="center">
   <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
     <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=alert_status" alt="Quality Gate" />
@@ -197,7 +197,7 @@ Sonaqube >= 9.X
 
 ![SonarQube Properties](/docs/sonar/sonar-properties.png)
 
-_Las pruebas fueron realizas sobre *SonarQube 9.5* y *SonarCloud* para ejecutar el analisis de codigo ejecutar el comando para la instancia local:_
+_Las pruebas fueron realizas sobre *SonarQube 9.7* y *SonarCloud* para ejecutar el analisis de codigo ejecutar el comando para la instancia local:_
 
 ```
 npm run sonar
@@ -219,6 +219,10 @@ _Se creo la carpeta `.github/workflows` con el archivo `build.yml` que contiene 
 
 ![CI 1](/docs/ci/ci-1.png)
 
+_Posteriormente a la ejecución del workflow se generan los artifacts `reports-e2e-test` , `reports-unit-test` que contienen el reporte cobertura generado_
+
+
+![CI 2](/docs/ci/ci-2.png)
 
 ## Documentacion
 
