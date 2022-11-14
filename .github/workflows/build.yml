@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - develop
+      - workflow_test
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -29,44 +30,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          envkey_DATABASE_HOST: ${{secrets.DATABASE_HOST}}
-          envkey_DATABASE_PORT: ${{secrets.DATABASE_PORT}}
-          envkey_DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
-          envkey_DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-          envkey_DATABASE_NAME: ${{secrets.DATABASE_NAME}}
-          envkey_JWT_TOKEN: ${{secrets.JWT_TOKEN}}
-          envkey_EMAIL_HOST: ${{secrets.EMAIL_HOST}} # MAIL PROPERTIES
-          envkey_EMAIL_PORT: ${{secrets.EMAIL_PORT}}
-          envkey_EMAIL_USERNAME: ${{secrets.EMAIL_USERNAME}}
-          envkey_EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}}
-          envkey_PUBLIC_KEY: ${{secrets.PUBLIC_KEY}} # WEB PUSH PROPERTIES
-          envkey_PRIVATE_KEY: ${{secrets.PRIVATE_KEY}}
-          envkey_EMAIL_WEB_PUSH: ${{secrets.EMAIL_WEB_PUSH}}
-          envkey_RP_ID: ${{secrets.RP_ID}} # WEB AUTH PROPERTIES
-          envkey_RP_ID_ARRAY: ${{secrets.RP_ID_ARRAY}}
-          envkey_ORIGIN: ${{secrets.ORIGIN}}
-          envkey_LOGO_APP: ${{secrets.LOGO_APP}}
-          envkey_LOGO_ICON: ${{secrets.LOGO_ICON}}
-          envkey_URL_WEB: ${{secrets.URL_WEB}}
-          envkey_TZ: ${{secrets.TZ}} # TIME ZONE PROPERTIES
-          envkey_CACHE_MAX_ITEMS: ${{secrets.CACHE_MAX_ITEMS}} # CACHE PROPERTIES
-          envkey_CACHE_TTL: ${{secrets.CACHE_TTL}}
-          envkey_ENABLED_MYSQL_CACHE: ${{secrets.ENABLED_MYSQL_CACHE}}
-          envkey_AWS_REGION: ${{secrets.AWS_REGION}} # AWS S3 PROPERTIES
-          envkey_AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-          envkey_AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          envkey_AWS_BUCKET: ${{secrets.AWS_BUCKET}}
-          envkey_DATE_PATTERN: ${{secrets.DATE_PATTERN}} # LOGGER PROPERTIES
-          envkey_APP_NAME: ${{secrets.APP_NAME}}
-          envkey_MAX_SIZE: ${{secrets.MAX_SIZE}}
-          envkey_MAX_DAYS: ${{secrets.MAX_DAYS}}
-          envkey_LOG_FOLDER: ${{secrets.LOG_FOLDER}}
-          envkey_TIMESTAMP_FORMAT: ${{secrets.TIMESTAMP_FORMAT}}
-          file_name: .env
-          fail_on_empty: false
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -90,86 +53,86 @@ jobs:
           name: reports-unit-test
           path: coverage/*
   e2e-testing:
-    name: E2E Testing SuperTest
+    name: E2E Testing
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: 'Create env file'
-        run: |
-          touch .env
-          echo DATABASE_HOST: ${{secrets.DATABASE_HOST}} >> .env
-          echo DATABASE_PORT: ${{secrets.DATABASE_PORT}} >> .env
-          echo DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}} >> .env
-          echo DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}} >> .env
-          echo DATABASE_NAME: ${{secrets.DATABASE_NAME}} >> .env
-          echo JWT_TOKEN: ${{secrets.JWT_TOKEN}} >> .env
-          echo EMAIL_HOST: ${{secrets.EMAIL_HOST}}  >> .env
-          echo EMAIL_PORT: ${{secrets.EMAIL_PORT}} >> .env
-          echo EMAIL_USERNAME: ${{secrets.EMAIL_USERNAME}} >> .env
-          echo EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}} >> .env
-          echo PUBLIC_KEY: ${{secrets.PUBLIC_KEY}}  >> .env
-          echo PRIVATE_KEY: ${{secrets.PRIVATE_KEY}} >> .env
-          echo EMAIL_WEB_PUSH: ${{secrets.EMAIL_WEB_PUSH}} >> .env
-          echo RP_ID: ${{secrets.RP_ID}} >> .env
-          echo RP_ID_ARRAY: ${{secrets.RP_ID_ARRAY}} >> .env
-          echo ORIGIN: ${{secrets.ORIGIN}} >> .env
-          echo LOGO_APP: ${{secrets.LOGO_APP}} >> .env
-          echo LOGO_ICON: ${{secrets.LOGO_ICON}} >> .env
-          echo URL_WEB: ${{secrets.URL_WEB}} >> .env
-          echo TZ: ${{secrets.TZ}}  >> .env
-          echo CACHE_MAX_ITEMS: ${{secrets.CACHE_MAX_ITEMS}}  >> .env
-          echo CACHE_TTL: ${{secrets.CACHE_TTL}} >> .env
-          echo ENABLED_MYSQL_CACHE: ${{secrets.ENABLED_MYSQL_CACHE}} >> .env
-          echo AWS_REGION: ${{secrets.AWS_REGION}} >> .env
-          echo AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}} >> .env
-          echo AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}} >> .env
-          echo AWS_BUCKET: ${{secrets.AWS_BUCKET}} >> .env
-          echo DATE_PATTERN: ${{secrets.DATE_PATTERN}}  >> .env
-          echo APP_NAME: ${{secrets.APP_NAME}} >> .env
-          echo MAX_SIZE: ${{secrets.MAX_SIZE}} >> .env
-          echo MAX_DAYS: ${{secrets.MAX_DAYS}} >> .env
-          echo LOG_FOLDER: ${{secrets.LOG_FOLDER}} >> .env
-          echo TIMESTAMP_FORMAT: ${{secrets.TIMESTAMP_FORMAT}} >> .env
-          cat .env
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v1
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v1.2
+        with:
+          envkey_DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+          envkey_DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+          envkey_DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
+          envkey_DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          envkey_DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+          envkey_JWT_TOKEN: ${{secrets.JWT_TOKEN}}
+          envkey_EMAIL_HOST: ${{secrets.EMAIL_HOST}} # MAIL PROPERTIES
+          envkey_EMAIL_PORT: ${{secrets.EMAIL_PORT}}
+          envkey_EMAIL_USERNAME: ${{secrets.EMAIL_USERNAME}}
+          envkey_EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}}
+          envkey_PUBLIC_KEY: ${{secrets.PUBLIC_KEY}} # WEB PUSH PROPERTIES
+          envkey_PRIVATE_KEY: ${{secrets.PRIVATE_KEY}}
+          envkey_EMAIL_WEB_PUSH: ${{secrets.EMAIL_WEB_PUSH}}
+          envkey_RP_ID: ${{secrets.RP_ID}} # WEB AUTH PROPERTIES
+          envkey_LOGO_APP: ${{secrets.LOGO_APP}}
+          envkey_LOGO_ICON: ${{secrets.LOGO_ICON}}
+          envkey_URL_WEB: ${{secrets.URL_WEB}}
+          envkey_TZ: ${{secrets.TZ}} # TIME ZONE PROPERTIES
+          envkey_CACHE_MAX_ITEMS: ${{secrets.CACHE_MAX_ITEMS}} # CACHE PROPERTIES
+          envkey_CACHE_TTL: ${{secrets.CACHE_TTL}}
+          envkey_ENABLED_MYSQL_CACHE: ${{secrets.ENABLED_MYSQL_CACHE}}
+          envkey_AWS_REGION: ${{secrets.AWS_REGION}} # AWS S3 PROPERTIES
+          envkey_AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          envkey_AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          envkey_AWS_BUCKET: ${{secrets.AWS_BUCKET}}
+          envkey_DATE_PATTERN: ${{secrets.DATE_PATTERN}} # LOGGER PROPERTIES
+          envkey_APP_NAME: ${{secrets.APP_NAME}}
+          envkey_MAX_SIZE: ${{secrets.MAX_SIZE}}
+          envkey_MAX_DAYS: ${{secrets.MAX_DAYS}}
+          envkey_LOG_FOLDER: ${{secrets.LOG_FOLDER}}
+          envkey_TIMESTAMP_FORMAT: ${{secrets.TIMESTAMP_FORMAT}}
+          directory: ${{ github.workspace }}
+          file_name: .env
+          fail_on_empty: false
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: restore-build
         with:
           path: ./*
           key: ${{ github.sha }}
-      - name: E2E Test
+      - name: Run All E2E Test
         run: npm run test:e2e:cov
       - uses: actions/upload-artifact@v3
         with:
           name: reports-e2e-test
           path: coverage-e2e/*
-  # sonarcloud:
-  #   name: SonarCloud
-  #   needs: [build , unit-test]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 16
-  #     - uses: actions/cache@v3
-  #       id: build-unit-test
-  #       with:
-  #         path: ./*
-  #         key: ${{ github.sha }}
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: reports-unit-test
-  #         path: coverage
-  #     - name: SonarCloud Scan
-  #       uses: SonarSource/sonarcloud-github-action@master
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  sonarcloud:
+    name: SonarCloud
+    needs: [build, unit-test, e2e-testing]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: actions/cache@v3
+        id: build-unit-test
+        with:
+          path: ./*
+          key: ${{ github.sha }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: reports-unit-test
+          path: coverage
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

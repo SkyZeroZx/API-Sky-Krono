@@ -133,7 +133,7 @@ describe('AttendanceService', () => {
 
   it('Valdiate Update Error Not Affected', async () => {
     jest.spyOn(attendanceService, 'isActiveAttendance').mockResolvedValueOnce(true);
-    const spyExecute = jest.spyOn(mockService, 'execute').mockResolvedValueOnce({ affected: 0 });
+    const spyExecute = jest.spyOn(mockService, 'update').mockResolvedValueOnce({ affected: 0 });
     await expect(attendanceService.update(UserServiceMock.userMock)).rejects.toThrowError(
       new InternalServerErrorException('Sucedio un error al actualizar Attendance'),
     );
@@ -142,7 +142,7 @@ describe('AttendanceService', () => {
 
   it('Valdiate Update Error Database', async () => {
     jest.spyOn(attendanceService, 'isActiveAttendance').mockResolvedValueOnce(true);
-    const spyExecute = jest.spyOn(mockService, 'execute').mockRejectedValueOnce(new Error());
+    const spyExecute = jest.spyOn(mockService, 'update').mockRejectedValueOnce(new Error());
     await expect(attendanceService.update(UserServiceMock.userMock)).rejects.toThrowError(
       new InternalServerErrorException('Sucedio un error al actualizar Attendance'),
     );
@@ -152,23 +152,10 @@ describe('AttendanceService', () => {
   it('Validate Update Ok ', async () => {
     jest.spyOn(attendanceService, 'isActiveAttendance').mockResolvedValueOnce(true);
     const spyUitlFormatDate = jest.spyOn(Util, 'formatDateId').mockReturnValueOnce(formatDateId);
-    const spyCreateQueryBuilder = jest.spyOn(mockService, 'createQueryBuilder');
-    const spyUpdate = jest.spyOn(mockService, 'update');
-    const spySet = jest.spyOn(mockService, 'set');
-    const spyWhere = jest.spyOn(mockService, 'where');
-    const spyExecute = jest.spyOn(mockService, 'execute').mockResolvedValueOnce({ affected: 1 });
+    const spyUpdate = jest.spyOn(mockService, 'update').mockResolvedValueOnce({ affected: 1 });
     const { message } = await attendanceService.update(UserServiceMock.userMock);
     expect(message).toEqual(Constants.MSG_OK);
-    expect(spyCreateQueryBuilder).toBeCalled();
-    expect(spyUpdate).toBeCalledWith(Attendance);
-    expect(spySet).toBeCalledWith({
-      isActive: false,
-    });
-    expect(spyWhere).toBeCalledWith('codUser = :codUser and id = :id', {
-      codUser: UserServiceMock.userMock.id,
-      id: formatDateId,
-    });
-    expect(spyExecute).toBeCalled();
+    expect(spyUpdate).toBeCalled();
     expect(spyUitlFormatDate).toBeCalled();
   });
 
@@ -227,6 +214,29 @@ describe('AttendanceService', () => {
     const spyQuery = jest.spyOn(mockService, 'query').mockResolvedValueOnce([]);
     await attendanceService.reportAttendanceByUser(AttendanceServiceMock.reportAttendanceDto);
     expect(spyQuery).toBeCalledWith('CALL REPORT_ATTENDANCE_BY_USER(?,?,?)', [
+      id,
+      initDate,
+      endDate,
+    ]);
+  });
+
+  it('Validate reportChartsAttendance', async () => {
+    const {
+      dateRange: [initDate, endDate],
+    } = AttendanceServiceMock.reportChartAttendance;
+    const spyQuery = jest.spyOn(mockService, 'query').mockResolvedValueOnce([]);
+    await attendanceService.reportChartsAttendance(AttendanceServiceMock.reportChartAttendance);
+    expect(spyQuery).toBeCalledWith('CALL REPORT_CHART_REPORT(?,?)', [initDate, endDate]);
+  });
+
+  it('Validate reportChartsAttendanceByUser', async () => {
+    const {
+      id,
+      dateRange: [initDate, endDate],
+    } = AttendanceServiceMock.reportChartAttendance;
+    const spyQuery = jest.spyOn(mockService, 'query').mockResolvedValueOnce([]);
+    await attendanceService.reportChartsAttendanceByUser(AttendanceServiceMock.reportChartAttendance);
+    expect(spyQuery).toBeCalledWith('CALL REPORT_CHART_REPORT_BY_USER(?,?,?)', [
       id,
       initDate,
       endDate,

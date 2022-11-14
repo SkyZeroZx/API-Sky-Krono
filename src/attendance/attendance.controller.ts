@@ -45,8 +45,8 @@ export class AttendanceController {
     return this.attendanceService.update(user);
   }
 
-  @Post('/report')
   @Auth('admin')
+  @Post('/report')
   @ApiOperation({
     summary: 'Reporte de asistencias del usuario seleccionado en un rango de fechas',
   })
@@ -55,15 +55,15 @@ export class AttendanceController {
     return this.attendanceService.reportAttendanceByUser(reportAttendanceDto);
   }
 
-  @Post('/chart')
   @Auth('admin')
+  @Post('/chart')
   @ApiOperation({ summary: 'Reporte de graficos general' })
   reportChartsAttendance(@Body() reportChartAttendance: ReportChartAttendance) {
     return this.attendanceService.reportChartsAttendance(reportChartAttendance);
   }
 
-  @Post('/chart-user')
   @Auth('admin')
+  @Post('/chart-user')
   @ApiOperation({ summary: 'Reporte de graficos por usuario' })
   reportChartsAttendanceByUser(@Body() reportChartAttendance: ReportChartAttendance) {
     return this.attendanceService.reportChartsAttendanceByUser(reportChartAttendance);

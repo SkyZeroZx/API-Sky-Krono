@@ -68,8 +68,10 @@ describe('LicenceController (e2e)', () => {
   });
 
   it('/LICENCE (PATCH) OK', async () => {
-    const { body } = await request.patch('/licence').send(LicenceE2EMock.updateLicenceDto); //.expect(200);
-    console.log('body is ', body);
+    const {
+      body: { message },
+    } = await request.patch('/licence').send(LicenceE2EMock.updateLicenceDto).expect(200);
+    expect(message).toEqual(Constants.MSG_OK);
   });
 
   it('/LICENCE (PATCH) ERROR [MOCK]', async () => {

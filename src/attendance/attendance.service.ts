@@ -78,14 +78,12 @@ export class AttendanceService {
     }
 
     try {
-      const { affected } = await this.attendanceRepository
-        .createQueryBuilder()
-        .update(Attendance)
-        .set({
+      const { affected } = await this.attendanceRepository.update(
+        { codUser: user.id, id: Util.formatDateId() },
+        {
           isActive: false,
-        })
-        .where('codUser = :codUser and id = :id', { codUser: user.id, id: Util.formatDateId() })
-        .execute();
+        },
+      );
       if (affected == 1) {
         this.logger.log('Se actualizo exitosamente el Attendance');
         return { message: Constants.MSG_OK, info: 'Se registro exitosamente su salida' };
