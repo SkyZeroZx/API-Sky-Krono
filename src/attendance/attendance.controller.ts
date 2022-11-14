@@ -6,6 +6,9 @@ import { UserDecorator as User } from '../common/decorators/user.decorator';
 import { AttendanceService } from './attendance.service';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
 import { AttendanceResponse, GenericResponse } from '../common/swagger/response';
+import { ReportAttendanceDto } from './dto/report-attendance.dto';
+import { Auth } from '../common/decorators/auth.decorator';
+import { ReportChartAttendance } from './dto/report-chart-attendance';
 
 @ApiTags('Attendance')
 @ApiBearerAuth()
@@ -40,5 +43,29 @@ export class AttendanceController {
   @ApiResponse(GenericResponse.response)
   update(@User() user: UserEntity) {
     return this.attendanceService.update(user);
+  }
+
+  @Auth('admin')
+  @Post('/report')
+  @ApiOperation({
+    summary: 'Reporte de asistencias del usuario seleccionado en un rango de fechas',
+  })
+  @ApiResponse(AttendanceResponse.reportAttendance)
+  reportAttendanceByUser(@Body() reportAttendanceDto: ReportAttendanceDto) {
+    return this.attendanceService.reportAttendanceByUser(reportAttendanceDto);
+  }
+
+  @Auth('admin')
+  @Post('/chart')
+  @ApiOperation({ summary: 'Reporte de graficos general' })
+  reportChartsAttendance(@Body() reportChartAttendance: ReportChartAttendance) {
+    return this.attendanceService.reportChartsAttendance(reportChartAttendance);
+  }
+
+  @Auth('admin')
+  @Post('/chart-user')
+  @ApiOperation({ summary: 'Reporte de graficos por usuario' })
+  reportChartsAttendanceByUser(@Body() reportChartAttendance: ReportChartAttendance) {
+    return this.attendanceService.reportChartsAttendanceByUser(reportChartAttendance);
   }
 }

@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 5s
+scrape_configs:
+  - job_name: "skykrono-backend-metrics"
+    metrics_path: /metrics
+  #  scheme: https #Use in https server deploys
+    static_configs:
+      - targets: ['host.docker.internal:80']

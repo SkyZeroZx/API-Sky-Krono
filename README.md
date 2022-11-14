@@ -2,9 +2,7 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
   <h1 align="center">Sky Krono API NestJS</h1>
-  <p align="center">Es el API REST para la WebAPP/PWA SkyKrono integrado con Web Authentication para el inicio de sesion passworless para la 
-          <a href="https://github.com/SkyZeroZx/Sky-Krono-App" target="_blank">Web App SkyKrono</a>
-  </p>
+  <p align="center">Es el API REST para la <a target="blank" href="https://github.com/SkyZeroZx/Sky-Krono-App"> WebAPP/PWA SkyKrono </a> integrado con Web Authentication para el inicio de sesion passworless</p>
 <p align="center">
   <a href="https://sonarcloud.io/summary/new_code?id=SkyZeroZx_API-Sky-Krono" target="_blank">
     <img src="https://sonarcloud.io/api/project_badges/measure?project=SkyZeroZx_API-Sky-Krono&metric=alert_status" alt="Quality Gate" />
@@ -35,12 +33,15 @@
 
 - [Pre-Requisitos](#pre-requisitos-)
 - [Instalación](#instalación-)
+  - [Base de Datos](#base-de-datos)
   - [Scripts SQL](#Scripts-SQL)
   - [Environment](#Environment)
 - [Desarrollo](#desarrollo-%EF%B8%8F)
   - [Unit-Test](#unit-test)
+  - [E2E-Test](#E2E-test)
   - [Build](#build)
-- [Despligue](#despliegue-)
+- [Despligue](#despliegue-)  
+- [Monitoreo](#monitoreo)  
 - [Analisis de Codigo](#analisis-de-codigo-)
 - [Integración Continua](#integración-continua)
 - [Logger](#logger)
@@ -86,9 +87,15 @@ _Previamente a ejecutar el servidor en desarrollo configurar el archivo .env con
 
 _Dirigirse a la ruta http://localhost:3000/ donde tendra el API REST levantada_
 
+### Base de Datos
+
+_El diagrama de base de datos se construyo para el proyecto se describe en la imagen_
+
+![Database 1](/docs/database/database-1.jpg)
+
 ### Scripts SQL
 
-_Se tiene el archivo `script.sql` en la raiz del proyecto , el cual contiene los scripts de creacion de Store Procedure y Events/Jobs en MySQL_
+_Se tiene el archivo ```script.sql``` en la raiz del proyecto , el cual contiene los scripts de creacion de Store Procedure y Events/Jobs en MySQL_
 
 _Se requiere ejecutar para el correcto funcionamiento de las tareas programadas como registro de licencias , dias libres de los trabajadores_
 
@@ -96,7 +103,7 @@ _Se requiere ejecutar para el correcto funcionamiento de las tareas programadas 
 
 ### Environment
 
-_Se tiene el archivo `env.template` , el cual posee un ejemplo de cada valor de las valores de entorno para poder desplegarlas en nuestro propio ambiente local o cloud_
+_Se tiene el archivo ```env.template``` , el cual posee un ejemplo de cada valor de las valores de entorno para poder desplegarlas en nuestro propio ambiente local o cloud_
 
 ![Env](/docs/env/env.png)
 
@@ -116,6 +123,20 @@ _La carpeta con la cobertura del codigo se creara en la raiz del proyecto con la
 
 ![Unit Test Coverage](/docs/unit-test/unit-test-coverage.png)
 
+### E2E-Test
+
+_Los test fueron desarrollados en Jest con ayuda de SuperTest realizados a la API , para validar el funcionamiento adecuado en un entorno más real_
+
+_Previamente configurar los datos de pruebas en el archivo ```e2e-config.spec.ts``` de la carpeta  ```e2e```_
+
+_Para ejecutar todos los E2E Test y reporte de cobertura de codigo ejecutar el comando_
+
+```
+ npm run test:e2e:cov
+```
+
+![E2E Test Coverage](/docs/e2e-test/e2e-test-coverage.png)
+
 ### Build
 
 _Para generar el build de producción del proyecto ejecutar el siguiente comando:_
@@ -126,9 +147,11 @@ _Para generar el build de producción del proyecto ejecutar el siguiente comando
 
 ## Despliegue 👨🏻‍💻
 
-_Para desplegar el proyecto mediante Docker se tiene los archivos `Dockerfile` y `docker-compose.prod.yaml`, los cuales tienen preconfigurado la imagen y dependencias necesarias para levantar el proyecto_
+_Para desplegar el proyecto mediante Docker se tiene los archivos ```Dockerfile``` y ```docker-compose.prod.yaml```, los cuales tienen preconfigurado la imagen y dependencias necesarias para levantar el proyecto_
 
-_Para construir la imagen y ejecutarla tenemos el siguiente comando , el cual tambien tomara nuestras variable de entorno del archivo `env`_
+_Se dockerizo sobre un servidor de proxy inverso nginx el cual se expone en el puerto **80** por default_
+
+_Para construir la imagen y ejecutarla tenemos el siguiente comando , el cual tambien tomara nuestras variable de entorno del archivo ```env```_
 
 _Ejecutar el siguiente comando en la raiz del proyecto_
 
@@ -146,6 +169,20 @@ _En caso de requerir volver a ejecutar el contenedor del proyecto previamente cr
  docker-compose -f docker-compose.prod.yaml --env-file .env up
 ```
 
+## Monitoreo
+
+_Adicionalmente en Docker se adiciono Prometheus y Grafana para el monitorio de nuestra API_
+
+_Se configuro por default el puerto **9090** para Prometheus y para Grafana se configuro el puerto **2525**_
+
+
+_DashBoard para monitoreo del API en Grafana_
+
+![Grafana 1](/docs/graphana/graphana-1.png)
+
+
+![Grafana 2](/docs/graphana/graphana-2.png)
+
 ## Analisis de Codigo 🔩
 
 _**Pre requisitos**_
@@ -160,7 +197,7 @@ Sonaqube >= 9.X
 
 ![SonarQube Properties](/docs/sonar/sonar-properties.png)
 
-_Las pruebas fueron realizas sobre *SonarQube 9.5* y *SonarCloud* para ejecutar el analisis de codigo ejecutar el comando para la instancia local:_
+_Las pruebas fueron realizas sobre *SonarQube 9.7* y *SonarCloud* para ejecutar el analisis de codigo ejecutar el comando para la instancia local:_
 
 ```
 npm run sonar
@@ -182,9 +219,15 @@ _Se creo la carpeta `.github/workflows` con el archivo `build.yml` que contiene 
 
 ![CI 1](/docs/ci/ci-1.png)
 
+_Posteriormente a la ejecución del workflow se generan los artifacts `reports-e2e-test` , `reports-unit-test` que contienen el reporte cobertura generado_
+
+
+![CI 2](/docs/ci/ci-2.png)
+
 ## Documentacion
 
-_Se realizo la documentación del API Rest usando Swagger el cual puede encontrar en la ruta http://localhost:3000/docs/ en la configuración por default_
+_Se realizo la documentación del API Rest usando Swagger el cual puede encontrar en la ruta http://localhost:3000/docs/  en la configuración por default_
+
 
 ![Swagger 1](/docs/swagger/swagger-1.jpg)
 
@@ -202,7 +245,6 @@ DATE_PATTERN=YYYY-MM-DD
 MAX_SIZE=20m
 MAX_DAYS=14d
 ```
-
 _Por default la carpeta donde se guardan los logs es `LOG` , el formato configurado es JSON_
 
 ![LOGGER 1](/docs/logger/logger-1.png)
@@ -217,6 +259,9 @@ _Las herramientas utilizadas son:_
 - [NPM](https://www.npmjs.com/) - Manejador de dependencias
 - [Jest](https://jestjs.io/) - Framework Testing para pruebas unitarias
 - [Docker](https://www.docker.com/) - Para el despliegue de aplicaciones basado en contenedores
+- [Nginx](https://www.nginx.com/) - Servidor de Proxy Inverso ligero
+- [Graphana](https://grafana.com/) - Para la creación de DashBoard interactivos
+- [Prometheus](https://prometheus.io/) -Aplicación para monitorear metricas en tiempo real
 - [SonarQube](https://www.sonarqube.org/) - Evaluacion de codigo on premise
 - [SonarCloud](https://sonarcloud.io/) - Evaluacion de codigo cloud
 - [Visual Studio Code](https://code.visualstudio.com/) - Editor de Codigo

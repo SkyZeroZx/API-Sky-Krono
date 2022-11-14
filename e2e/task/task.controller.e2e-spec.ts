@@ -3,7 +3,6 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as superTest from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { TaskModule } from '../../src/task/task.module';
-import * as config from '../config-e2e.json';
 import { TaskMockServiceE2E } from './task.mock.e2e.spec';
 import { TaskService } from '../../src/task/task.service';
 import { Constants } from '../../src/common/constants/Constant';
@@ -11,11 +10,12 @@ import { Task } from '../../src/task/entities/task.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TaskToUserService } from '../../src/task_to_user/task_to_user.service';
 import { TaskToUser } from '../../src/task_to_user/entities/task_to_user.entity';
+import { e2e_config } from '../e2e-config.spec';
 
 describe('TaskController (e2e)', () => {
   let app: INestApplication;
   // Instanciamos request para posteriormente setear las configuraciones de superTest
-  let request;
+  let request: any;
   let taskServiceMock: TaskService;
   let taskToUserServiceMock: TaskToUserService;
   let taskRepositoryMock: any;
@@ -25,8 +25,8 @@ describe('TaskController (e2e)', () => {
     findTask: { id: idTask },
     taskByUser,
     tasks: { updateTask },
-    users: { userLoginOk, userReseteado, userCreado, userBloqueado, userSuscrito },
-  } = config.env;
+    users: { userLoginOk, userReset, userCreate, userBloq, userSuscribe },
+  } = e2e_config.env;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -57,8 +57,9 @@ describe('TaskController (e2e)', () => {
     request = superTest.agent(app.getHttpServer()).set(jwtToken);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     jest.clearAllMocks();
+  //  await app.close();
   });
 
   // Al finalizar todos nuevos test cerramos las conexiones para evitar memory leaks
@@ -238,7 +239,7 @@ describe('TaskController (e2e)', () => {
       .spyOn(taskRepositoryMock, 'delete')
       .mockResolvedValueOnce({ affected: 0 });
     const removeTaskError = await request.delete(`/task/remove_task/${codTask}`);
-    expect(removeTaskError.body.message).toEqual('Sucedio un error');
+    expect(removeTaskError.body.message).toEqual('Sucedio un error al eliminar la tarea');
     expect(spyDeleteTaskRepositoryError).toBeCalled();
 
     const spyDeleteTaskRepositoryInternalError = jest

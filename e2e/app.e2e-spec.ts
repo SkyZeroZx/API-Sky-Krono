@@ -16,6 +16,6 @@ describe('AppController (e2e)', () => {
   });
 
   it('/ (GET)', async () => {
-    return superTest(app.getHttpServer()).get('/').expect(200).expect('Sky Calendar API');
+    return superTest(app.getHttpServer()).get('/').expect(200).expect('Sky Krono API');
   });
 });

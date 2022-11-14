@@ -2,31 +2,32 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as superTest from 'supertest';
 import { AppModule } from '../../src/app.module';
-import * as config from '../config-e2e.json';
+import { Notification } from '../../src/notification/entities/notification.entity'
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { NotificacionModule } from '../../src/notificacion/notificacion.module';
-import webPush from '../../src/config/webpush';
-import { Notificacion } from '../../src/notificacion/entities/notificacion.entity';
-import { NotificacionService } from '../../src/notificacion/notificacion.service';
 import { Constants } from '../../src/common/constants/Constant';
+import { NotificationService } from '../../src/notification/notification.service';
+import { e2e_config } from '../e2e-config.spec';
+import { NotificationModule } from '../../src/notification/notification.module';
+import webPush from '../../src/config/webpush/webpush'
+
 
 describe('NotificacionController (e2e)', () => {
   let app: INestApplication;
   // Instanciamos request para posteriormente setear las configuraciones de superTest
-  let request;
-  let notificacionServiceMock: NotificacionService;
-  let notificacionRepositoryMock;
+  let request : any;
+  let notificationServiceMock: NotificationService;
+  let notificacionRepositoryMock : any;
   const {
     jwtToken,
-    users: { userLoginOk, userReseteado, userCreado, userBloqueado },
-  } = config.env;
-  const arrayUsers = [userLoginOk, userReseteado, userCreado, userBloqueado];
+    users: { userLoginOk, userReset, userCreate, userBloq },
+  } = e2e_config.env;
+  const arrayUsers = [userLoginOk, userReset, userCreate, userBloq];
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, NotificacionModule],
+      imports: [AppModule, NotificationModule],
       providers: [
-        { provide: NotificacionService, useValue: notificacionServiceMock },
-        { provide: getRepositoryToken(Notificacion), useValue: notificacionRepositoryMock },
+        { provide: NotificationService, useValue: notificationServiceMock },
+        { provide: getRepositoryToken(Notification), useValue: notificacionRepositoryMock },
       ],
     }).compile();
     app = moduleFixture.createNestApplication();
@@ -37,8 +38,8 @@ describe('NotificacionController (e2e)', () => {
       }),
     );
     await app.init();
-    notificacionServiceMock = moduleFixture.get<NotificacionService>(NotificacionService);
-    notificacionRepositoryMock = moduleFixture.get(getRepositoryToken(Notificacion));
+    notificationServiceMock = moduleFixture.get<NotificationService>(NotificationService);
+    notificacionRepositoryMock = moduleFixture.get(getRepositoryToken(Notification));
 
     // Inc]ializamos las push notification
     webPush();
@@ -46,8 +47,9 @@ describe('NotificacionController (e2e)', () => {
     request = superTest.agent(app.getHttpServer()).set(jwtToken);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     jest.clearAllMocks();
+    await app.close();
   });
 
   // Al finalizar todos nuevos test cerramos las conexiones para evitar memory leaks
@@ -82,7 +84,7 @@ describe('NotificacionController (e2e)', () => {
 
   it('/NOTIFICACION/SEND (POST) ERROR [MOCK]', async () => {
     const spyFindTokensByUser = jest
-      .spyOn(notificacionServiceMock, 'findTokensByUser')
+      .spyOn(notificationServiceMock, 'findTokensByUser')
       .mockRejectedValue(new Error('Algo salio mal'));
     const sendNotificationError = await request
       .post('/notificacion/send')
@@ -92,4 +94,7 @@ describe('NotificacionController (e2e)', () => {
     );
     expect(spyFindTokensByUser).toBeCalled();
   });
+
 });
+
+

@@ -10,10 +10,12 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JWT_TOKEN } from '../common/constants/Constant';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Authentication } from './entities/autentication.entity';
+import { Challenge } from './entities/challenge.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Authentication]),
+    TypeOrmModule.forFeature([Challenge]),
     PassportModule,
     UserModule,
     JwtModule.registerAsync({

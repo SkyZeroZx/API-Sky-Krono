@@ -3,6 +3,7 @@
 /node_modules
 /coverage
 /coverage-e2e
+/data
 credentials.txt
 querys.sql
 dev_querys.sql

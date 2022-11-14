@@ -3,7 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as superTest from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { AuthModule } from '../../src/auth/auth.module';
-import * as config from '../config-e2e.json';
+import { e2e_config } from '../e2e-config.spec';
 import { Constants } from '../../src/common/constants/Constant';
 import { AuthMockServiceE2E } from './auth.mock.e2e.spec';
 import { UserService } from '../../src/user/user.service';
@@ -14,6 +14,7 @@ import { Authentication } from '../../src/auth/entities/autentication.entity';
 import { User } from '../../src/user/entities/user.entity';
 import * as bycrpt from 'bcryptjs';
 import { transporter } from '../../src/config/mailer/mailer';
+import { Challenge } from '../../src/auth/entities/challenge.entity';
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
   // Instanciamos request para posteriormente setear las configuraciones de superTest
@@ -22,6 +23,7 @@ describe('AuthController (e2e)', () => {
   let authenticationServiceMock: AuthMockServiceE2E = new AuthMockServiceE2E();
   let userServiceMock: UserService;
   let authServiceMock: AuthService;
+  let challengeRepositoryMock: any;
   let userRepositoryMock: any;
   let mockQueryBuilder: any = {
     update: {
@@ -34,16 +36,18 @@ describe('AuthController (e2e)', () => {
       },
     },
   };
+
   const {
     jwtToken,
-    users: { userLoginOk, userReseteado, userCreado, userBloqueado },
-  } = config.env;
+    users: { userLoginOk, userReset, userCreate, userBloq },
+  } = e2e_config.env;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule, AuthModule],
       providers: [
         { provide: getRepositoryToken(User), useValue: userRepositoryMock },
+        { provide: getRepositoryToken(Challenge), useValue: challengeRepositoryMock },
         {
           provide: UserService,
           useValue: authMockServiceE2E,
@@ -62,13 +66,15 @@ describe('AuthController (e2e)', () => {
     ),
       await app.init();
     userRepositoryMock = moduleFixture.get(getRepositoryToken(User));
+    challengeRepositoryMock = moduleFixture.get(getRepositoryToken(Challenge));
     userServiceMock = moduleFixture.get<UserService>(UserService);
     authServiceMock = moduleFixture.get<AuthService>(AuthService);
     request = superTest.agent(app.getHttpServer());
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     jest.clearAllMocks();
+    await app.close();
   });
 
   // Al finalizar todos nuevos test cerramos las conexiones para evitar memory leaks
@@ -80,46 +86,47 @@ describe('AuthController (e2e)', () => {
     // Hacemos nuestra peticion a nuestro servicio y esperamos respondan un status 201
     const userHabilitadoResponse = await request.post('/auth/login').send(userLoginOk).expect(201);
     // Recuperamos el body de nuestro response y desesctructuramos
-    const { message, token, ...recivedtUserHabilitado } = userHabilitadoResponse.body;
+    const {
+      message,
+      token,
+      updateAt: updateResponse,
+      ...recivedtUserHabilitado
+    } = userHabilitadoResponse.body;
     // Igualmente con nuestra variables globares
-    const { password, ...expectUserHabilitado } = userLoginOk;
+    const { password, updateAt, ...expectUserHabilitado } = userLoginOk;
     // Validamos la respuesta de nuestro servicio contra los datos de la variables
-    expect(message).toEqual(Constants.MSG_OK);
     expect(token).toBeDefined();
     expect(recivedtUserHabilitado).toEqual(expectUserHabilitado);
   });
 
   it('/LOGIN (POST) USER RESETEADO', async () => {
     // Hacemos nuestra peticion a nuestro servicio y esperamos respondan un status 201
-    const userReseteadoResponse = await request.post('/auth/login').send(userReseteado).expect(201);
+    const { body } = await request.post('/auth/login').send(userReset).expect(201);
     // Recuperamos el body de nuestro response y desesctructuramos
-    const { message, token, ...recivedtUserReseteado } = userReseteadoResponse.body;
+    const { message, token, ...recivedUserReset } = body;
     // Igualmente con nuestra variables globares
-    const { password, ...expectUserReseteado } = userReseteado;
-    // Validamos la respuesta de nuestro servicio contra los datos de la variables
-    expect(message).toEqual(Constants.MSG_OK);
+    const { password, ...expectedUserReset } = userReset;
     expect(token).toBeDefined();
-    expect(recivedtUserReseteado).toEqual(expectUserReseteado);
+    expect(recivedUserReset).toEqual(expectedUserReset);
   });
 
-  it('/LOGIN (POST) USER CREADO', async () => {
+  it('/LOGIN (POST) USER create', async () => {
     // Hacemos nuestra peticion a nuestro servicio y esperamos respondan un status 201
-    const userCreadoResponse = await request.post('/auth/login').send(userCreado).expect(201);
+    const { body } = await request.post('/auth/login').send(userCreate).expect(201);
     // Recuperamos el body de nuestro response y desesctructuramos
-    const { message, token, ...recivedtUserCreado } = userCreadoResponse.body;
+    const { message, token, ...recivedUserCreate } = body;
     // Igualmente con nuestra variables globares
-    const { password, ...expectUserCreado } = userCreado;
+    const { password, ...expectedUserCreate } = userCreate;
     // Validamos la respuesta de nuestro servicio contra los datos de la variables
-    expect(message).toEqual(Constants.MSG_OK);
     expect(token).toBeDefined();
-    expect(recivedtUserCreado).toEqual(expectUserCreado);
+    expect(recivedUserCreate).toEqual(expectedUserCreate);
   });
 
-  it('/LOGIN (POST) USER BLOQUEADO', async () => {
-    // Hacemos nuestra peticion a nuestro servicio y esperamos respondan un status 201
-    const userBloqueadoResponse = await request.post('/auth/login').send(userBloqueado).expect(201);
+  it('/LOGIN (POST) USER BLOQ', async () => {
+    // Hacemos nuestra peticion a nuestro servicio y esperamos respondan un status 400
+    const userbloqResponse = await request.post('/auth/login').send(userBloq).expect(400);
     // Recuperamos el body de nuestro response y desesctructuramos
-    const { message, ...recivedtUserBloqueado } = userBloqueadoResponse.body;
+    const { message } = userbloqResponse.body;
     expect(message).toEqual(`El usuario tiene un status BLOQUEADO`);
   });
 
@@ -158,7 +165,7 @@ describe('AuthController (e2e)', () => {
   it('/CHANGE-PASSWORD (POST) OK  AFFECTED (MOCK)', async () => {
     // Mockeamos el caso que no hubiera registros afectados
     const spyFindByEmailOk = jest
-      .spyOn(userServiceMock, 'findByEmail')
+      .spyOn(userServiceMock, 'findUserByEmail')
       .mockImplementationOnce(async () => {
         return { message: '', user: AuthMockServiceE2E.userHabilitado };
       });
@@ -186,7 +193,7 @@ describe('AuthController (e2e)', () => {
   it('/CHANGE-PASSWORD (POST) ERROR (MOCK)', async () => {
     // Mockeamos el caso de error inesperado de base de datos
     const spyFindByEmailOk = jest
-      .spyOn(userServiceMock, 'findByEmail')
+      .spyOn(userServiceMock, 'findUserByEmail')
       .mockImplementationOnce(async () => {
         return { message: '', user: AuthMockServiceE2E.userHabilitado };
       });
@@ -234,7 +241,7 @@ describe('AuthController (e2e)', () => {
   it('/CHANGE-PASSWORD (POST) ERROR NOT AFFECTED (MOCK)', async () => {
     // Mockeamos el caso que no hubiera registros afectados
     const spyFindByEmailOk = jest
-      .spyOn(userServiceMock, 'findByEmail')
+      .spyOn(userServiceMock, 'findUserByEmail')
       .mockImplementationOnce(async () => {
         return { message: '', user: AuthMockServiceE2E.userHabilitado };
       });
@@ -271,7 +278,7 @@ describe('AuthController (e2e)', () => {
     const userReseteadoOk = await request
       .post('/auth/reset-password')
       .set(jwtToken)
-      .send({ username: userCreado.username, password: 'CUALQUIER_COSA' });
+      .send({ username: userCreate.username, password: 'CUALQUIER_COSA' });
     expect(userReseteadoOk.body.message).toEqual(Constants.MSG_OK);
     expect(spyMockOkAuthSaveNewPassword).toBeCalled();
   });
@@ -284,7 +291,7 @@ describe('AuthController (e2e)', () => {
     const userReseteadoOk = await request
       .post('/auth/reset-password')
       .set(jwtToken)
-      .send({ username: userCreado.username, password: 'CUALQUIER_COSA' })
+      .send({ username: userCreate.username, password: 'CUALQUIER_COSA' })
       .expect(500);
     expect(userReseteadoOk.body.message).toEqual('Hubo un error al enviar el correo de reseteo');
     expect(spyMockErrorAuthSaveNewPassword).toBeCalled();
@@ -294,25 +301,46 @@ describe('AuthController (e2e)', () => {
     // Mockeamos el valor de nuestro userService para evitar el reseteo de contraseña
     const spyMockErrorAuthSaveNewPassword = jest
       .spyOn(userServiceMock, 'saveNewPassword')
-      .mockResolvedValue({ message: 'Error controlado ', info: 'Algo salio mal fake' });
+      .mockRejectedValueOnce({ message: 'Error controlado ', info: 'Algo salio mal fake' });
     const userReseteadoOk = await request
       .post('/auth/reset-password')
       .set(jwtToken)
-      .send({ username: userCreado.username, password: 'CUALQUIER_COSA' })
+      .send({ username: userCreate.username, password: 'CUALQUIER_COSA' })
       .expect(500);
     expect(userReseteadoOk.body.message).toEqual('Hubo un error al enviar el correo de reseteo');
     expect(spyMockErrorAuthSaveNewPassword).toBeCalled();
   });
 
-  it('/AUTH/GENERATE-REGISTRATION-OPTIONS (GET) OK', async () => {
+  it('/AUTH/GENERATE-REGISTRATION-OPTIONS (GET) - OK', async () => {
     const spyWebAuthn = jest
       .spyOn(webAuthn, 'generateRegistrationOption')
       .mockReturnValue(AuthMockServiceE2E.generateRegistrationOption);
+    const spyGegisterCurrentChallenge = jest
+      .spyOn(challengeRepositoryMock, 'upsert')
+      .mockReturnValueOnce(null);
     const userGenerateRegistrationOptions = await request
       .get('/auth/generate-registration-options')
       .set(jwtToken);
     expect(spyWebAuthn).toBeCalled();
+    expect(spyGegisterCurrentChallenge).toBeCalled();
     expect(userGenerateRegistrationOptions.body).toEqual(
+      AuthMockServiceE2E.generateRegistrationOption,
+    );
+  });
+
+  it('/AUTH/GENERATE-REGISTRATION-OPTIONS (GET) - ERROR REGISTER CURRENT CHALLENGE', async () => {
+    const spyWebAuthn = jest
+      .spyOn(webAuthn, 'generateRegistrationOption')
+      .mockReturnValue(AuthMockServiceE2E.generateRegistrationOption);
+    const spyGegisterCurrentChallengeError = jest
+      .spyOn(challengeRepositoryMock, 'upsert')
+      .mockRejectedValueOnce(new Error());
+    const userGenerateRegistrationOptions = await request
+      .get('/auth/generate-registration-options')
+      .set(jwtToken);
+    expect(spyWebAuthn).toBeCalled();
+    expect(spyGegisterCurrentChallengeError).toBeCalled();
+    expect(userGenerateRegistrationOptions.body).not.toEqual(
       AuthMockServiceE2E.generateRegistrationOption,
     );
   });
@@ -334,6 +362,19 @@ describe('AuthController (e2e)', () => {
     expect(spySave).toBeCalled();
   });
 
+  it('/AUTH/VERIFY-REGISTRATION (POST) - ERROR GET CURRENT CHALLENGE', async () => {
+    const spyGetCurrentChallengeError = jest
+      .spyOn(challengeRepositoryMock, 'findOneOrFail')
+      .mockRejectedValueOnce(new Error());
+    const userGenerateRegistrationOptions = await request
+      .post('/auth/verify-registration')
+      .set(jwtToken)
+      .send({ id: 666 })
+      .expect(500);
+    expect(userGenerateRegistrationOptions.body.message).not.toEqual(Constants.MSG_OK);
+    expect(spyGetCurrentChallengeError).toBeCalled();
+  });
+
   it('/AUTH/GENERATE-AUTHENTICATION-OPTIONS (POST) OK (MOCK)', async () => {
     const spyGenerateAuthenticationOptionWebAuthn = jest
       .spyOn(webAuthn, 'generateAuthenticationOption')
@@ -341,12 +382,19 @@ describe('AuthController (e2e)', () => {
         challenge: null,
         allowCredentials: [],
       });
+    const spyRegisterCurrentChallenge = jest
+      .spyOn(challengeRepositoryMock, 'upsert')
+      .mockResolvedValueOnce(null);
+    /*  const spyRegisterCurrentChallenge = jest
+      .spyOn(authServiceMock, 'registerCurrentChallenge')
+      .mockResolvedValue(null);*/
     await request
       .post('/auth/generate-authentication-options')
       .set(jwtToken)
       .send({ username: userLoginOk.username });
     // Validamos se llamen nuestro mockeos de nuestras funciones
     expect(spyGenerateAuthenticationOptionWebAuthn).toBeCalled();
+    //  expect(spyRegisterCurrentChallenge).toBeCalled();
   });
 
   it('/AUTH/VERIFY-AUTHENTICATION (POST) OK (MOCK)', async () => {

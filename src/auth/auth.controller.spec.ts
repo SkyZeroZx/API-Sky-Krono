@@ -11,6 +11,7 @@ import { Authentication } from './entities/autentication.entity';
 import * as webAuthn from '../config/webAuthentication/webAuthn';
 import { ChangePasswordDto } from './dtos/changePasssword.dto';
 import { BadRequestException } from '@nestjs/common';
+import { Challenge } from './entities/challenge.entity';
 describe('AuthController', () => {
   let controller: AuthController;
   let authService: AuthService;
@@ -26,7 +27,10 @@ describe('AuthController', () => {
           provide: getRepositoryToken(Authentication),
           useValue: mockService,
         },
-
+        {
+          provide: getRepositoryToken(Challenge),
+          useValue: mockService,
+        },
         {
           provide: JwtService,
           useValue: mockService,
@@ -51,66 +55,39 @@ describe('AuthController', () => {
   });
 
   it('Validamos Login', async () => {
-    // Validamos el primer caso donde los status reseteado , creado y habilitado pueden logearse
     const spyGenerateToken = jest.spyOn(authService, 'generateToken').mockImplementation(() => {
       return { ...UserServiceMock.mockFindAllUserData[0], token: AuthMockService.token };
     });
-    const loginOkReseteado: any = await controller.login(
-      AuthMockService.loginDto,
-      AuthMockService.userResetado,
-    );
+    await controller.login(AuthMockService.loginDto, AuthMockService.userResetado);
     expect(spyGenerateToken).toBeCalledWith(AuthMockService.userResetado);
-    expect(loginOkReseteado.message).toEqual(Constants.MSG_OK);
-    // Validamos para el caso de usuario HABILITADO
-
-    const loginOkHabilitado: any = await controller.login(
-      AuthMockService.loginDto,
-      AuthMockService.userHabilitado,
-    );
-    expect(spyGenerateToken).toHaveBeenNthCalledWith(2, AuthMockService.userHabilitado);
-    expect(loginOkHabilitado.message).toEqual(Constants.MSG_OK);
-
-    // Validamos para el caso de usuario CREADO
-    const loginOkCreado: any = await controller.login(
-      AuthMockService.loginDto,
-      AuthMockService.userCreate,
-    );
-    expect(spyGenerateToken).toHaveBeenNthCalledWith(3, AuthMockService.userCreate);
-
-    expect(loginOkHabilitado.message).toEqual(Constants.MSG_OK);
-
-    // En caso contario cualquier otro usuario como el status bloqueado no puede logearse
-    let userBloqueado = AuthMockService.userResetado;
-    userBloqueado.status = Constants.STATUS_USER.BLOQUEADO;
-    const loginBloqueado: any = controller.login(AuthMockService.loginDto, userBloqueado);
-
-    await expect(loginBloqueado).rejects.toThrowError(
-      new BadRequestException({
-        message: `El usuario tiene un status ${userBloqueado.status}`,
-      }),
-    );
-    expect(spyGenerateToken).not.toBeCalledTimes(4);
   });
 
   it('Validamos generateRegistration', async () => {
     const mockReturn: any = { register: { challenge: null } };
+    const spyRegisterCurrentChallenge = jest
+      .spyOn(authService, 'registerCurrentChallenge')
+      .mockResolvedValueOnce(null);
     const spyGenerateRegistrationOption = jest
       .spyOn(webAuthn, 'generateRegistrationOption')
       .mockReturnValueOnce(mockReturn);
     const spyGenerateToken = jest
-      .spyOn(authService, 'getUserAuthenticators')
+      .spyOn(authService, 'getUserAuthenticatorsByUsername')
       .mockImplementation(async () => {
         return [];
       });
     await controller.generateRegistration(UserServiceMock.mockFindAllUserData[0]);
     expect(spyGenerateRegistrationOption).toBeCalled();
     expect(spyGenerateToken).toBeCalled();
+    expect(spyRegisterCurrentChallenge).toBeCalled();
   });
 
   it('Validamos verifyRegistration', async () => {
-    let verifyMock = {
+    const verifyMock = {
       id: 1,
     };
+    const spyGetCurrentChallenge = jest
+      .spyOn(authService, 'getCurrentChallenge')
+      .mockResolvedValueOnce(AuthMockService.challenge);
     const spyVerifyAuthWeb = jest.spyOn(webAuthn, 'verifyAuthWeb').mockResolvedValueOnce(null);
     const spySaveUserAuthenticators = jest
       .spyOn(authService, 'saveUserAuthenticators')
@@ -118,6 +95,7 @@ describe('AuthController', () => {
     await controller.verifyRegistration(verifyMock, user);
     expect(spyVerifyAuthWeb).toBeCalled();
     expect(spySaveUserAuthenticators).toBeCalled();
+    expect(spyGetCurrentChallenge).toBeCalled();
   });
 
   it('Validamos generateAuthenticationOptions', async () => {
@@ -127,12 +105,19 @@ describe('AuthController', () => {
     const spyGenerateAuthenticationOption = jest
       .spyOn(webAuthn, 'generateAuthenticationOption')
       .mockResolvedValueOnce({ challenge: '' });
+    const spyRegisterCurrentChallenge = jest
+      .spyOn(authService, 'registerCurrentChallenge')
+      .mockResolvedValueOnce(null);
     await controller.generateAuthenticationOptions(user);
     expect(spyGetUserAuthenticatorsByUsername).toBeCalled();
     expect(spyGenerateAuthenticationOption).toBeCalled();
+    expect(spyRegisterCurrentChallenge).toBeCalled();
   });
 
   it('Validamos verifityAuthentication', async () => {
+    const spyGetCurrentChallenge = jest
+      .spyOn(authService, 'getCurrentChallenge')
+      .mockResolvedValueOnce(AuthMockService.challenge);
     const spyGetUserAuthenticatorsById = jest.spyOn(authService, 'getUserAuthenticatorsById');
     const spyGenerateTokenWithAuthnWeb = jest
       .spyOn(authService, 'generateTokenWithAuthnWeb')
@@ -144,37 +129,18 @@ describe('AuthController', () => {
     expect(spyVerifyAuthenticationOption).toBeCalled();
     expect(spyGetUserAuthenticatorsById).toBeCalled();
     expect(spyGenerateTokenWithAuthnWeb).toBeCalled();
+    expect(spyGetCurrentChallenge).toBeCalled();
   });
 
   it('Validamos resetPassword', async () => {
-    const spyResetPassword = jest.spyOn(authService, 'resetPassword').mockResolvedValue(null);
+    const spyResetPassword = jest.spyOn(authService, 'resetPassword').mockResolvedValueOnce(null);
     await controller.resetPassword(AuthMockService.resetUserDto);
     expect(spyResetPassword).toHaveBeenCalledWith(AuthMockService.resetUserDto.username);
   });
 
-  it('Validamos changePassword OK', async () => {
-    const { oldPassword, newPassword } = AuthMockService.changePasswordDto;
-    let newUserPassword = user;
-    newUserPassword.firstLogin = false;
-    newUserPassword.status = Constants.STATUS_USER.HABILITADO;
-    newUserPassword.password = newPassword;
-    const spyChangePassword = jest.spyOn(authService, 'changePassword').mockResolvedValue(null);
-    await controller.changePassword(AuthMockService.changePasswordDto, user);
-    expect(spyChangePassword).toBeCalledWith(newUserPassword, oldPassword);
-  });
-
-  it('Validamos changePassword Error', async () => {
-    let userSamePassword: ChangePasswordDto = {
-      oldPassword: user.password,
-      newPassword: user.password,
-    };
-    const spyChangePassword = jest.spyOn(authService, 'changePassword');
-
-    await expect(controller.changePassword(userSamePassword, user)).rejects.toThrowError(
-      new BadRequestException({
-        message: 'No puede repetir la contraseña antigua para la nueva contraseña',
-      }),
-    );
-    expect(spyChangePassword).not.toBeCalled();
+  it('Validamos changePassword', async () => {
+    const spyChangePassword = jest.spyOn(authService, 'changePassword').mockResolvedValueOnce(null);
+    await controller.changePassword(user, AuthMockService.changePasswordDto);
+    expect(spyChangePassword).toBeCalledWith(user, AuthMockService.changePasswordDto);
   });
 });

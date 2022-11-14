@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - develop
+      - workflow_test
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -13,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -31,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -41,7 +42,7 @@ jobs:
           path: ./*
           key: ${{ github.sha }}
       - name: Run All Unit Tests
-        run:  npm run test:cov
+        run: npm run test:cov
       - uses: actions/cache@v3
         id: build-unit-test
         with:
@@ -50,15 +51,74 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: reports-unit-test
-          path: coverage/*        
-  sonarcloud: 
-    name: SonarCloud
-    needs: [build , unit-test]
+          path: coverage/*
+  e2e-testing:
+    name: E2E Testing
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  
+          fetch-depth: 0
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v1.2
+        with:
+          envkey_DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+          envkey_DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+          envkey_DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
+          envkey_DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          envkey_DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+          envkey_JWT_TOKEN: ${{secrets.JWT_TOKEN}}
+          envkey_EMAIL_HOST: ${{secrets.EMAIL_HOST}} # MAIL PROPERTIES
+          envkey_EMAIL_PORT: ${{secrets.EMAIL_PORT}}
+          envkey_EMAIL_USERNAME: ${{secrets.EMAIL_USERNAME}}
+          envkey_EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}}
+          envkey_PUBLIC_KEY: ${{secrets.PUBLIC_KEY}} # WEB PUSH PROPERTIES
+          envkey_PRIVATE_KEY: ${{secrets.PRIVATE_KEY}}
+          envkey_EMAIL_WEB_PUSH: ${{secrets.EMAIL_WEB_PUSH}}
+          envkey_RP_ID: ${{secrets.RP_ID}} # WEB AUTH PROPERTIES
+          envkey_LOGO_APP: ${{secrets.LOGO_APP}}
+          envkey_LOGO_ICON: ${{secrets.LOGO_ICON}}
+          envkey_URL_WEB: ${{secrets.URL_WEB}}
+          envkey_TZ: ${{secrets.TZ}} # TIME ZONE PROPERTIES
+          envkey_CACHE_MAX_ITEMS: ${{secrets.CACHE_MAX_ITEMS}} # CACHE PROPERTIES
+          envkey_CACHE_TTL: ${{secrets.CACHE_TTL}}
+          envkey_ENABLED_MYSQL_CACHE: ${{secrets.ENABLED_MYSQL_CACHE}}
+          envkey_AWS_REGION: ${{secrets.AWS_REGION}} # AWS S3 PROPERTIES
+          envkey_AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          envkey_AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          envkey_AWS_BUCKET: ${{secrets.AWS_BUCKET}}
+          envkey_DATE_PATTERN: ${{secrets.DATE_PATTERN}} # LOGGER PROPERTIES
+          envkey_APP_NAME: ${{secrets.APP_NAME}}
+          envkey_MAX_SIZE: ${{secrets.MAX_SIZE}}
+          envkey_MAX_DAYS: ${{secrets.MAX_DAYS}}
+          envkey_LOG_FOLDER: ${{secrets.LOG_FOLDER}}
+          envkey_TIMESTAMP_FORMAT: ${{secrets.TIMESTAMP_FORMAT}}
+          directory: ${{ github.workspace }}
+          file_name: .env
+          fail_on_empty: false
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: actions/cache@v3
+        id: restore-build
+        with:
+          path: ./*
+          key: ${{ github.sha }}
+      - name: Run All E2E Test
+        run: npm run test:e2e:cov
+      - uses: actions/upload-artifact@v3
+        with:
+          name: reports-e2e-test
+          path: coverage-e2e/*
+  sonarcloud:
+    name: SonarCloud
+    needs: [build, unit-test, e2e-testing]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -74,5 +134,5 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}           
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

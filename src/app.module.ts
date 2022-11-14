@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -23,6 +23,13 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { LicenceModule } from './licence/licence.module';
 import { AwsS3Module } from './aws-s3/aws-s3.module';
 import { NotificationModule } from './notification/notification.module';
+import { HealthModule } from './health/health.module';
+import {
+  makeCounterProvider,
+  makeHistogramProvider,
+  PrometheusModule,
+} from '@willsoto/nestjs-prometheus';
+import { HttpLoggingInterceptor } from './common/interceptor/http-logging.interceptor';
 
 @Module({
   imports: [
@@ -47,6 +54,7 @@ import { NotificationModule } from './notification/notification.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    PrometheusModule.register(),
     ScheduleModuleNestJs.forRoot(),
     AuthModule,
     TaskModule,
@@ -59,8 +67,45 @@ import { NotificationModule } from './notification/notification.module';
     ScheduleModule,
     LicenceModule,
     AwsS3Module,
+    HealthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    makeHistogramProvider({
+      name: 'http_request_duration_ms',
+      help: 'Duration of HTTP requests in ms',
+      labelNames: ['route', 'method', 'code'],
+      // buckets for response time from 0.1ms to 500ms
+      buckets: [0.1, 5, 15, 50, 100, 200, 300, 400, 500],
+    }),
+    makeCounterProvider({
+      name: 'http_request_total',
+      help: 'Total of HTTP request',
+      labelNames: ['route', 'method', 'code'],
+    }),
+    makeHistogramProvider({
+      name: 'http_response_size_bytes',
+      help: 'Size in bytes of response',
+      labelNames: ['route', 'method', 'code'],
+      buckets: [0.1, 5, 15, 50, 100, 200, 300, 400, 500],
+    }),
+    makeHistogramProvider({
+      name: 'http_request_size_bytes',
+      help: 'Size in bytes of request',
+      labelNames: ['route', 'method', 'code'],
+      buckets: [0.1, 5, 15, 50, 100, 200, 300, 400, 500],
+    }),
+  ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(HttpLoggingInterceptor)
+      .exclude(
+        { path: 'metrics', method: RequestMethod.GET },
+        { path: 'health', method: RequestMethod.GET },
+      )
+      .forRoutes('*');
+  }
+}

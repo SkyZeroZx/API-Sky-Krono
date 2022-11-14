@@ -62,9 +62,7 @@ export class ChargueService {
       await this.chargueRepository.delete(id);
     } catch (error) {
       this.logger.error({ message: 'Sucedio un error al eliminar al eliminar el chargue', error });
-      throw new InternalServerErrorException({
-        message: 'Sucedio un error al eliminar el chargue',
-      });
+      throw new InternalServerErrorException('Sucedio un error al eliminar el chargue');
     }
 
     this.logger.log(`Se elimino exitosamente el chargue ${id}`);

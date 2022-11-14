@@ -2,25 +2,36 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as superTest from 'supertest';
 import { AppModule } from '../../src/app.module';
-import * as config from '../config-e2e.json';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import webPush from '../../src/config/webpush';
 import { Constants } from '../../src/common/constants/Constant';
 import { UserModule } from '../../src/user/user.module';
 import { User } from '../../src/user/entities/user.entity';
 import { UserMockE2E } from './user.mock.e2e.spec';
-import { transporter } from '../../src/config/mailer';
+import { transporter } from '../../src/config/mailer/mailer';
+import { e2e_config } from '../e2e-config.spec';
+
+const mockUploadInstance = {
+  upload: jest.fn().mockReturnThis(),
+  done: jest.fn(),
+  promise: jest.fn(),
+};
+
+jest.mock('@aws-sdk/lib-storage', () => {
+  return { Upload: jest.fn(() => mockUploadInstance) };
+});
+
+import webPush from '../../src/config/webpush/webpush';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   // Instanciamos request para posteriormente setear las configuraciones de superTest
-  let request;
+  let request: any;
   // let userServiceMock: UserService;
-  let userRepositoryMock;
+  let userRepositoryMock: any;
   const {
     jwtToken,
-    users: { userLoginOk, userReseteado, userCreado, userBloqueado },
-  } = config.env;
+    users: { userLoginOk, userReset, userCreate, userBloq },
+  } = e2e_config.env;
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule, UserModule],
@@ -46,8 +57,9 @@ describe('UserController (e2e)', () => {
     request = superTest.agent(app.getHttpServer()).set(jwtToken);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     jest.clearAllMocks();
+    await app.close();
   });
 
   // Al finalizar todos nuevos test cerramos las conexiones para evitar memory leaks
@@ -58,28 +70,16 @@ describe('UserController (e2e)', () => {
   it('/USER (POST) OK', async () => {
     //Registramos un usuario fake
     const userRegister = new UserMockE2E();
-    const registerUserOK = await request.post('/users').send(userRegister.createUserNew);
     const {
-      message,
-      user: { id, createdAt, updateAt, status, firstLogin, password, ...rest },
-    } = registerUserOK.body;
-
+      body: { message },
+    } = await request.post('/users').send(userRegister.createUserNew);
     expect(message).toEqual(Constants.MSG_OK);
-    expect(createdAt).toBeDefined();
-    expect(updateAt).toBeDefined();
-    expect(status).toEqual(Constants.STATUS_USER.CREADO);
-    expect(password).toBeUndefined();
-    expect(firstLogin).toBeTruthy();
-    expect(rest).toEqual(userRegister.createUserNew);
   });
 
   it('/USER (POST) ERROR', async () => {
     //Intentamos registrar un usuario ya existe por lo cual tendremos un error
-    const registerUserErrorExist = await request
-      .post('/users')
-      .send(UserMockE2E.createUserExist)
-      .expect(201);
-    expect(registerUserErrorExist.body.message).toEqual('El correo del usuario ya existe');
+    const { body } = await request.post('/users').send(UserMockE2E.createUserExist).expect(400);
+    expect(body.message).toEqual('El correo del usuario ya existe');
 
     // Validamos para el caso que tengamos un error en base de datos al buscar al usuario para ello mockeamos
     const spyErrorCreateQueryBuilder = jest
@@ -126,17 +126,13 @@ describe('UserController (e2e)', () => {
     expect(getUsersOk.body.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('/USER (GET) ERROR [MOCK]', async () => {
-    const spyFindError = jest.spyOn(userRepositoryMock, 'find').mockResolvedValueOnce([]);
-    const getUsersError = await request.get('/users');
-    expect(getUsersError.body.message).toEqual('No users found');
-    expect(spyFindError).toBeCalled();
-  });
-
   it('/PROFILE (GET) OK', async () => {
-    const { password, ...expectUserLogin } = userLoginOk;
-    const profileOk = await request.get('/users/profile').expect(200);
-    expect(profileOk.body).toEqual(expectUserLogin);
+    const { password, updateAt, ...expectUserLogin } = userLoginOk;
+    const {
+      body: { updateAt: responseUpdateAt, ...rest },
+    } = await request.get('/users/profile').expect(200);
+
+    expect(rest).toEqual(expectUserLogin);
   });
 
   it('/PROFILE (GET) ERROR [MOCK]', async () => {
@@ -149,9 +145,10 @@ describe('UserController (e2e)', () => {
   });
 
   it('/UPDATE (PATCH) OK', async () => {
-    const updateOK = await request.patch('/users').send(UserMockE2E.updateUserExist).expect(200);
-
-    expect(updateOK.body.message).toEqual(Constants.MSG_OK);
+    const {
+      body: { message },
+    } = await request.patch('/users').send(UserMockE2E.updateUserExist).expect(200);
+    expect(message).toEqual(Constants.MSG_OK);
   });
 
   it('/UPDATE (PATCH) ERROR [MOCK]', async () => {
@@ -178,5 +175,19 @@ describe('UserController (e2e)', () => {
     const deleteError = await request.delete(`/users/${UserMockE2E.deleteUserDto.id}`).expect(500);
     expect(deleteError.body.message).toEqual('Sucedio un error al eliminar al usuario');
     expect(spyDeleteError).toBeCalled();
+  });
+
+  it('/PHOTO (POST) OK', async () => {
+    const {
+      body: { message },
+    } = await request.post('/users/photo').attach('file', e2e_config.env.pathPhoto).expect(201);
+    expect(message).toEqual(Constants.MSG_OK);
+  });
+
+  it('/PHOTO (POST) ERROR [MOCK]', async () => {
+    mockUploadInstance.done.mockImplementationOnce(() => {
+      throw new Error();
+    });
+    await request.post('/users/photo').attach('file', e2e_config.env.pathPhoto).expect(500);
   });
 });

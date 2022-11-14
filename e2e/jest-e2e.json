@@ -1,5 +1,6 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
+  "modulePathIgnorePatterns": ["dist", "config"],
   "moduleNameMapper": {
     "^@/(.*)$": "<rootDir>/src/$1",
     "^@test/(.*)$": "<rootDir>/e2e/$1"
@@ -15,12 +16,15 @@
     "!**/*.module.(t|j)s",
     "!**/*.swagger.(t|j)s",
     "!**/*.enum.(t|j)s",
+    "!**/**.logger.(t|j)s",
     "!**/src/common/decorators/test/**.(t|j)s",
     "!**/src/common/decorators/test/*.(t|j)s",
-    "!**/config/*.(t|j)s",
+    "!**/src/common/utils/**",
+    "!**/src/health/**",
+    "!**/config/**",
     "!**/src/common/helpers/*.(t|j)s",
-    "!**/src/common/swagger/*.(t|j)s",
-    "!**/*.(service|controller|guard|strategy).spec.(t|j)s",
+    "!**/src/common/swagger/**",
+    "!**/*.(service|controller|guard|strategy|interceptor).spec.(t|j)s",
     "!**/src/**main.(t|j)s",
     "!**/src/main.(t|j)s"
   ],

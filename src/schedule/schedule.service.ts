@@ -48,6 +48,7 @@ export class ScheduleService implements OnModuleInit {
   }
 
   async findScheduleByUser(id: number): Promise<Schedule> {
+    this.logger.log('Listando Schedule por usuario');
     return this.scheduleRepository
       .createQueryBuilder('SCHEDULE')
       .select('SCHEDULE.entryHour', 'entryHour')
@@ -89,18 +90,17 @@ export class ScheduleService implements OnModuleInit {
   }
 
   updateCronJob(updateScheduleDto: UpdateScheduleDto): void {
+    const updateJob = this.schedulerRegistry.getCronJob(updateScheduleDto.codSchedule.toString());
     if (updateScheduleDto.notificationIsActive) {
-      const updateJob = this.schedulerRegistry.getCronJob(updateScheduleDto.codSchedule.toString());
       updateJob.setTime(new CronTime(Util.formatCronJob(updateScheduleDto as any)));
+      updateJob.start();
     } else {
-      this.schedulerRegistry.deleteCronJob(updateScheduleDto.codSchedule.toString());
+      updateJob.stop();
     }
   }
 
   async restartSavedCrons() {
-    const listSchedule = await this.scheduleRepository.find({
-      where: { notificationIsActive: true },
-    });
+    const listSchedule = await this.scheduleRepository.find();
     this.logger.log({ message: 'List Schedule Active', listSchedule });
     listSchedule.forEach((schedule) => {
       this.registerCronJob(schedule);
@@ -109,13 +109,12 @@ export class ScheduleService implements OnModuleInit {
 
   registerCronJob(schedule: Schedule) {
     this.logger.log(`Se va registrar el cron Job ${schedule.name}`);
-
     const userSyncJob = new CronJob(
       Util.formatCronJob(schedule),
       this.sendNotificationBySchedule.bind(this, schedule),
     );
     this.schedulerRegistry.addCronJob(schedule.id.toString(), userSyncJob);
-    userSyncJob.start();
+    userSyncJob.stop();
   }
 
   async sendNotificationBySchedule(schedule: Schedule) {
@@ -129,10 +128,22 @@ export class ScheduleService implements OnModuleInit {
     });
   }
 
+  async findScheduleById(id: number): Promise<Schedule> {
+    try {
+      return await this.scheduleRepository.findOneByOrFail({ id });
+    } catch (error) {
+      this.logger.error({ message: 'Sucedio un error al obtener el schedule', error });
+      throw new InternalServerErrorException('Sucedio un error al buscar schedule');
+    }
+  }
+
   async remove(id: number) {
     try {
+      const { notificationIsActive } = await this.findScheduleById(id);
       await this.scheduleRepository.delete(id);
-      this.schedulerRegistry.deleteCronJob(id.toString());
+      if (notificationIsActive) {
+        this.schedulerRegistry.deleteCronJob(id.toString());
+      }
     } catch (error) {
       this.logger.error({ message: 'Sucedio un error al eliminar al eliminar el Schedule', error });
       throw new InternalServerErrorException('Sucedio un error al eliminar el Schedule');

@@ -27,4 +27,5 @@ export class Authentication {
   @Column({ type: 'bigint' })
   @IsNotEmpty()
   counter: number;
+
 }

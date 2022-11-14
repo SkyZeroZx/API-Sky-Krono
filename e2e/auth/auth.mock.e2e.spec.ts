@@ -1,3 +1,4 @@
+ 
 import { ChangePasswordDto } from '../../src/auth/dtos/changePasssword.dto';
 import { LoginDto } from '../../src/auth/dtos/login.dto';
 import { ResetUserDto } from '../../src/auth/dtos/reset.dto';
@@ -44,6 +45,8 @@ export class AuthMockServiceE2E {
 
   public getUserAuthenticators = jest.fn().mockReturnThis();
 
+ 
+
   public getUserAuthenticatorsById = jest.fn().mockReturnThis();
 
   public getUserAuthenticatorsByUsername = jest.fn().mockReturnThis();
@@ -74,6 +77,8 @@ export class AuthMockServiceE2E {
 
   public getRawOne = jest.fn().mockReturnThis();
 
+  public registerCurrentChallenge = jest.fn().mockReturnThis();
+
   public static readonly token: string = 'SoyElToken';
 
   public static readonly userMockData = {
@@ -100,6 +105,10 @@ export class AuthMockServiceE2E {
     firstLoginStatus: function (): Promise<void> {
       return;
     },
+    codChargue: 0,
+    codSchedule: 0,
+    photo: '',
+    phone: ''
   };
 
   public static readonly loginDto: LoginDto = {
@@ -142,6 +151,10 @@ export class AuthMockServiceE2E {
     firstLoginStatus: function (): Promise<void> {
       return;
     },
+    codChargue: 0,
+    codSchedule: 0,
+    photo: '',
+    phone: ''
   };
 
   public static readonly userCreate: User = {
@@ -162,6 +175,10 @@ export class AuthMockServiceE2E {
     firstLoginStatus: function (): Promise<void> {
       return;
     },
+    codChargue: 0,
+    codSchedule: 0,
+    photo: '',
+    phone: ''
   };
 
   public static readonly userHabilitado: User = {
@@ -182,6 +199,10 @@ export class AuthMockServiceE2E {
     firstLoginStatus: function (): Promise<void> {
       return;
     },
+    codChargue: 0,
+    codSchedule: 0,
+    photo: '',
+    phone: ''
   };
 
   public static readonly userBloq: User = {
@@ -202,6 +223,10 @@ export class AuthMockServiceE2E {
     firstLoginStatus: function (): Promise<void> {
       return;
     },
+    codChargue: 0,
+    codSchedule: 0,
+    photo: '',
+    phone: ''
   };
 
   public static readonly verifyAuthWeb = {
@@ -230,7 +255,7 @@ export class AuthMockServiceE2E {
     rp: null,
   };
 
-  public static readonly verifityAuthenticationOption = {
+  public static readonly verifityAuthenticationOption : any = {
     verified: true,
     authenticationInfo: {
       credentialID: null,

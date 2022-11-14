@@ -1,4 +1,9 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Constants } from '../common/constants/Constant';
 import { transporter } from '../config/mailer/mailer';
@@ -23,9 +28,9 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const { message } = await this.findByEmail(createUserDto.username);
+    const { message } = await this.findUserByEmail(createUserDto.username);
     if (message !== Constants.MSG_OK) {
-      return { message: message };
+      throw new BadRequestException('El correo del usuario ya existe');
     }
 
     let user = createUserDto as User;
@@ -35,12 +40,13 @@ export class UserService {
         length: 10,
         numbers: true,
       });
+
       user.password = generatePassword;
       const newUser = this.userRepository.create(user);
       user = await this.userRepository.save(newUser);
     } catch (error) {
       this.logger.error({ message: `Sucedio un error al crear al usuario`, error });
-      throw new InternalServerErrorException({ message: 'Sucedio un error al crear al usuario' });
+      throw new InternalServerErrorException('Sucedio un error al crear al usuario');
     }
 
     try {
@@ -71,7 +77,7 @@ export class UserService {
     };
   }
 
-  async findByEmail(email: string) {
+  async findUserByEmail(email: string) {
     let user: User;
     try {
       user = await this.userRepository
@@ -90,7 +96,7 @@ export class UserService {
       }
     } catch (error) {
       this.logger.error(`Sucedio un error al realizar la busqueda del usuario ${email}`, { error });
-      throw new InternalServerErrorException({ message: 'Sucedio un error' });
+      throw new InternalServerErrorException('Sucedio un error');
     }
     return { message: Constants.MSG_OK };
   }
@@ -115,7 +121,6 @@ export class UserService {
       .addSelect('SCHEDULE.name', 'schedule')
       .innerJoin(Chargue, 'CHARGUE', 'CHARGUE.id = USER.codChargue')
       .innerJoin(Schedule, 'SCHEDULE', 'SCHEDULE.id = USER.codSchedule')
-      .cache(1000)
       .getRawMany();
   }
 
@@ -152,9 +157,7 @@ export class UserService {
       await this.userRepository.delete(deleteUserDto.id);
     } catch (error) {
       this.logger.error({ message: `Sucedio un error al eliminar al usuario`, error });
-      throw new InternalServerErrorException({
-        message: 'Sucedio un error al eliminar al usuario',
-      });
+      throw new InternalServerErrorException('Sucedio un error al eliminar al usuario');
     }
 
     this.logger.log({ message: 'Se elimino exitosamente al usuario ', deleteUserDto });

@@ -24,8 +24,8 @@ export class TypeServiceMock {
     description: 'Test Description 1',
     backgroundColor: 'rgba(255,255,255,0.5)',
     borderColor: 'rgba(255,255,255,0.5)',
-    start: new Date(),
-    end: new Date(),
+    start: new Date().toString(),
+    end: new Date().toString(),
   };
 
   public static readonly updateTypeDto: UpdateTypeDto = {
@@ -33,8 +33,8 @@ export class TypeServiceMock {
     description: 'Test Description 1',
     backgroundColor: 'rgba(255,255,255,0.5)',
     borderColor: 'rgba(255,255,255,0.5)',
-    start: new Date(),
-    end: new Date(),
+    start:new Date().toString(),
+    end: new Date().toString(),
   };
 
   public static readonly listType: Type[] = [

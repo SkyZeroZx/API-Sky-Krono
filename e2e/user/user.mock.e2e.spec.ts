@@ -1,13 +1,14 @@
 import { DeleteUserDto } from 'src/user/dto/delete-user.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { CreateUserDto } from '../../src/user/dto/create-user.dto';
-import * as config from '../config-e2e.json';
+import { e2e_config } from '../e2e-config.spec';
+
 const {
   users: {
     userUpdate: { username, id, status },
     userLoginOk: { username: usernameLoginOk },
   },
-} = config.env;
+} = e2e_config.env;
 export class UserMockE2E {
   static createUserNew: any;
   generateRandomString(length: number): string {
@@ -25,6 +26,9 @@ export class UserMockE2E {
     motherLastName: 'Exist',
     fatherLastName: 'Exist',
     role: 'admin',
+    codChargue: 1,
+    codSchedule: 1,
+    phone: '961008127'
   };
 
   static readonly updateUserExist: UpdateUserDto = {
@@ -37,7 +41,8 @@ export class UserMockE2E {
     fatherLastName: 'TEST E2E API',
     createdAt: new Date(),
     updateAt: new Date(),
-    role: 'viewer',
+    role: 'employee',
+    phone: '961008127',
     firstLogin: false,
     hashPassword: function (): Promise<void> {
       return;
@@ -56,6 +61,9 @@ export class UserMockE2E {
     name: 'TEST E2E API',
     motherLastName: 'TEST E2E API',
     fatherLastName: 'TEST E2E API',
-    role: 'viewer',
+    role: 'employee',
+    codChargue: 1,
+    codSchedule: 1,
+    phone: '961008127'
   };
 }

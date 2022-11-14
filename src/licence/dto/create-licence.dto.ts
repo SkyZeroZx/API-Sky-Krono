@@ -12,7 +12,7 @@ export class CreateLicenceDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsArray()
-  dateRange: Date[];
+  dateRange: string[];
 
   @ApiProperty()
   @IsNotEmpty()

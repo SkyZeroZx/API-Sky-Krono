@@ -45,6 +45,8 @@ export class ScheduleServiceMock {
 
   public getRawOne = jest.fn().mockReturnThis();
 
+  public findOneByOrFail = jest.fn().mockReturnThis();
+  
   public createQueryBuilder = jest.fn(() => ({
     where: this.where,
     select: this.select,
@@ -60,13 +62,15 @@ export class ScheduleServiceMock {
   public setTime = jest.fn().mockReturnThis();
 
   public deleteCronJob = jest.fn().mockReturnThis();
+  public findScheduleById = jest.fn().mockReturnThis();
 
   public addCronJob = jest.fn().mockReturnThis();
   public start = jest.fn().mockReturnThis();
-
+  public stop = jest.fn().mockReturnThis();
   public getCronJob = jest.fn(() => ({
     setTime: this.setTime,
     start: this.start,
+    stop: this.stop,
   }));
 
   public static readonly cronTimeString: string = '* * * * *';
@@ -161,6 +165,23 @@ export class ScheduleServiceMock {
     saturday: false,
     sunday: false,
     notificationIsActive: false,
+  };
+
+  static readonly scheduleNotificationEnabled: Schedule = {
+    id: 1,
+    name: 'create mock',
+    description: 'description mock',
+    entryHour: '12:12',
+    exitHour: '23:23',
+    toleranceTime: 15,
+    monday: true,
+    tuesday: true,
+    wednesday: true,
+    thursday: true,
+    friday: true,
+    saturday: true,
+    sunday: true,
+    notificationIsActive: true,
   };
 
   static readonly listSchedule: Schedule[] = [

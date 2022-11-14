@@ -20,10 +20,10 @@ export class CreateTypeDto {
   @ApiProperty()
   @IsMilitaryTime()
   @IsNotEmpty()
-  start: Date;
+  start: string;
 
   @ApiProperty()
   @IsMilitaryTime()
   @IsNotEmpty()
-  end: Date;
+  end: string;
 }

@@ -19,6 +19,32 @@ export class AttendanceResponse {
     },
   };
 
+  public static readonly reportAttendance = {
+    status: 201,
+    description: 'Devolucion exitosa',
+    schema: {
+      type: 'array',
+      example: [
+        {
+          date: '2022-10-23',
+          description: 'Hello World',
+          status: 'PUNTUAL',
+          fullName: 'SkyBot paterno materno',
+          entryTime: '2022-10-23',
+          exitTime: '17:28',
+        },
+        {
+          date: '2022-10-24',
+          description: '',
+          status: 'TARDE',
+          fullName: 'SkyBot paterno materno',
+          entryTime: '2022-10-24',
+          exitTime: '04:24',
+        },
+      ],
+    },
+  };
+
   public static readonly historyAttendance = {
     status: 200,
     description: 'Devolucion exitosa',

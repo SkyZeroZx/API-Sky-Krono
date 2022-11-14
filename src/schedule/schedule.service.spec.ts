@@ -160,14 +160,22 @@ describe('ScheduleService', () => {
 
   it('Validate remove OK', async () => {
     const spyDelete = jest.spyOn(mockService, 'delete');
+    const spyFindScheduleById = jest
+      .spyOn(scheduleService, 'findScheduleById')
+      .mockResolvedValueOnce(ScheduleServiceMock.scheduleNotificationEnabled);
     const spyDeleteCronJob = jest.spyOn(mockService, 'deleteCronJob');
     const { message } = await scheduleService.remove(id);
     expect(spyDelete).toBeCalled();
     expect(spyDeleteCronJob).toBeCalled();
+    expect(spyFindScheduleById).toBeCalled();
     expect(message).toEqual(Constants.MSG_OK);
   });
 
   it('Validate remove Error', async () => {
+    const spyFindScheduleById = jest
+      .spyOn(scheduleService, 'findScheduleById')
+      .mockResolvedValueOnce(ScheduleServiceMock.scheduleNotificationEnabled)
+      .mockResolvedValueOnce(ScheduleServiceMock.scheduleNotificationEnabled);
     const spyDeleteError = jest.spyOn(mockService, 'delete').mockRejectedValueOnce(new Error());
     await expect(scheduleService.remove(id)).rejects.toThrowError(
       new InternalServerErrorException({
@@ -175,6 +183,7 @@ describe('ScheduleService', () => {
       }),
     );
     expect(spyDeleteError).toBeCalled();
+    expect(spyFindScheduleById).toBeCalled();
   });
 
   it('Validate updateCronJob Enabled Notifications', async () => {
@@ -194,11 +203,9 @@ describe('ScheduleService', () => {
   });
 
   it('Validate updateCronJob Disabled Notifications', async () => {
-    const spyDeleteCronJob = jest.spyOn(mockService, 'deleteCronJob');
+    const spyCronJobStop = jest.spyOn(mockService, 'stop');
     scheduleService.updateCronJob(ScheduleServiceMock.disabledNotifications);
-    expect(spyDeleteCronJob).toBeCalledWith(
-      ScheduleServiceMock.updateScheduleDto.codSchedule.toString(),
-    );
+    expect(spyCronJobStop).toBeCalled();
   });
 
   it('Validate restartSavedCrons OK', async () => {
@@ -207,9 +214,7 @@ describe('ScheduleService', () => {
       .mockResolvedValueOnce(ScheduleServiceMock.listSchedule);
     const spyRegisterCronJob = jest.spyOn(scheduleService, 'registerCronJob');
     await scheduleService.restartSavedCrons();
-    expect(spyFind).toBeCalledWith({
-      where: { notificationIsActive: true },
-    });
+    expect(spyFind).toBeCalled();
     expect(spyRegisterCronJob).toBeCalledTimes(ScheduleServiceMock.listSchedule.length);
   });
 
@@ -222,12 +227,30 @@ describe('ScheduleService', () => {
     });
 
     const spyAddCronJob = jest.spyOn(mockService, 'addCronJob');
-    const spyCronStart = jest.spyOn(ScheduleServiceMock.cronJob, 'start');
+    const spyCronStop = jest.spyOn(ScheduleServiceMock.cronJob, 'stop');
     scheduleService.registerCronJob(ScheduleServiceMock.schedule);
     expect(spyUtilFormatCronJob).toBeCalledWith(ScheduleServiceMock.schedule);
     expect(spyAddCronJob).toBeCalledWith(id.toString(), ScheduleServiceMock.cronJob);
     expect(spyCronJob).toBeCalledWith(ScheduleServiceMock.cronTimeString, expect.any(Function));
-    expect(spyCronStart).toBeCalled();
+    expect(spyCronStop).toBeCalled();
+  });
+
+  it('Validate findScheduleById OK', async () => {
+    const spyFindOneByOrFail = jest
+      .spyOn(mockService, 'findOneByOrFail')
+      .mockResolvedValueOnce(ScheduleServiceMock.schedule);
+    await scheduleService.findScheduleById(id);
+    expect(spyFindOneByOrFail).toBeCalledWith({ id });
+  });
+
+  it('Validate findScheduleById ERROR', async () => {
+    const spyFindOneByOrFailError = jest
+      .spyOn(mockService, 'findOneByOrFail')
+      .mockRejectedValueOnce(new Error());
+    await expect(scheduleService.findScheduleById(id)).rejects.toThrowError(
+      new InternalServerErrorException('Sucedio un error al buscar schedule'),
+    );
+    expect(spyFindOneByOrFailError).toBeCalledWith({ id });
   });
 
   it('Validate sendNotificationBySchedule', async () => {
