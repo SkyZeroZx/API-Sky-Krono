@@ -86,6 +86,7 @@ services:
       - prometheus:prometheus
     volumes:
       - ./data/grafana:/var/lib/grafana
+      - ./docker/grafana/config/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yml
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-}
       - GF_SERVER_HTTP_PORT=2525

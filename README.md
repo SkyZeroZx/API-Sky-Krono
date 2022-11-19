@@ -46,7 +46,7 @@
 - [Integración Continua](#integración-continua)
 - [Logger](#logger)
 - [Documentación](#documentacion)
-- [Construido](#construido-con-)
+- [Construido](#Construido-con-%EF%B8%8F)
 
 ## Comenzando 🚀
 
@@ -149,7 +149,7 @@ _Para generar el build de producción del proyecto ejecutar el siguiente comando
 
 _Para desplegar el proyecto mediante Docker tiene el archivo `docker-compose.prod.yaml` y la carpeta `docker`_
 
-_Las cuales contienes los `Dockerfile` y dependencias necesarias para levantar el proyecto_
+_Las cuales contienen los `Dockerfile` y dependencias necesarias para levantar el proyecto_
 
 _Se dockerizo sobre un servidor de proxy inverso nginx el cual se expone en el puerto **80** por default_
 
@@ -169,7 +169,7 @@ _En caso de requerir volver a ejecutar el contenedor del proyecto previamente cr
 
 ## Monitoreo
 
-_Adicionalmente en Docker se adiciono Prometheus y Grafana para el monitorio de nuestra API_
+_Adicionalmente en Docker posee Prometheus y Grafana para el monitorio de nuestra API_
 
 _Se configuro por default el puerto **9090** para Prometheus y para Grafana se configuro el puerto **2525**_
 
@@ -205,12 +205,13 @@ LOGSTASH_PORT= 50000
 LOGSTASH_NODE_NAME= SKY_KRONO_LOG
 LOGSTASH_HOST= host.docker.internal
 GRAFANA_PASSWORD='changeme'
+ELASTIC_VERSION=8.5.0
 KIBANA_SYSTEM_PASSWORD= changeme
 LOGSTASH_INTERNAL_PASSWORD= changeme
 ELASTIC_PASSWORD= changeme
 ```
 
-_Si desea importar los dashboardS construidos para este proyecto se encuentran en la carpeta ```dashboard``` siendo los archivos:_
+_Si desea importar los dashboards construidos para este proyecto se encuentran en la carpeta ```dashboard``` siendo los archivos:_
 
 - ***grafana-sky-krono.json*** para **Grafana**
 - ***kibana-sky-krono.ndjson*** para **Kibana**
@@ -289,10 +290,14 @@ _Las herramientas utilizadas son:_
 - [NestJS](https://nestjs.com/) - El framework para construir aplicaciones del lado del servidor eficientes, confiables y escalables.
 - [NPM](https://www.npmjs.com/) - Manejador de dependencias
 - [Jest](https://jestjs.io/) - Framework Testing para pruebas unitarias
+- [SuperTest](https://www.testim.io/blog/supertest-how-to-test-apis-like-a-pro/) - Libreria para probar APIs bajo HTTP
 - [Docker](https://www.docker.com/) - Para el despliegue de aplicaciones basado en contenedores
 - [Nginx](https://www.nginx.com/) - Servidor de Proxy Inverso ligero
 - [Graphana](https://grafana.com/) - Para la creación de DashBoard interactivos
-- [Prometheus](https://prometheus.io/) -Aplicación para monitorear metricas en tiempo real
+- [Prometheus](https://prometheus.io/) - Aplicación para monitorear metricas en tiempo real
+- [Kibana](https://www.elastic.co/es/kibana) - Permite visualizar los datos de Elasticsearch y navegar en el Elastic Stack
+- [Logstash](https://www.elastic.co/es/logstash/) - Procesador de datos gratuito e ingesta de logs
+- [ElasticSearch](https://www.elastic.co/es/what-is/elasticsearch) - Motor de búsqueda y analítica distribuido, gratuito y abierto
 - [SonarQube](https://www.sonarqube.org/) - Evaluacion de codigo on premise
 - [SonarCloud](https://sonarcloud.io/) - Evaluacion de codigo cloud
 - [Visual Studio Code](https://code.visualstudio.com/) - Editor de Codigo
