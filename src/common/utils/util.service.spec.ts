@@ -1,4 +1,4 @@
-import * as dateFnsTz from 'date-fns-tz';
+import dateFnsTz from 'date-fns-tz';
 import { Util } from './util';
 import { Schedule } from '../../schedule/entities/schedule.entity';
 describe('Util', () => {

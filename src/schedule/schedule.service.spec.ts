@@ -9,7 +9,7 @@ import { Constants } from '../common/constants/Constant';
 import { InternalServerErrorException } from '@nestjs/common';
 import { User } from '../user/entities/user.entity';
 import { Util } from '../common/utils/util';
-import * as Cron from 'cron';
+import Cron from 'cron';
 import { NotificationService } from '../notification/notification.service';
 
 describe('ScheduleService', () => {

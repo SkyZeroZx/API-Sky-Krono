@@ -12,8 +12,7 @@ import * as webAuthn from '../../src/config/webAuthentication/webAuthn';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Authentication } from '../../src/auth/entities/autentication.entity';
 import { User } from '../../src/user/entities/user.entity';
-import * as bycrpt from 'bcryptjs';
-import { transporter } from '../../src/config/mailer/mailer';
+import bycrpt from 'bcryptjs';
 import { Challenge } from '../../src/auth/entities/challenge.entity';
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -123,11 +122,8 @@ describe('AuthController (e2e)', () => {
   });
 
   it('/LOGIN (POST) USER BLOQ', async () => {
-    // Hacemos nuestra peticion a nuestro servicio y esperamos respondan un status 400
-    const userbloqResponse = await request.post('/auth/login').send(userBloq).expect(400);
-    // Recuperamos el body de nuestro response y desesctructuramos
-    const { message } = userbloqResponse.body;
-    expect(message).toEqual(`El usuario tiene un status BLOQUEADO`);
+    // Hacemos nuestra peticion a nuestro servicio y esperamos respondan un status 401
+    await request.post('/auth/login').send(userBloq).expect(401);
   });
 
   it('/LOGIN (POST) USER ERROR', async () => {

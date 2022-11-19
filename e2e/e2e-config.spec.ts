@@ -3,7 +3,7 @@ export const e2e_config = {
     pathPhoto: 'e2e/fixture/coffee.jpg',
     jwtToken: {
       Authorization:
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoic2t5emVyb2JvdDY0QGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE2NjgzODA4OTQsImV4cCI6MTY2ODQ2NzI5NH0.hbflgxoOR0hveBfC6zr4iDLLK0Ev5HzqpbkqCRRwx1o',
+        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoic2t5emVyb2JvdDY0QGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE2Njg4MTIyMDUsImV4cCI6MTY2ODg5ODYwNX0.NacjNvjwhuRJ3Tj-KVaOVCfJTGjf9pklUA-nJn1Vt74',
     },
     jwtTokenFail: {
       Authorization: '',
@@ -22,7 +22,7 @@ export const e2e_config = {
         fatherLastName: 'paterno',
         motherLastName: 'materno',
         createdAt: '2022-09-05T11:23:27.399Z',
-        updateAt: '2022-11-11T21:40:23.000Z',
+        updateAt: '2022-11-18T18:25:49.000Z',
         role: 'admin',
         photo: 'https://skykronobucket.s3.amazonaws.com/skyzerobot64@gmail.com.jpeg',
         phone: '961008127',
@@ -34,12 +34,12 @@ export const e2e_config = {
         codChargue: 1,
         codSchedule: 1,
         username: 'mysqlserver64@gmail.com',
-        password: '7RXI3KIgG8',
+        password: 'vdvixlAlms',
         name: 'sdfsdf',
         fatherLastName: 'sdfsdf',
         motherLastName: 'sfdsfsdf',
         createdAt: '2022-10-11T02:03:45.298Z',
-        updateAt: '2022-11-09T00:56:12.000Z',
+        updateAt: '2022-11-17T12:02:03.000Z',
         role: 'admin',
         status: 'RESETEADO',
         photo: null,

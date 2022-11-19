@@ -9,7 +9,7 @@ import { UserServiceMock } from '../user/user.mock.spec';
 import { Notification } from './entities/notification.entity';
 import { NotificationService } from './notification.service';
 import { NotificationMockService } from './notification.mock.spec';
-import * as webpush from 'web-push';
+import webpush from 'web-push';
 import { Schedule } from '../schedule/entities/schedule.entity';
 
 describe('NotificationService', () => {
