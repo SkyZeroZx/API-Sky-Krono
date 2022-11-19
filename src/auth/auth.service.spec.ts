@@ -2,7 +2,7 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import * as bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 import { Constants } from '../common/constants/Constant';
 import { transporter } from '../config/mailer/mailer';
 import { User } from '../user/entities/user.entity';

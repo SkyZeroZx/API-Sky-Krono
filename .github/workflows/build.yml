@@ -94,6 +94,7 @@ jobs:
           envkey_MAX_DAYS: ${{secrets.MAX_DAYS}}
           envkey_LOG_FOLDER: ${{secrets.LOG_FOLDER}}
           envkey_TIMESTAMP_FORMAT: ${{secrets.TIMESTAMP_FORMAT}}
+          env_key_LOGSTASH_ENABLED: ${{secrets.LOGSTASH_ENABLED}}
           directory: ${{ github.workspace }}
           file_name: .env
           fail_on_empty: false

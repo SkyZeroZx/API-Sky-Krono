@@ -30,7 +30,7 @@ export class TaskController {
   constructor(private readonly taskService: TaskService) {}
   private readonly logger = new Logger(TaskController.name);
 
-  @UseGuards(JwtAuthGuard)
+  @Auth('admin')
   @ApiOperation({ summary: 'Crea una nueva tarea' })
   @ApiResponse(GenericResponse.response)
   @Post()
@@ -49,7 +49,6 @@ export class TaskController {
       this.logger.warn('No se encontraron taks');
       return { message: 'No se encontraron task' };
     }
-    this.logger.log('Listado Task ' + Constants.MSG_OK);
     return taks;
   }
 
@@ -64,7 +63,6 @@ export class TaskController {
       this.logger.warn(`No se encontraron taks para el usuario ${user.username}`);
       return { message: 'No se encontraron task' };
     }
-    this.logger.log(`Listado Task para el usuario ${user.username} ${Constants.MSG_OK}`);
     return taskByUser;
   }
 

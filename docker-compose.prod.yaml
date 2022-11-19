@@ -1,17 +1,18 @@
-version: '3'
+version: '3.7'
 services:
   skykronoapi:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/nodejs/Dockerfile
     image: sky-krono-docker
     container_name: sky-krono-api
     hostname: sky-krono-api
-    restart: always # reiniciar el contenedor si se detiene
+    restart: unless-stopped
     ports:
       - '3000:3000'
     networks:
-      - example-net
+      - elk
+      - app
     environment:
       PORT: 3000
       DATABASE_HOST: ${DATABASE_HOST}
@@ -47,10 +48,15 @@ services:
       MAX_DAYS: ${MAX_DAYS}
       LOG_FOLDER: ${LOG_FOLDER}
       TIMESTAMP_FORMAT: ${TIMESTAMP_FORMAT}
+      LOGSTASH_ENABLED: ${LOGSTASH_ENABLED} # LOGSTASH PROPERTIES
+      LOGSTASH_PORT: ${LOGSTASH_PORT}
+      LOGSTASH_NODE_NAME: ${LOGSTASH_NODE_NAME}
+      LOGSTASH_HOST: ${LOGSTASH_HOST}
+
   nginx:
     build:
-      context: .
-      dockerfile: nginxdockerfile
+      context: docker/nginx
+      # dockerfile: docker/nginx
     container_name: nginx
     hostname: nginx
     ports:
@@ -58,28 +64,129 @@ services:
     depends_on:
       - skykronoapi
     networks:
-      - example-net
+      - elk
+      - app
+
   prometheus:
-    image: prom/prometheus:latest
+    build:
+      context: docker/prometheus/
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./docker/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     ports:
       - '9090:9090'
+
   grafana:
-    image: grafana/grafana:latest
+    build:
+      context: docker/grafana/
     container_name: monitoring_grafana
     restart: unless-stopped
     links:
       - prometheus:prometheus
     volumes:
       - ./data/grafana:/var/lib/grafana
+      - ./docker/grafana/config/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yml
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=12345
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-}
       - GF_SERVER_HTTP_PORT=2525
     ports:
       - '2525:2525'
+
+  # The 'setup' service runs a one-off script which initializes the
+  # 'logstash_internal' and 'kibana_system' users inside Elasticsearch with the
+  # values of the passwords defined in the '.env' file.
+  #
+  # This task is only performed during the *initial* startup of the stack. On all
+  # subsequent runs, the service simply returns immediately, without performing
+  # any modification to existing users.
+  setup:
+    build:
+      context: docker/setup/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    init: true
+    volumes:
+      - setup:/state:Z
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+    networks:
+      - elk
+      - app
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    build:
+      context: docker/elasticsearch/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,z
+      - elasticsearch:/usr/share/elasticsearch/data:z
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    environment:
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      # Bootstrap password.
+      # Used to initialize the keystore during the initial startup of
+      # Elasticsearch. Ignored on subsequent runs.
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks.
+      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      discovery.type: single-node
+    networks:
+      - elk
+      - app
+
+  logstash:
+    build:
+      context: docker/logstash/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
+      - ./docker/logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
+    ports:
+      - '5044:5044'
+      - '50000:50000/tcp'
+      - '50000:50000/udp'
+      - '9600:9600'
+    environment:
+      LS_JAVA_OPTS: -Xms256m -Xmx256m
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+    networks:
+      - elk
+      - app
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    build:
+      context: docker/kibana/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./docker/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
+    ports:
+      - '5601:5601'
+    environment:
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+    networks:
+      - elk
+      - app
+    depends_on:
+      - elasticsearch
+
 networks:
-  example-net:
+  elk:
+    driver: bridge
+  app:
     external: true
+
+volumes:
+  setup:
+  elasticsearch:

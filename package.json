@@ -70,7 +70,10 @@
     "swagger-ui-express": "^4.5.0",
     "typeorm": "^0.3.10",
     "web-push": "^3.5.0",
-    "winston-daily-rotate-file": "^4.7.1"
+    "winston-daily-rotate-file": "^4.7.1",
+    "winston-logstash": "^1.0.2",
+    "winston-loki": "^6.0.6",
+    "winston-transport": "^4.5.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.1.4",

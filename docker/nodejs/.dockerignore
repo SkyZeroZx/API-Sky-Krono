@@ -1,0 +1,11 @@
+dist/
+node_modules/
+.gitignore
+.git/
+.github/
+.scannerwork/
+docs/
+e2e/
+LOG/
+log/
+.gitattributes
