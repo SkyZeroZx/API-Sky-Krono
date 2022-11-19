@@ -46,7 +46,7 @@
 - [Integración Continua](#integración-continua)
 - [Logger](#logger)
 - [Documentación](#documentacion)
-- [Construido](#Construido-con-🛠️)
+- [Construido](#Construido-con-%EF%B8%8F)
 
 ## Comenzando 🚀
 
